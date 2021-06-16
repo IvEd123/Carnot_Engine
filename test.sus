@@ -1,0 +1,54 @@
+#objects 5
+
+#t 0
+#n skybox
+#s 500
+#p 0 0 0 
+#r 0 0 0 
+#vs ./sky.vs
+#fs ./sky.fs
+#s 0
+#end
+
+#t 3
+#n ground
+#s 100
+#p 0 1 0 
+#r 5 0 0 
+#vs ./plane.vs
+#fs ./dirt.fs
+#s 1
+#end
+
+#t 3
+#n sea
+#s 300
+#p 100 0 100 
+#r 0 180 0 
+#vs ./plane.vs
+#fs ./sea.fs
+#s 1
+#end
+
+#t 2
+#n house
+#m ./house.obj
+#s 0.03
+#p 15 0.7 2 
+#r 5 0 0 
+#vs ./mesh.vs
+#fs ./mesh.fs
+#s 1
+#end
+
+#t 2
+#n crowbar
+#m ./model.obj
+#s 1
+#p 2 1.5 5 
+#r 90 0 0 
+#vs ./mesh.vs
+#fs ./mesh.fs
+#s 1
+#end
+

@@ -427,7 +427,7 @@ void Terrain::CreateVertices(){
 //                                
 //    
 
-Mesh::Mesh(const char* path){
+Mesh::Mesh( char* path){
     pos = sf::Vector3f(0, 0, 0);
     rot = sf::Vector3f(0, 0, 0);
     OBJLoader(path, this);
@@ -441,7 +441,7 @@ void Mesh::CreateVertices() {
     material.createVAO_VBO_mesh((*vert_vec3)[array_index], (*uv_vec2)[array_index],(* norm_vec3)[array_index]);
 }
 
-void Mesh::setModel(const char* path) {
+void Mesh::setModel( char* path) {
     model_path = path;
     OBJLoader(path, this);
     CreateVertices();

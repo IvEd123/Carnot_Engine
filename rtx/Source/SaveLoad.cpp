@@ -26,7 +26,7 @@ std::string SaveLoad::GetExtension(){
 	return extension;
 }
 
-int SaveLoad::Load(std::vector<GeometricObject*>* obj_list, std::vector<LightSource*>* light_list){
+int SaveLoad::Load(){
 	std::string  path_full = path + "/" + name + "." + extension;
 	std::ifstream file;
 	file.open(path_full);
@@ -35,12 +35,13 @@ int SaveLoad::Load(std::vector<GeometricObject*>* obj_list, std::vector<LightSou
 		std::cout << "not opened" << std::endl;
 		return 1;
 	}
-	char buffer[50];
+	std::string buffer;
 
 	int obj_nun;
 
 	file >> buffer;
-	if (buffer == "#objects")
+	//if (buffer == "#objects")
+	if (buffer.compare("#objects") == 0)
 		file >> obj_nun;
 	else {
 		std::cout << "unknown command" << std::endl;
@@ -48,43 +49,82 @@ int SaveLoad::Load(std::vector<GeometricObject*>* obj_list, std::vector<LightSou
 	}
 
 	int type;
-
+	
 	while (!file.eof()) {
+		bool loaded = false;
 		file >> buffer;
-		if (buffer[0] != '#') {
-			std::cout << "unknown command" << std::endl;
-			return 1;
-		}
-		else if (buffer == "#t") {		// type
+		if (buffer.compare("#t") == 0){
 			file >> type;
-		}
-		else if (buffer == "#n") {		// name
+			std::string name;
+			file >> buffer;
+			if (buffer.compare("#n") == 0) {
+				file >> name;
+				AddObject((GeometryType)type, name);
+				file >> buffer;
+				if (buffer.compare("#m") == 0 && type == MESH) {
+					char mesh_path[50];
+					file >> mesh_path;
+					LAST_OBJ_PTR->setModel(mesh_path);
+					file >> buffer;
+				}
+				float size;
+				
+				if (buffer.compare("#s") == 0) {
+					file >> size;
+					LAST_OBJ_PTR->SetSize(size);
 
-		}
-		else if (buffer == "#m") {		// mesh
+					file >> buffer;
+					if (buffer.compare("#p") == 0) {
+						sf::Vector3f pos;
+						file >> pos.x;
+						file >> pos.y;
+						file >> pos.z;
+						LAST_OBJ_PTR->SetPos(pos);
 
-		}
-		else if (buffer == "#s") {		// size
+						file >> buffer;
+						if (buffer.compare("#r") == 0) {
+							sf::Vector3f rot;
+							file >> rot.x;
+							file >> rot.y;
+							file >> rot.z;
+							LAST_OBJ_PTR->SetRot(rot);
 
+							file >> buffer;
+							if (buffer.compare("#vs") == 0) {
+								char shader_path[100];
+								file >> shader_path;
+								LAST_OBJ_PTR->material.loadShader(GL_VERTEX_SHADER, shader_path);
+								file >> buffer;
+								if (buffer.compare("#fs") == 0) {
+									file >> shader_path;
+									LAST_OBJ_PTR->material.loadShader(GL_FRAGMENT_SHADER, shader_path);
+									int error = LAST_OBJ_PTR->material.CreateShaders();
+									LAST_OBJ_PTR->material.specifyVertexAttributes_mesh();
+									if (error != 0) {
+										std::cout << name << " script error " << error << std::endl;
+									}
+									file >> buffer;
+									if (buffer.compare("#sh") == 0) {
+										bool sh;
+										file >> sh;
+										LAST_OBJ_PTR->cast_shadow = sh;
+										//LAST_OBJ_PTR->addLightSource(light_list[0]);
+										
+										file >> buffer;
+										if (buffer.compare("#end") == 0)
+											loaded = true;
+										
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 		}
-		else if (buffer == "#p") {		// position
-
-		}
-		else if (buffer == "#r") {		// rotation
-
-		}
-		else if (buffer == "#vs") {		// vertex shader
-
-		}
-		else if (buffer == "#fs") {		// fragment shader
-
-		}
-		else if (buffer == "#sh") {		// shadows
-
-		}
-		else if (buffer == "#end") {	// end
-
-		}
+		if (!loaded)
+			std::cout << "error " << name << std::endl;
+		
 	}
 
 	return 0;

@@ -5,9 +5,9 @@
 #s 500
 #p 0 0 0 
 #r 0 0 0 
-#vs ./sky.vs
-#fs ./sky.fs
-#s 0
+#vs C:\Users\IvEda\Desktop\sfml\rtx\Shaders\sky.vs
+#fs C:\Users\IvEda\Desktop\sfml\rtx\Shaders\sky.fs
+#sh 0
 #end
 
 #t 3
@@ -15,9 +15,9 @@
 #s 100
 #p 0 1 0 
 #r 5 0 0 
-#vs ./plane.vs
-#fs ./dirt.fs
-#s 1
+#vs C:\Users\IvEda\Desktop\sfml\rtx\Shaders\plane.vs
+#fs C:\Users\IvEda\Desktop\sfml\rtx\Shaders\dirt.fs
+#sh 1
 #end
 
 #t 3
@@ -25,30 +25,30 @@
 #s 300
 #p 100 0 100 
 #r 0 180 0 
-#vs ./plane.vs
-#fs ./sea.fs
-#s 1
+#vs C:\Users\IvEda\Desktop\sfml\rtx\Shaders\plane.vs
+#fs C:\Users\IvEda\Desktop\sfml\rtx\Shaders\sea.fs
+#sh 1
 #end
 
 #t 2
 #n house
-#m ./house.obj
+#m C:\Users\IvEda\Desktop\sfml\rtx\Meshes\house.obj
 #s 0.03
 #p 15 0.7 2 
 #r 5 0 0 
-#vs ./mesh.vs
-#fs ./mesh.fs
-#s 1
+#vs C:\Users\IvEda\Desktop\sfml\rtx\Shaders\mesh.vs
+#fs C:\Users\IvEda\Desktop\sfml\rtx\Shaders\mesh.fs
+#sh 1
 #end
 
 #t 2
 #n crowbar
-#m ./model.obj
+#m C:\Users\IvEda\Desktop\sfml\rtx\Meshes\model.obj
 #s 1
 #p 2 1.5 5 
 #r 90 0 0 
-#vs ./mesh.vs
-#fs ./mesh.fs
-#s 1
+#vs C:\Users\IvEda\Desktop\sfml\rtx\Shaders\mesh.vs
+#fs C:\Users\IvEda\Desktop\sfml\rtx\Shaders\mesh.fs
+#sh 1
 #end
 

@@ -23,6 +23,7 @@ class GeometricObject{
 private:
     std::string name;
 protected:
+    
     int type;
     float size;
     sf::Vector3f pos;
@@ -56,7 +57,7 @@ public:
     void                                    UpdateModelMatrix();
     void                                    addLightSource(LightSource* source);
     virtual void                            Draw() = 0;
-
+    virtual void                            setModel(char* path) = 0;
 
     std::vector<GLfloat>                    vertices;
     std::vector<std::vector<glm::vec3>>*    vert_vec3;
@@ -79,6 +80,7 @@ public:
 
     void Draw();
     void CreateVertices();
+    void setModel(char* path) {}
 
 };
 
@@ -96,6 +98,7 @@ public:
     glm::mat4* view; glm::mat4* proj;
     void CreateVertices();
     void Draw();
+    void setModel(char* path) {}
     Screen();
     ~Screen();
 };
@@ -116,7 +119,7 @@ public:
     GLuint* getNormalMap() {
         return &norm;
     }
-
+    void setModel(char* path) {}
     float height;
 private:
     float size;
@@ -134,8 +137,8 @@ private:
 class  Mesh : public GeometricObject {
 public:
     std::string model_path;
-    Mesh(const char* path);
-    void setModel(const char* path);
+    Mesh( char* path);
+    void setModel( char* path);
     Mesh();
     ~Mesh();
     void Draw();
@@ -152,6 +155,7 @@ public:
     ~Plane();
     void Draw();
     void CreateVertices();
+    void setModel(char* path) {}
     int texture_repeat = 1;
     GLuint* getNormalMap() {
         return &norm;

@@ -9,7 +9,9 @@
 #include <fstream>
 
 #include "../Headers/GeometricObject.h"
+#include "../Headers/AddObject.h"
 
+extern std::vector <GeometricObject*> obj_list;
 
 class SaveLoad{
 private:
@@ -26,7 +28,7 @@ public:
 	void SetExtension(std::string _ex);
 	std::string GetExtension();
 
-	int Load(std::vector <GeometricObject*>* obj_list, std::vector <LightSource*>* light_list);
+	int Load();
 	int Save(std::vector <GeometricObject*>* obj_list, std::vector <LightSource*>* light_list);
 };
 

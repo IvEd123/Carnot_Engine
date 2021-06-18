@@ -149,6 +149,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\AddObject.cpp" />
     <ClCompile Include="Source\DLLScriptHandler.cpp" />
     <ClCompile Include="Source\GeometricObject.cpp" />
     <ClCompile Include="Source\main.cpp" />
@@ -180,6 +181,7 @@
     <ResourceCompile Include="rtx.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Headers\AddObject.h" />
     <ClInclude Include="Headers\DLLScriptHandler.h" />
     <ClInclude Include="Headers\GeometricObject.h" />
     <ClInclude Include="Headers\Material.h" />

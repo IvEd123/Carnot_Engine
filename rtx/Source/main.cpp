@@ -302,12 +302,6 @@ int main(int argc, char* argv[]) {
         sun.SetPov(pl.GetPos() + sun_spawn_pov);
         sun.SetPos(pl.GetPos() + sun_spawn_pos);
 
-        //getByName("skybox")->SetPos(pl.GetPos());
-        //getByName("sea")->material.attachUniform("time", time_passed);
-       // getByName("crowbar")->SetRot(getByName("crowbar")->GetRot() + time * Vector3f(1, 0, 1));
-
-
-        
 
         for (int i = 0; i < obj_list.size(); i++) {
             obj_list[i]->Draw();
@@ -317,7 +311,6 @@ int main(int argc, char* argv[]) {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         screen.material.attachUniform("time", time);
         
-        //if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) {
         if (event.type == Event::KeyReleased && event.key.code == Keyboard::F5){
             int t = sf.Save(&obj_list, &light_list);
             if (t == 0)

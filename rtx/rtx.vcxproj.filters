@@ -147,6 +147,9 @@
     <ClInclude Include="Headers\AddObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="thirdparty\OBJ-loader\OBJ_Loader.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\mesh.fs">

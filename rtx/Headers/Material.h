@@ -22,6 +22,7 @@ public:
     std::vector<GLchar>log_vs;
     std::vector<GLchar>log_gs;
     std::vector<GLchar>log_fs;
+    std::string tex_path;
     Material();
     ~Material();
     glm::mat4* lightSpaceMatrixPtr;

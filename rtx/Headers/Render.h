@@ -12,6 +12,7 @@
 #include <SFML\OpenGL.hpp>
 #include "../thirdparty\glm\glm.hpp"
 #include <gl/GLU.h>
+#include "../thirdparty/OBJ-loader/OBJ_Loader.h"
 
 #include "../Headers/PLayer.h"
 #include "../Headers/Material.h"
@@ -30,6 +31,8 @@ GLuint createFrameBuffer(int height, int width, GLuint *depghstencil, GLuint *co
 void bindTexture(const char* path, const char* name, GLuint* handler, Material* material, int i);
 
 void OBJLoader(const char* path, GeometricObject* object);
+
+void OBJLoaderLegacy(const char* path, GeometricObject* object);
 
 enum GeometryType{
 	CUBE,

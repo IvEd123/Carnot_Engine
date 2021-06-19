@@ -124,6 +124,7 @@ void Material::loadShader(GLenum type, const GLchar* path) {
 }
 
 void Material::bindTexture(const GLchar* path) {
+    tex_path = path;
     texture = loadTexture(path);
     glBindVertexArray(vao);
     glUseProgram(shaderProgram);

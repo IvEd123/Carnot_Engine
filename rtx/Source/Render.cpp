@@ -1,4 +1,4 @@
-#include "Render.h"
+#include "../Headers/Render.h"
 
 
 #pragma warning(disable : 4996)
@@ -104,7 +104,7 @@ void bindTexture(const char* path, const char* name, GLuint* handler, Material* 
 }
 
 
-void OBJLoader(const char* path, GeometricObject* object) {
+void OBJLoaderLegacy(const char* path, GeometricObject* object) {
     std::vector< unsigned int > vertexIndices, uvIndices, normalIndices;
     std::vector< glm::vec3 > temp_vertices;
     std::vector< glm::vec2 > temp_uvs;
@@ -175,3 +175,23 @@ void OBJLoader(const char* path, GeometricObject* object) {
     }
 }
 
+glm::vec3 toglmv3(objl::Vector3 vec) {
+    return glm::vec3(vec.X, vec.Y, vec.Z);
+}
+
+glm::vec2 toglmv2(objl::Vector2 vec) {
+    return glm::vec2(vec.X, vec.Y);
+}
+
+void OBJLoader(const char* path, GeometricObject* object) {
+    objl::Loader loader;
+    loader.LoadFile(path);
+    
+    for (int i = 0; i < loader.LoadedVertices.size(); i++) {
+        (*object->vert_vec3)[object->array_index].push_back(toglmv3(loader.LoadedVertices[i].Position));
+        (*object->norm_vec3)[object->array_index].push_back(toglmv3(loader.LoadedVertices[i].Normal));
+        (*object->uv_vec2)[object->array_index].push_back(toglmv2(loader.LoadedVertices[i].TextureCoordinate));
+    }
+
+    return;
+}

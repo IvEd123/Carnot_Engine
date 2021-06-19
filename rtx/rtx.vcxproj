@@ -190,6 +190,7 @@
     <ClInclude Include="Headers\resource.h" />
     <ClInclude Include="Headers\SaveLoad.h" />
     <ClInclude Include="Headers\ScriptCompiler.h" />
+    <ClInclude Include="thirdparty\OBJ-loader\OBJ_Loader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\dirt.fs" />

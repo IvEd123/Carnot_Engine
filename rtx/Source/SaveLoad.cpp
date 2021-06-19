@@ -111,9 +111,15 @@ int SaveLoad::Load(){
 										//LAST_OBJ_PTR->addLightSource(light_list[0]);
 										
 										file >> buffer;
+										if (buffer.compare("#tex") == 0) {
+											char tex_path[100];
+											file >> tex_path;
+											LAST_OBJ_PTR->material.bindTexture(tex_path);
+											file >> buffer;
+											
+										}
 										if (buffer.compare("#end") == 0)
 											loaded = true;
-										
 									}
 								}
 							}
@@ -156,6 +162,7 @@ int SaveLoad::Save(std::vector<GeometricObject*>* obj_list, std::vector<LightSou
 		file << "#vs " << (*obj_list)[i]->material.GetVSPath() << std::endl;
 		file << "#fs " << (*obj_list)[i]->material.GetFSPath() << std::endl;
 		file << "#sh " << (*obj_list)[i]->cast_shadow << std::endl;
+		file << "#tex " << (*obj_list)[i]->material.tex_path << std::endl;
 		file << "#end" << std::endl;
 		file << std::endl;
 	}

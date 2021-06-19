@@ -1,7 +1,5 @@
 #include "../Headers/SaveLoad.h"
 
-//using namespace std;
-
 void SaveLoad::SetPath(std::string _path){
 	path = _path;
 }
@@ -40,7 +38,6 @@ int SaveLoad::Load(){
 	int obj_nun;
 
 	file >> buffer;
-	//if (buffer == "#objects")
 	if (buffer.compare("#objects") == 0)
 		file >> obj_nun;
 	else {

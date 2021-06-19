@@ -9,7 +9,7 @@
 #include <stdint.h>
 #include <fstream>
 
-#include <SFML\Graphics.hpp>
+#include <SFML/Graphics.hpp>
 
 class GeometricObject;
 
@@ -41,30 +41,30 @@ static std::map<uint8_t, uint8_t> arguments = {			// number of arguments for eve
 	{ROTATETO, 3}, 
 	{FLOAT_VAR, 1}
 };	
-
+											
 class ScriptHandler {
 public:
-	GeometricObject*				object;						// pointer to parent object
-	std::map <std::string, int>		int_var_names;				// variable names and indecies - integer
-	std::map <std::string, int>		float_var_names;			// variable names and indecies - float
-	std::string						path;						// path to script file
-	std::vector<int>				int_variables;				// buffer with integers
-	std::vector<float>				float_variables;			// buffer with floats
-	std::vector<uint8_t>			update_inst;				// instructions in update function
-	std::vector<uint8_t>			start_inst;					// instructions in start function
-	int								bc;							// bracket counter;
-	void							Update();					// update function
-	void							Start();					// start function
+	GeometricObject*						object;						// pointer to parent object
+	std::map <std::string, int>				int_var_names;				// variable names and indecies - integer
+	std::map <std::string, int>				float_var_names;			// variable names and indecies - float
+	std::string								path;						// path to script file
+	std::vector<int>						int_variables;				// buffer with integers
+	std::vector<float>						float_variables;			// buffer with floats
+	std::vector<uint8_t>					update_inst;				// instructions in update function
+	std::vector<uint8_t>					start_inst;					// instructions in start function
+	int										bc;							// bracket counter;
+	void									Update();					// update function
+	void									Start();					// start function
 private:
-	void							move(sf::Vector3f v);		// add vector to object position
-	void							moveto(sf::Vector3f v);		// changes object position
-	void							rotate(sf::Vector3f v);		// add vector to object rotation
-	void							rotateto(sf::Vector3f v);	// changes object rotation
+	void									move(sf::Vector3f v);		// add vector to object position
+	void									moveto(sf::Vector3f v);		// changes object position
+	void									rotate(sf::Vector3f v);		// add vector to object rotation
+	void									rotateto(sf::Vector3f v);	// changes object rotation
 };
 
 class ScriptCompiler{
 public:
-	ScriptHandler					LoadScript(std::string path, GeometricObject *obj);
+	ScriptHandler							LoadScript(std::string path, GeometricObject *obj);
 };
 
 #endif

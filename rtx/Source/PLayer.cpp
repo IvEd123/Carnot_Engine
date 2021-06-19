@@ -1,7 +1,9 @@
 #include "../Headers/PLayer.h"
 
 void Player::Move(sf::Vector2f ang) {
-	//std::cout << ang.x << ' ' << ang.y << ' ' << pos.x << ' ' << pos.z << std::endl;
+
+	//TODO: improve moving
+
     float dx = 0, dz = 0;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 	{
@@ -31,14 +33,6 @@ void Player::Move(sf::Vector2f ang) {
 }
 
 
-void Player::Update()
-{
-    /*
-    if ((int)pos.x <= terrain->getSize().x && pos.x >= 0 && (int)pos.z <= terrain->getSize().y && pos.z >= 0)
-        pos.y = terrain->getHeight(sf::Vector2f(pos.x, pos.z)) + h;
-    else
-    {
-        pos.x = terrain->getSize().x / 2;
-        pos.z = terrain->getSize().y / 2;
-    }*/
+void Player::Update(){
+    
 }

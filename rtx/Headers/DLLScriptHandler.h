@@ -4,15 +4,13 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 
-#include "../Headers/GeometricObject.h"
 
-#include <SFML\System\Vector3.hpp>
+#include <SFML/System/Vector3.hpp>
 #include <Windows.h>
 #include <string>
 #include <iostream>
 
-
-
+#include "../Headers/GeometricObject.h"
 
 typedef struct gameobject {
 	sf::Vector3f* pos;

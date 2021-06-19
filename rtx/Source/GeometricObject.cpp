@@ -283,8 +283,6 @@ GLuint* Screen::getColorBuffer(){
 }
 
 void Screen::CreateVertices(){
-
-
     vertices =  {
         -1.0f,  1.0f,  0.0f, 1.0f,
          1.0f,  1.0f,  1.0f, 1.0f,
@@ -299,7 +297,6 @@ void Screen::CreateVertices(){
 
 void Screen::Draw() {
 
-    //glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glDisable(GL_DEPTH_TEST);
 
     glUseProgram(material.getShaderProgram());
@@ -313,7 +310,6 @@ void Screen::Draw() {
     glDrawArrays(GL_TRIANGLES, 0, 6);
     
     glBindVertexArray(0);
-    //glUseProgram(0);
 }
 
 
@@ -499,9 +495,6 @@ Plane::Plane(){
     pos = sf::Vector3f(0, 0, 0);
     rot = sf::Vector3f(0, 0, 0);
 
-
-
-
     material = Material();
 }
 
@@ -571,14 +564,6 @@ void Plane::CreateVertices(){
          glm::vec3(0.0f, 1.0f,  0.0f),
          glm::vec3(0.0f, 1.0f,  0.0f),
     };
-    /*vertices = {
-        0.0, 0.0, 0.0, 0.0, 0.0,
-        1.0, 0.0, 0.0, 1.0, 0.0,
-        1.0, 0.0, 1.0, 1.0, 1.0,
-        1.0, 0.0, 1.0, 1.0, 1.0,
-        0.0, 0.0, 1.0, 0.0, 1.0,
-        0.0, 0.0, 0.0, 0.0, 0.0
-    };*/
 
     material.createVAO_VBO_mesh((*vert_vec3)[array_index], (*uv_vec2)[array_index], (*norm_vec3)[array_index]);
 
@@ -644,9 +629,7 @@ int LightSource::CreateShaders(){
 }
 
 void LightSource::Draw(std::vector <GeometricObject*> obj_list) {
-    // 1. first render to depth map
-    
-    
+
     glEnable(GL_DEPTH_TEST);
     glUseProgram(ShaderProgram);
     
@@ -667,7 +650,6 @@ void LightSource::Draw(std::vector <GeometricObject*> obj_list) {
             sf::Vector3f rot = obj_list[i]->GetRot();
 
             glm::mat4 model = glm::mat4(1.0);
-            //model = glm::scale(model, glm::vec3(obj_list[i]->GetSize()));
             model = glm::translate(model, ConvertSFML2GLM(pos));
             
             model = glm::rotate(model, glm::radians(rot.x), glm::vec3(1.0, 0.0, 0.0));

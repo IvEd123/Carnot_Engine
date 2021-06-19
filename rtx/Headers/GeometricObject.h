@@ -12,8 +12,9 @@
 #include <SFML/OpenGL.hpp>
 #include <gl/GLU.h>
 
-#include "PLayer.h"
-#include "Render.h"
+#include "../Headers/PLayer.h"
+#include "../Headers/Render.h"
+#include "../Headers/DLLScriptHandler.h"
 
 void getError(std::vector<GLchar>log, GLuint shader);
 
@@ -21,13 +22,14 @@ class LightSource;
 
 class GeometricObject{
 private:
-    std::string name;
+                                            
+    std::string                             name;
 protected:
     
-    int type;
-    float size;
-    sf::Vector3f pos;
-    sf::Vector3f rot;
+    int                                     type;
+    float                                   size;
+    sf::Vector3f                            pos;
+    sf::Vector3f                            rot;
     
 public:
     GeometricObject(){}
@@ -50,7 +52,7 @@ public:
     sf::Vector3f *                          GetRotPtr();
     float        *                          GetSizePtr();
 
-
+    DLLScriptHandler script;
 
     Material                                material;
     bool                                    cast_shadow = true;
@@ -78,27 +80,27 @@ public:
     Cube();
     ~Cube();
 
-    void Draw();
-    void CreateVertices();
-    void setModel(char* path) {}
+    void                                    Draw();
+    void                                    CreateVertices();
+    void                                    setModel(char* path) {}
 
 };
 
 class Screen : public GeometricObject {
 private:
-    GLuint depth_stencil_buff;
-    GLuint tex;
+    GLuint                                  depth_stencil_buff;
+    GLuint                                  tex;
 public:
-    GLuint frameBuffer;
-    GLuint* getDepthSteencilBuffer();
-    GLuint* getColorBuffer();
-    void setColorBuffer(GLuint t) {
-        tex = t;
-    }
-    glm::mat4* view; glm::mat4* proj;
-    void CreateVertices();
-    void Draw();
-    void setModel(char* path) {}
+    GLuint                                  frameBuffer;
+    GLuint *                                getDepthSteencilBuffer();
+    GLuint *                                getColorBuffer();
+    void                                    setColorBuffer(GLuint t) { tex = t; }
+
+    glm::mat4 *                             view; 
+    glm::mat4 *                             proj;
+    void                                    CreateVertices();
+    void                                    Draw();
+    void                                    setModel(char* path) {}
     Screen();
     ~Screen();
 };
@@ -108,43 +110,35 @@ public:
     Terrain(float _size, float _res, float _height);
     ~Terrain();
     Terrain();
-    void Draw();
-    void CreateVertices();
-    GLuint* getHeightmap() {
-        return &heightmap;
-    }
-    GLuint* getAOMap() {
-        return &ao;
-    }
-    GLuint* getNormalMap() {
-        return &norm;
-    }
-    void setModel(char* path) {}
-    float height;
+
+    void                                    Draw();
+    void                                    CreateVertices();
+
+    GLuint *                                getHeightmap() { return &heightmap; }
+    GLuint *                                getAOMap() { return &ao; }
+    GLuint *                                getNormalMap() { return &norm; }
+    void                                    setModel(char* path) {}
+    float                                   height;
 private:
-    float size;
-    int resolution;
+    float                                   size;
+    int                                     resolution;
 
-    GLuint heightmap;
-    GLuint ao;
-    GLuint norm;
-
-    
+    GLuint                                  heightmap;
+    GLuint                                  ao;
+    GLuint                                  norm;
 };
 
 
 
 class  Mesh : public GeometricObject {
 public:
-    std::string model_path;
-    Mesh( char* path);
-    void setModel( char* path);
+    std::string                             model_path;
+    Mesh(char* path);
+    void                                    setModel( char* path);
     Mesh();
     ~Mesh();
-    void Draw();
-    void CreateVertices();
-private:
-
+    void                                    Draw();
+    void                                    CreateVertices();
 };
 
 
@@ -153,20 +147,16 @@ public:
     
     Plane();
     ~Plane();
-    void Draw();
-    void CreateVertices();
-    void setModel(char* path) {}
-    int texture_repeat = 1;
-    GLuint* getNormalMap() {
-        return &norm;
-    }
-    GLuint* getSpecMap() {
-        return &spec;
-    }
+    void                                    Draw();
+    void                                    CreateVertices();
+    void                                    setModel(char* path) {}
+    int                                     texture_repeat = 1;
+
+    GLuint *                                getNormalMap() { return &norm; }
+    GLuint *                                getSpecMap() { return &spec; }
 private:
-    
-    GLuint norm;
-    GLuint spec;
+    GLuint                                  norm;
+    GLuint                                  spec;
 };
 
 
@@ -176,46 +166,45 @@ private:
 
 class LightSource {
 private:
-    std::string name;
-    sf::Vector3f pos;
-    sf::Vector3f rot;
-    std::string vertexShader_source;
-    std::string fragmentShader_source;
-    int resolution;
-    unsigned int depthMapFBO;
-    unsigned int depthMap;
-    unsigned int ShaderProgram;
-    float fov = 20;
-    sf::Vector3f pov;
+    std::string                             name;
+    sf::Vector3f                            pos;
+    sf::Vector3f                            rot;
+    std::string                             vertexShader_source;
+    std::string                             fragmentShader_source;
+    int                                     resolution;
+    unsigned int                            depthMapFBO;
+    unsigned int                            depthMap;
+    unsigned int                            ShaderProgram;
+    float                                   fov = 20;
+    sf::Vector3f                            pov;
 
-     int loadShader(GLenum type, const GLchar* path);
+    int                                     loadShader(GLenum type, const GLchar* path);
 
-    float near_plane, far_plane;
-    glm::mat4 lightProjection, lightView, lightSpaceMatrix;
+    float                                   near_plane, 
+                                            far_plane;
+    glm::mat4                               lightProjection, lightView, lightSpaceMatrix;
     
-    
-    int CreateShaderProgram();
+    int                                     CreateShaderProgram();
 public:
+
     LightSource();
-    void setShader(GLenum type, const GLchar* path);
-    int CreateShaders();
-    void SetName(std::string);
-    std::string GetName(void);
+    void                                    setShader(GLenum type, const GLchar* path);
+    int                                     CreateShaders();
+    void                                    SetName(std::string);
+    std::string                             GetName(void);
 
-    glm::mat4* getProjMatrix() {
-        return &lightSpaceMatrix;
-    }
+    glm::mat4 *                             getProjMatrix() { return &lightSpaceMatrix; }
 
-    unsigned int *getShadowMap();
+    unsigned int *                          getShadowMap();
 
-    sf::Vector3f GetPos() { return pos; }
-    void SetPos(sf::Vector3f _pos) { pos = _pos; }
-    sf::Vector3f GetPov() { return pov; }
-    void SetPov(sf::Vector3f _pov) { pov = _pov; }
-    sf::Vector3f GetRot() { return rot; }
-    void SetRot(sf::Vector3f _rot) { rot = _rot; }
+    sf::Vector3f                            GetPos() { return pos; }
+    void                                    SetPos(sf::Vector3f _pos) { pos = _pos; }
+    sf::Vector3f                            GetPov() { return pov; }
+    void                                    SetPov(sf::Vector3f _pov) { pov = _pov; }
+    sf::Vector3f                            GetRot() { return rot; }
+    void                                    SetRot(sf::Vector3f _rot) { rot = _rot; }
 
-    void Draw(std::vector <GeometricObject*> obj_list);
+    void                                    Draw(std::vector <GeometricObject*> obj_list);
 };
 
 

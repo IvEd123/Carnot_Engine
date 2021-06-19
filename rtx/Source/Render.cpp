@@ -50,7 +50,6 @@ GLuint loadTexture(const GLchar* path) {
     GLuint texture = 0;
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
-    //gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, image.getSize().x, image.getSize().y, GL_RGBA, GL_UNSIGNED_BYTE, image.getPixelsPtr());
     glTexImage2D(
         GL_TEXTURE_2D, 0, GL_RGBA,
         image.getSize().x, image.getSize().y,
@@ -103,7 +102,7 @@ void bindTexture(const char* path, const char* name, GLuint* handler, Material* 
     glBindVertexArray(0);
 }
 
-
+// my own .obj loader. doesn't work very well 
 void OBJLoaderLegacy(const char* path, GeometricObject* object) {
     std::vector< unsigned int > vertexIndices, uvIndices, normalIndices;
     std::vector< glm::vec3 > temp_vertices;
@@ -175,6 +174,8 @@ void OBJLoaderLegacy(const char* path, GeometricObject* object) {
     }
 }
 
+
+// convert objl::vec to glm::vec
 glm::vec3 toglmv3(objl::Vector3 vec) {
     return glm::vec3(vec.X, vec.Y, vec.Z);
 }
@@ -182,6 +183,7 @@ glm::vec3 toglmv3(objl::Vector3 vec) {
 glm::vec2 toglmv2(objl::Vector2 vec) {
     return glm::vec2(vec.X, vec.Y);
 }
+
 
 void OBJLoader(const char* path, GeometricObject* object) {
     objl::Loader loader;

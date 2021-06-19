@@ -1,5 +1,4 @@
 #include "../Headers/ScriptCompiler.h"
-
 #include "../Headers/GeometricObject.h"
 
 ScriptHandler ScriptCompiler::LoadScript(std::string path, GeometricObject* obj) {
@@ -32,7 +31,6 @@ ScriptHandler ScriptCompiler::LoadScript(std::string path, GeometricObject* obj)
 
 	while (!file.eof() && !error) {
 		file >> s;
-	//	std::cout << s << " - " << std::to_string(keywords[s]) << std::endl;
 	
 		uint8_t kw = keywords[s];
 

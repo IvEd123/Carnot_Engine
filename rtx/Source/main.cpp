@@ -8,13 +8,13 @@
 #include <stdint.h>
 #include <chrono>
 
-#include "../thirdparty\glew-2.1.0\include\GL\glew.h"
-#include <gl\GLU.h>
-#include <SFML\Graphics.hpp>
-#include <SFML\OpenGL.hpp>
-#include "../thirdparty\glm\glm.hpp"
-#include "../thirdparty\glm\gtc\matrix_transform.hpp"
-#include "../thirdparty\glm\gtc\type_ptr.hpp"
+#include "../thirdparty/glew-2.1.0/include/GL/glew.h"
+#include <gl/GLU.h>
+#include <SFML/Graphics.hpp>
+#include <SFML/OpenGL.hpp>
+#include "../thirdparty/glm/glm.hpp"
+#include "../thirdparty/glm/gtc/matrix_transform.hpp"
+#include "../thirdparty/glm/gtc/type_ptr.hpp"
 
 #include "imgui.h"
 #include "imgui-SFML.h"
@@ -83,8 +83,7 @@ int main(int argc, char* argv[]) {
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-    //glm::ortho(-fov, fov, -fov, fov, near_plane, far_plane);
-    //pl.proj = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 1.0f, 255.0f);//glm::perspective(glm::radians(90.0f), static_cast<float>(WIDTH) / static_cast<float>(WIDTH), 0.1f, 1000.0f);
+    
     pl.proj = glm::perspective(glm::radians(90.0f), static_cast<float>(WIDTH) / static_cast<float>(WIDTH), 0.1f, 1000.0f);
     glEnable(GL_TEXTURE_2D);
 
@@ -92,7 +91,7 @@ int main(int argc, char* argv[]) {
     
 
     
- //light
+    //light
     LightSource sun = LightSource();
     sun.setShader(GL_VERTEX_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\Shadow.vs");
     sun.setShader(GL_FRAGMENT_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\Shadow.fs");
@@ -217,7 +216,7 @@ int main(int argc, char* argv[]) {
 
     for ever{
         //d.Update();
-        //std::cout << obj_list[4]->GetPos().x << " " << obj_list[4]->GetPos().y << " " << obj_list[4]->GetPos().z << " " << std::endl;
+        
         Event event;
         while (window.pollEvent(event)) {
             ImGui::SFML::ProcessEvent(event);
@@ -228,8 +227,7 @@ int main(int argc, char* argv[]) {
             }
         }
 
-        //if (event.type == Event::KeyReleased && event.key.code == Keyboard::Escape)
-          //  pause = !pause;
+
           
         pause = pause_prev ^ Keyboard::isKeyPressed(Keyboard::Escape);
         //window.setMouseCursorVisible(pause);
@@ -258,7 +256,7 @@ int main(int argc, char* argv[]) {
         ImGui::SFML::Update(window, clock.restart());
         ImGui::ShowDemoWindow();
 
-        ImGui::Begin("object"); // создаём окно
+        ImGui::Begin("object"); 
         if (ImGui::BeginMenu("objects")) {
             for (int i = 0; i < obj_list.size(); i++) {
                 char name[100];
@@ -269,6 +267,7 @@ int main(int argc, char* argv[]) {
         }
         ImGui::End(); // end window
 
+        //helpful gui tutorial
         //https://docs.unity3d.com/ru/current/Manual/gui-Controls.html
 
         //clear depth buffer
@@ -287,11 +286,6 @@ int main(int argc, char* argv[]) {
         glEnable(GL_DEPTH_TEST);
         glDepthMask(GL_TRUE);
 
-        
-        //lightProjection = glm::ortho(-fov, fov, -fov, fov, near_plane, far_plane);
-        //lightView = glm::lookAt(
-
-        
         pl.view = glm::lookAt(
             ConvertSFML2GLM(pl.GetPos()),
             glm::vec3(pl.GetPos().x - sin(pl.GetAng().x / 180 * M_PI), pl.GetPos().y + tan(pl.GetAng().y / 180 * M_PI), pl.GetPos().z - cos(pl.GetAng().x / 180 * M_PI)),
@@ -302,10 +296,9 @@ int main(int argc, char* argv[]) {
         sun.SetPov(pl.GetPos() + sun_spawn_pov);
         sun.SetPos(pl.GetPos() + sun_spawn_pos);
 
-
-        for (int i = 0; i < obj_list.size(); i++) {
+        for (int i = 0; i < obj_list.size(); i++) 
             obj_list[i]->Draw();
-        }
+        
 
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);

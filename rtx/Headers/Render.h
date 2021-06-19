@@ -7,10 +7,10 @@
 #include <fstream>
 #include <sstream>
 
-#include "../thirdparty\glew-2.1.0\include\GL\glew.h"
-#include <SFML\Graphics.hpp>
-#include <SFML\OpenGL.hpp>
-#include "../thirdparty\glm\glm.hpp"
+#include "../thirdparty/glew-2.1.0/include/GL/glew.h"
+#include <SFML/Graphics.hpp>
+#include <SFML/OpenGL.hpp>
+#include "../thirdparty/glm/glm.hpp"
 #include <gl/GLU.h>
 #include "../thirdparty/OBJ-loader/OBJ_Loader.h"
 

@@ -1,6 +1,5 @@
 #include "../Headers/DLLScriptHandler.h"
 
-
 void DLLScriptHandler::setObj(GeometricObject* ref){
 	obj = gameobject();
 	obj.pos = ref->GetPosPtr();
@@ -22,8 +21,6 @@ void DLLScriptHandler::Start(){
 	else
 		return;
 }
-
-
 
 int DLLScriptHandler::SetDLL(const char* path) {
 	hInst = ::LoadLibraryA(path);

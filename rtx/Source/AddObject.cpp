@@ -48,5 +48,4 @@ GeometricObject* getByName(std::string name) {
             return obj_list[i];
     std::cout << "object " << name << " not found" << std::endl;
     return nullptr;
-
 }

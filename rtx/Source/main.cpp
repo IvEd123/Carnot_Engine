@@ -39,20 +39,15 @@ std::vector<std::vector<glm::vec2>> array_of_uvs;
 #include "../Headers/DLLScriptHandler.h"
 
 
+using namespace sf;
 
 #define ever (;;)
-
-using namespace sf;
 
 #define M_PI 3.1415926535897932384626433832795
 #define DRAW_DISTANCE 1000
 
 #define HEIGHT 800
 #define WIDTH 800
-
-
-
-
 
 int main(int argc, char* argv[]) {
     ImGuiContext* ctx2 = ImGui::CreateContext();

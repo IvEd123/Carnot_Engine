@@ -21,6 +21,7 @@
 
 
 #include "../Headers/GeometricObject.h"
+#include "../Headers/DLLScriptHandler.h"
 
 std::vector <GeometricObject*> obj_list;
 std::vector <LightSource*> light_list;
@@ -28,15 +29,14 @@ std::vector <LightSource*> light_list;
 std::vector<std::vector<glm::vec3>> array_of_vertecies;
 std::vector<std::vector<glm::vec3>> array_of_normals;
 std::vector<std::vector<glm::vec2>> array_of_uvs;
+std::vector<DLLScriptHandler> scripts;
+
 
 #include "../Headers/AddObject.h"
 #include "../Headers/PLayer.h"
 #include "../Headers/Render.h"
 #include "../Headers/Material.h"
-
-
 #include "../Headers/SaveLoad.h"
-#include "../Headers/DLLScriptHandler.h"
 
 
 using namespace sf;
@@ -49,6 +49,9 @@ using namespace sf;
 #define HEIGHT 800
 #define WIDTH 800
 
+
+
+
 int main(int argc, char* argv[]) {
     ImGuiContext* ctx2 = ImGui::CreateContext();
     ImGui::SetCurrentContext(ctx2);
@@ -59,7 +62,7 @@ int main(int argc, char* argv[]) {
     std::string path = argv[0];
 
     std::cout << "WASD - move,\nalt - close,\nesc - pause(doesn't work good)" << std::endl;
-    Clock clock;    
+    Clock clock;
 
     ContextSettings settings;
     settings.depthBits = 24;
@@ -72,20 +75,20 @@ int main(int argc, char* argv[]) {
     RenderWindow window(VideoMode(WIDTH, HEIGHT), "win", 7u, settings);
     window.setFramerateLimit(60);
     ImGui::SFML::Init(window);
-    assert(window.getSettings().depthBits == 24);   
+    assert(window.getSettings().depthBits == 24);
     glewExperimental = GL_TRUE;
     glewInit();
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-    
+
     pl.proj = glm::perspective(glm::radians(90.0f), static_cast<float>(WIDTH) / static_cast<float>(WIDTH), 0.1f, 1000.0f);
     glEnable(GL_TEXTURE_2D);
 
     int error;
-    
 
-    
+
+
     //light
     LightSource sun = LightSource();
     sun.setShader(GL_VERTEX_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\Shadow.vs");
@@ -94,21 +97,21 @@ int main(int argc, char* argv[]) {
     if (error != 0)
         std::cout << error << std::endl;
     sun.SetPos(Vector3f(20, 20, 00));
-    sun.SetRot(Vector3f(180, 0,  0));
+    sun.SetRot(Vector3f(180, 0, 0));
 
-     //framebuffer
+    //framebuffer
     Screen screen = Screen();
-    screen.frameBuffer  = createFrameBuffer(WIDTH, HEIGHT, screen.getDepthSteencilBuffer(), screen.getColorBuffer());
+    screen.frameBuffer = createFrameBuffer(WIDTH, HEIGHT, screen.getDepthSteencilBuffer(), screen.getColorBuffer());
     screen.material.loadShader(GL_VERTEX_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\screen.vs");
     screen.material.loadShader(GL_FRAGMENT_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\screen.fs");
     error = screen.material.CreateShaders();
     screen.material.specifyVertexAttributes_screen(screen.material.getShaderProgram());
     if (error != 0)
-        std::cout<<error<<std::endl;
+        std::cout << error << std::endl;
     screen.addLightSource(&sun);
 
 
-   
+
     /*
     //Skybox
     AddObject(CUBE, "skybox");
@@ -119,11 +122,11 @@ int main(int argc, char* argv[]) {
     LAST_OBJ_PTR->material.specifyVertexAttributes_mesh();
     if (error != 0)
         std::cout << error << std::endl;
-    LAST_OBJ_PTR->material.bindTexture("C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Textures\\sky.png"); 
+    LAST_OBJ_PTR->material.bindTexture("C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Textures\\sky.png");
     LAST_OBJ_PTR->cast_shadow = false;
     LAST_OBJ_PTR->addLightSource(&sun);
-    
-   
+
+
 
     //ground
     AddObject(PLANE, "ground");
@@ -168,7 +171,7 @@ int main(int argc, char* argv[]) {
         std::cout << error << std::endl;
     LAST_OBJ_PTR->material.bindTexture("C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Textures\\wood\\albedo.png");
     LAST_OBJ_PTR->addLightSource(&sun);
-    
+
     //crowbar
     AddObject(MESH, "crowbar");
     (dynamic_cast<Mesh*>(LAST_OBJ_PTR))->setModel("C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Meshes\\model.obj");
@@ -183,14 +186,14 @@ int main(int argc, char* argv[]) {
     LAST_OBJ_PTR->addLightSource(&sun);
     LAST_OBJ_PTR->SetSize(1);
     LAST_OBJ_PTR->SetRot(Vector3f(90, 0, 0));
-    
-   
+
+
    //*/
 
 
     sf::Vector3f sun_spawn_pos = sun.GetPos();
     sf::Vector3f sun_spawn_pov = sun.GetPov();
-   
+
     const unsigned int t = *screen.getColorBuffer();
     float time_passed = 0;
     bool pause = 0;
@@ -201,13 +204,17 @@ int main(int argc, char* argv[]) {
     sf.SetName("test");
 
     sf.Load();
-    for (int i = 0; i < obj_list.size(); i++)
+    for (int i = 0; i < obj_list.size(); i++) 
         obj_list[i]->addLightSource(&sun);
+    
+    for (int i = 0; i < scripts.size(); i++)
+        scripts[i].Start();
 
 
     /*DLLScriptHandler d = DLLScriptHandler();
     d.SetDLL("C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\scrtipts\\crowbar.sus");
     d.setObj(obj_list[4]);*/
+
 
     for ever{
         //d.Update();
@@ -234,7 +241,7 @@ int main(int argc, char* argv[]) {
         if (!pause) {
             POINT mousexy;
             GetCursorPos(&mousexy);
-             Vector2<int> t = Vector2<int>(window.getPosition().x + 400, window.getPosition().y + 400);
+            Vector2<int> t = Vector2<int>(window.getPosition().x + 400, window.getPosition().y + 400);
             pl.SetAng(Vector2f(pl.GetAng().x + (t.x - mousexy.x) / 4, pl.GetAng().y + (t.y - mousexy.y) / 3));
             if (pl.GetAng().y < -89)
                 pl.SetAng(Vector2f(pl.GetAng().x, -89));
@@ -260,7 +267,7 @@ int main(int argc, char* argv[]) {
             }
             ImGui::EndMenu();
         }
-        ImGui::End(); // end window
+        ImGui::End(); // end window*/
 
         //helpful gui tutorial
         //https://docs.unity3d.com/ru/current/Manual/gui-Controls.html
@@ -293,7 +300,10 @@ int main(int argc, char* argv[]) {
 
         for (int i = 0; i < obj_list.size(); i++) 
             obj_list[i]->Draw();
-        
+
+
+        for (int i = 0; i < scripts.size(); i++)
+            scripts[i].Update();
 
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);

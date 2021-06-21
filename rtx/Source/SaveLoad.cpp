@@ -46,10 +46,10 @@ int SaveLoad::Load(){
 	}
 
 	int type;
-	
-	while (!file.eof()) {
+	file >> buffer;
+	while (!file.eof() && buffer.compare("#scripts") != 0) {
 		bool loaded = false;
-		file >> buffer;
+		
 		if (buffer.compare("#t") == 0){
 			file >> type;
 			std::string name;
@@ -113,8 +113,8 @@ int SaveLoad::Load(){
 											file >> tex_path;
 											LAST_OBJ_PTR->material.bindTexture(tex_path);
 											file >> buffer;
-											
 										}
+
 										if (buffer.compare("#end") == 0)
 											loaded = true;
 									}
@@ -127,7 +127,32 @@ int SaveLoad::Load(){
 		}
 		if (!loaded)
 			std::cout << "error " << name << std::endl;
-		
+		file >> buffer;
+	}
+
+
+
+	if (buffer.compare("#scripts") == 0) {
+		int scr_n;
+		file >> scr_n;
+		if (scr_n > 0) {
+			while (!file.eof()) {
+				file >> buffer;
+				if (buffer.compare("#id") == 0) {
+					int id;
+					file >> id;
+					file >> buffer;
+					if (buffer.compare("#path") == 0) {
+						char path[100];
+						file >> path;
+						scripts.push_back(DLLScriptHandler());
+						scripts.back().setObj(obj_list[id], id);
+						scripts.back().SetDLL(path);
+					}
+				}
+
+			}
+		}
 	}
 
 	return 0;
@@ -163,6 +188,13 @@ int SaveLoad::Save(std::vector<GeometricObject*>* obj_list, std::vector<LightSou
 		file << "#end" << std::endl;
 		file << std::endl;
 	}
+
+	file << "#scripts " << scripts.size() << std::endl << std::endl;
+	for (int i = 0; i < scripts.size(); i++) {
+		file << "#id " << scripts[i].obj_id << std::endl;
+		file << "#path " << scripts[i].path << std::endl;
+	}
+
 	file.close();
 	return 0;
 }

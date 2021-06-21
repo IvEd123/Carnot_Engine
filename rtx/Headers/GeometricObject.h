@@ -19,6 +19,7 @@
 void getError(std::vector<GLchar>log, GLuint shader);
 
 class LightSource;
+class DLLScriptHandler;
 
 class GeometricObject{
 private:
@@ -51,8 +52,6 @@ public:
     sf::Vector3f *                          GetPosPtr();
     sf::Vector3f *                          GetRotPtr();
     float        *                          GetSizePtr();
-
-    DLLScriptHandler script;
 
     Material                                material;
     bool                                    cast_shadow = true;

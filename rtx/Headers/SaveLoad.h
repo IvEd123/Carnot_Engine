@@ -12,6 +12,7 @@
 #include "../Headers/AddObject.h"
 
 extern std::vector <GeometricObject*> obj_list;
+extern std::vector <DLLScriptHandler> scripts;
 											//
 class SaveLoad{
 private:

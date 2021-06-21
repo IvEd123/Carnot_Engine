@@ -14,8 +14,6 @@ extern std::vector<std::vector<glm::vec2>> array_of_uvs;
 extern std::vector <GeometricObject*> obj_list;
 extern std::vector <LightSource*> light_list;
 
-
-
 void set_pointers_to_arrays(GeometricObject* g);
 void AddObject(GeometryType type, std::string name);
 GeometricObject* getByName(std::string name);

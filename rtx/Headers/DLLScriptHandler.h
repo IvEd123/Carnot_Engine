@@ -6,11 +6,12 @@
 
 
 #include <SFML/System/Vector3.hpp>
+#include "../Headers/GeometricObject.h"
 #include <Windows.h>
 #include <string>
 #include <iostream>
 
-#include "../Headers/GeometricObject.h"
+
 
 typedef struct gameobject {
 	sf::Vector3f* pos;
@@ -28,12 +29,16 @@ class DLLScriptHandler{
 	STARTFUNCPTR start;
 	bool error = false;
 public:
-	void setObj(GeometricObject*);
+	void setObj(GeometricObject*, int id);
+
+	int obj_id;
 
 	void Update();
 	void Start();
 
 	int SetDLL(const char* path);
+
+	std::string path;
 };
 
 

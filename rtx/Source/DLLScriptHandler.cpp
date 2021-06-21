@@ -1,6 +1,7 @@
 #include "../Headers/DLLScriptHandler.h"
 
-void DLLScriptHandler::setObj(GeometricObject* ref){
+void DLLScriptHandler::setObj(GeometricObject* ref, int id){
+	obj_id = id;
 	obj = gameobject();
 	obj.pos = ref->GetPosPtr();
 	obj.rot = ref->GetRotPtr();
@@ -25,6 +26,8 @@ void DLLScriptHandler::Start(){
 int DLLScriptHandler::SetDLL(const char* path) {
 	hInst = ::LoadLibraryA(path);
 	
+	this->path = path;
+
 	if (hInst == 0) {
 		std::cout << "DLL loading error";
 		error = true;

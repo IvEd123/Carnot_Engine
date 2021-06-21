@@ -112,84 +112,6 @@ int main(int argc, char* argv[]) {
 
 
 
-    /*
-    //Skybox
-    AddObject(CUBE, "skybox");
-    LAST_OBJ_PTR->SetSize(500);
-    LAST_OBJ_PTR->material.loadShader(GL_VERTEX_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\sky.vs");
-    LAST_OBJ_PTR->material.loadShader(GL_FRAGMENT_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\sky.fs");
-    error = LAST_OBJ_PTR->material.CreateShaders();
-    LAST_OBJ_PTR->material.specifyVertexAttributes_mesh();
-    if (error != 0)
-        std::cout << error << std::endl;
-    LAST_OBJ_PTR->material.bindTexture("C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Textures\\sky.png");
-    LAST_OBJ_PTR->cast_shadow = false;
-    LAST_OBJ_PTR->addLightSource(&sun);
-
-
-
-    //ground
-    AddObject(PLANE, "ground");
-    LAST_OBJ_PTR->SetSize(100);
-    LAST_OBJ_PTR->SetPos(Vector3f(0.0, 1.0, 0.0));
-    LAST_OBJ_PTR->SetRot(Vector3f(5.0, 0.0, 0.0));
-    LAST_OBJ_PTR->material.loadShader(GL_VERTEX_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\plane.vs");
-    LAST_OBJ_PTR->material.loadShader(GL_FRAGMENT_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\dirt.fs");
-    error = LAST_OBJ_PTR->material.CreateShaders();
-    LAST_OBJ_PTR->material.specifyVertexAttributes_mesh();
-    if (error != 0)
-        std::cout << error << std::endl;
-    LAST_OBJ_PTR->material.bindTexture("C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Textures\\grass.jpg");
-    ((Plane*)LAST_OBJ_PTR)->texture_repeat = 10;
-    LAST_OBJ_PTR->addLightSource(&sun);
-
-    //sea
-    AddObject(PLANE, "sea");
-    LAST_OBJ_PTR->SetSize(300);
-    LAST_OBJ_PTR->SetRot(Vector3f(0.0, 180.0, 0.0));
-    LAST_OBJ_PTR->SetPos(Vector3f(100, 0.0, 100));
-    LAST_OBJ_PTR->material.loadShader(GL_VERTEX_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\plane.vs");
-    LAST_OBJ_PTR->material.loadShader(GL_FRAGMENT_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\sea.fs");
-    error = LAST_OBJ_PTR->material.CreateShaders();
-    LAST_OBJ_PTR->material.specifyVertexAttributes_mesh();
-    if (error != 0)
-        std::cout << error << std::endl;
-    LAST_OBJ_PTR->material.bindTexture("C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Textures\\Water\\Water_COLOR.jpg");
-    LAST_OBJ_PTR->addLightSource(&sun);
-
-    //house
-     AddObject(MESH, "house");
-    (dynamic_cast<Mesh*>(LAST_OBJ_PTR))->setModel("C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Meshes\\house.obj");
-    LAST_OBJ_PTR->SetPos(Vector3f(15.0, 0.7, 2.0));
-    LAST_OBJ_PTR->SetRot(Vector3f(5.0, 0.0, 0.0));
-    LAST_OBJ_PTR->SetSize(0.03);
-    LAST_OBJ_PTR->material.loadShader(GL_VERTEX_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\mesh.vs");
-    LAST_OBJ_PTR->material.loadShader(GL_FRAGMENT_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\mesh.fs");
-    error = LAST_OBJ_PTR->material.CreateShaders();
-    LAST_OBJ_PTR->material.specifyVertexAttributes_mesh();
-    if (error != 0)
-        std::cout << error << std::endl;
-    LAST_OBJ_PTR->material.bindTexture("C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Textures\\wood\\albedo.png");
-    LAST_OBJ_PTR->addLightSource(&sun);
-
-    //crowbar
-    AddObject(MESH, "crowbar");
-    (dynamic_cast<Mesh*>(LAST_OBJ_PTR))->setModel("C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Meshes\\model.obj");
-    LAST_OBJ_PTR->SetPos(Vector3f(2.0, 1.5, 5.0));
-    LAST_OBJ_PTR->material.loadShader(GL_VERTEX_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\mesh.vs");
-    LAST_OBJ_PTR->material.loadShader(GL_FRAGMENT_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\mesh.fs");
-    error = LAST_OBJ_PTR->material.CreateShaders();
-    LAST_OBJ_PTR->material.specifyVertexAttributes_mesh();
-    if (error != 0)
-        std::cout << error << std::endl;
-    LAST_OBJ_PTR->material.bindTexture("C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Textures\\Crowbar_albedo.jpg");
-    LAST_OBJ_PTR->addLightSource(&sun);
-    LAST_OBJ_PTR->SetSize(1);
-    LAST_OBJ_PTR->SetRot(Vector3f(90, 0, 0));
-
-
-   //*/
-
 
     sf::Vector3f sun_spawn_pos = sun.GetPos();
     sf::Vector3f sun_spawn_pov = sun.GetPov();
@@ -211,13 +133,8 @@ int main(int argc, char* argv[]) {
         scripts[i].Start();
 
 
-    /*DLLScriptHandler d = DLLScriptHandler();
-    d.SetDLL("C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\scrtipts\\crowbar.sus");
-    d.setObj(obj_list[4]);*/
-
 
     for ever{
-        //d.Update();
         
         Event event;
         while (window.pollEvent(event)) {

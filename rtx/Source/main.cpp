@@ -161,17 +161,17 @@ int main(int argc, char* argv[]) {
             POINT mousexy;
             GetCursorPos(&mousexy);
             Vector2<int> t = Vector2<int>(window.getPosition().x + 400, window.getPosition().y + 400);
-            pl.SetAng(Vector2f(pl.GetAng().x + (t.x - mousexy.x) / 4, pl.GetAng().y + (t.y - mousexy.y) / 3));
+            pl.SetAng(Vector2f((int)(pl.GetAng().x + (t.x - mousexy.x) / 4)%360 , pl.GetAng().y + (t.y - mousexy.y) / 3));
             if (pl.GetAng().y < -89)
                 pl.SetAng(Vector2f(pl.GetAng().x, -89));
             if (pl.GetAng().y > 89)
-                pl.SetAng(Vector2f(pl.GetAng().x, 89));
+                pl.SetAng(Vector2f( pl.GetAng().x, 89));
             SetCursorPos(t.x, t.y); 
             //ShowCursor(false);
         }
         
-        float time = clock.getElapsedTime().asSeconds() * 100;
-        time_passed += time;
+        float Dtime = clock.getElapsedTime().asSeconds() * 100;
+        time_passed += Dtime;
         float size = 20.f;
         
         ImGui::SFML::Update(window, clock.restart());
@@ -216,7 +216,7 @@ int main(int argc, char* argv[]) {
             glm::vec3(0.0f, 1.0f, 0.0f)
         );
 
-        pl.Move(pl.GetAng());
+        pl.Move(pl.GetAng(), Dtime);
         sun.SetPov(pl.GetPos() + sun_spawn_pov);
         sun.SetPos(pl.GetPos() + sun_spawn_pos);
 
@@ -233,7 +233,7 @@ int main(int argc, char* argv[]) {
 
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        screen.material.attachUniform("time", time);
+        screen.material.attachUniform("time", Dtime);
         
         if (event.type == Event::KeyReleased && event.key.code == Keyboard::F5){
             int t = sf.Save(&obj_list, &light_list);

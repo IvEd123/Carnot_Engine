@@ -207,6 +207,7 @@
     <None Include="Shaders\Shadow.vs" />
     <None Include="Shaders\sky.fs" />
     <None Include="Shaders\sky.gs" />
+    <None Include="Shaders\sky.vs" />
     <None Include="Shaders\terrain.fs" />
     <None Include="Shaders\terrain.vs" />
   </ItemGroup>

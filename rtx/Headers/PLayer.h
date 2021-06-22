@@ -18,10 +18,12 @@ class GeometricObject;
 class Player {
 private:
 	static sf::Vector3f						pos;
+	static sf::Vector3f						velocity;
 	static Player							s_Instance;
-	static float							speed;
+	static float							a;//acceleration
 	static sf::Vector2f						ang;
 	float									h = 1.5;
+	const float								max_speed = .25;
 public:
 	Player(float _h) { h = _h; }
 	Player() {}
@@ -38,8 +40,9 @@ public:
 	static sf::Vector3f						GetPos() { return Get().pos; }
 	static void								SetPos(sf::Vector3f _pos) { pos = _pos; }
 
-	void									Move(sf::Vector2f ang);
-	void									SetSpeed(float _speed) { speed = _speed; }
+	void									MoveLegacy(sf::Vector2f ang);
+	void									Move(sf::Vector2f ang, float Dtime);
+	void									SetAcceleration(float _a) { a = _a; }
 	void									Update();
 };
 

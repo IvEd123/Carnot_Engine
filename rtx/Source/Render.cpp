@@ -14,7 +14,8 @@ Player& Pl = Player::Get();
 
 sf::Vector2f Player::ang = sf::Vector2f(0, 0);
 sf::Vector3f Player::pos = sf::Vector3f(0, 0, 0);
-float Player::speed = .05;
+float Player::a = .01;
+sf::Vector3f Player::velocity = sf::Vector3f(0, 0, 0);
 
 
 

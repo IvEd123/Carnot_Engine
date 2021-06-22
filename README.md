@@ -1,4 +1,4 @@
-# Carnot_Engine
+# Carnot Engine
 Game engine prototype. Written in C++ with SFML and OpenGL.
 
 Works very bad yet.

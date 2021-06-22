@@ -22,6 +22,7 @@
 
 #include "../Headers/GeometricObject.h"
 #include "../Headers/DLLScriptHandler.h"
+#include "../Headers/gui.h"
 
 std::vector <GeometricObject*> obj_list;
 std::vector <LightSource*> light_list;
@@ -132,6 +133,7 @@ int main(int argc, char* argv[]) {
     for (int i = 0; i < scripts.size(); i++)
         scripts[i].Start();
 
+    GUI_Object obj_win = GUI_Object();
 
 
     for ever{
@@ -175,12 +177,15 @@ int main(int argc, char* argv[]) {
         ImGui::SFML::Update(window, clock.restart());
         ImGui::ShowDemoWindow();
 
+        int selected = -1;
+
         ImGui::Begin("object"); 
         if (ImGui::BeginMenu("objects")) {
             for (int i = 0; i < obj_list.size(); i++) {
                 char name[100];
                 strcpy_s(name, obj_list[i]->GetName().c_str());
-                ImGui::MenuItem(name, NULL);
+                if(ImGui::MenuItem(name, NULL))
+                    selected = i;
             }
             ImGui::EndMenu();
         }
@@ -215,8 +220,12 @@ int main(int argc, char* argv[]) {
         sun.SetPov(pl.GetPos() + sun_spawn_pov);
         sun.SetPos(pl.GetPos() + sun_spawn_pos);
 
-        for (int i = 0; i < obj_list.size(); i++) 
+        for (int i = 0; i < obj_list.size(); i++)
             obj_list[i]->Draw();
+
+        if (selected != -1)
+            obj_win.SetObject(obj_list[selected]);
+        obj_win.Update();
 
 
         for (int i = 0; i < scripts.size(); i++)

@@ -40,6 +40,7 @@ public:
     int                                     GetType();
     void                                    SetName(std::string);
     std::string                             GetName(void);
+    std::string *                           GetNamePtr(void);
 
 
     sf::Vector3f                            GetPos();

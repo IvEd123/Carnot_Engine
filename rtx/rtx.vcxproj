@@ -153,6 +153,7 @@
     <ClCompile Include="Source\AddObject.cpp" />
     <ClCompile Include="Source\DLLScriptHandler.cpp" />
     <ClCompile Include="Source\GeometricObject.cpp" />
+    <ClCompile Include="Source\gui.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\Material.cpp" />
     <ClCompile Include="Source\PLayer.cpp" />
@@ -185,6 +186,7 @@
     <ClInclude Include="Headers\AddObject.h" />
     <ClInclude Include="Headers\DLLScriptHandler.h" />
     <ClInclude Include="Headers\GeometricObject.h" />
+    <ClInclude Include="Headers\gui.h" />
     <ClInclude Include="Headers\Material.h" />
     <ClInclude Include="Headers\PLayer.h" />
     <ClInclude Include="Headers\Render.h" />

@@ -63,6 +63,10 @@ std::string GeometricObject::GetName(void) {
     return name;
 }
 
+std::string * GeometricObject::GetNamePtr(void) {
+    return &name;
+}
+
 sf::Vector3f GeometricObject::GetPos(){
    return pos;
 }

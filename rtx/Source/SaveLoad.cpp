@@ -59,7 +59,7 @@ int SaveLoad::Load(){
 				AddObject((GeometryType)type, name);
 				file >> buffer;
 				if (buffer.compare("#m") == 0 && type == MESH) {
-					char mesh_path[50];
+					char mesh_path[100];
 					file >> mesh_path;
 					LAST_OBJ_PTR->setModel(mesh_path);
 					file >> buffer;

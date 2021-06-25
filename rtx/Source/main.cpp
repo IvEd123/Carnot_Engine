@@ -59,6 +59,26 @@ int main(int argc, char* argv[]) {
     Player& pl = Player::Get();
     pl.SetPos(Vector3f(0, 2, 0));
 
+    //cloud map
+    {
+        int x, y, z;
+        x = 100;
+        y = 100;
+        z = 100;
+
+        GLuint cloudbuffer;
+        glGenRenderbuffers(1, &cloudbuffer);
+        glBindFramebuffer(GL_FRAMEBUFFER, cloudbuffer);
+        
+        GLuint cloudtex;
+        glGenTextures(1, &cloudtex);
+        glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, x, y, z, 0, GL_RGBA, GL_FLOAT, NULL);
+        glBindTexture(GL_TEXTURE_3D, 0);
+        glFramebufferTexture3D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_3D, cloudtex, 0, 0);
+
+
+    }
+
     std::cout << argv[0] << std::endl;
     std::string path = argv[0];
 

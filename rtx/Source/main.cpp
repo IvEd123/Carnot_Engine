@@ -59,25 +59,7 @@ int main(int argc, char* argv[]) {
     Player& pl = Player::Get();
     pl.SetPos(Vector3f(0, 2, 0));
 
-    //cloud map
-    {
-        int x, y, z;
-        x = 100;
-        y = 100;
-        z = 100;
-
-        GLuint cloudbuffer;
-        glGenRenderbuffers(1, &cloudbuffer);
-        glBindFramebuffer(GL_FRAMEBUFFER, cloudbuffer);
-        
-        GLuint cloudtex;
-        glGenTextures(1, &cloudtex);
-        glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, x, y, z, 0, GL_RGBA, GL_FLOAT, NULL);
-        glBindTexture(GL_TEXTURE_3D, 0);
-        glFramebufferTexture3D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_3D, cloudtex, 0, 0);
-
-
-    }
+   
 
     std::cout << argv[0] << std::endl;
     std::string path = argv[0];
@@ -108,7 +90,46 @@ int main(int argc, char* argv[]) {
 
     int error;
 
+    //cloud map
+    
+        int x, y, z;
+        x = 100;
+        y = 100;
+        z = 100;
 
+        glEnable(GL_TEXTURE_3D);
+        PFNGLTEXIMAGE3DPROC glTexImage3D;
+        glTexImage3D = (PFNGLTEXIMAGE3DPROC)wglGetProcAddress("glTexImage3D");
+
+        GLuint cloudbuffer;
+        glGenFramebuffers(1, &cloudbuffer);
+        glBindFramebuffer(GL_FRAMEBUFFER, cloudbuffer);
+        
+        GLuint cloudtex;
+        glGenTextures(1, &cloudtex);
+        glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, x, y, z, 0, GL_RGBA, GL_FLOAT, NULL);
+        glBindTexture(GL_TEXTURE_3D, 0);
+        glFramebufferTexture3D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_3D, cloudtex, 0, 0);
+
+        Cube cloudbox = Cube(sf::Vector3f(0, 5, 0), sf::Vector3f(0, 0, 0), 2, &cloudtex);
+        cloudbox.CreateVerticesLegacy();
+        cloudbox.material.loadShader(GL_VERTEX_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\cloud.vs");
+        cloudbox.material.loadShader(GL_FRAGMENT_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\cloud.fs");
+        cloudbox.material.CreateShaders();
+        //cloudbox.material.specifyVertexAttributes_mesh();
+        cloudbox.material.specifyVertexAttributes(cloudbox.material.getShaderProgram());
+
+        glUseProgram(cloudbox.material.getShaderProgram());
+        glBindVertexArray(cloudbox.material.getVAO());
+
+        for (int i = 0; i < z; ++i) {
+            glFramebufferTexture3D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_3D, cloudtex, 0, i);
+            glDrawArrays(GL_POINTS, 0, cloudbox.vertices.size());
+        }
+
+        glBindVertexArray(0);
+
+    
 
     //light
     LightSource sun = LightSource();

@@ -34,6 +34,9 @@
     <Filter Include="shaders\Shadow">
       <UniqueIdentifier>{690a4897-83b3-4da7-887b-7848435808e3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="shaders\cloud">
+      <UniqueIdentifier>{da5e9211-352a-4aac-b84e-cab416d6a126}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="thirdparty\imgui\imgui_demo.cpp">
@@ -199,6 +202,12 @@
     </None>
     <None Include="Shaders\sky.vs">
       <Filter>shaders\sky</Filter>
+    </None>
+    <None Include="Shaders\cloud.fs">
+      <Filter>shaders\cloud</Filter>
+    </None>
+    <None Include="Shaders\cloud.vs">
+      <Filter>shaders\cloud</Filter>
     </None>
   </ItemGroup>
 </Project>

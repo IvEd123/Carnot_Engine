@@ -82,6 +82,7 @@ public:
 
     void                                    Draw();
     void                                    CreateVertices();
+    void                                    CreateVerticesLegacy();
     void                                    setModel(char* path) {}
 
 };

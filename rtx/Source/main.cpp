@@ -32,7 +32,6 @@ std::vector<std::vector<glm::vec3>> array_of_normals;
 std::vector<std::vector<glm::vec2>> array_of_uvs;
 std::vector<DLLScriptHandler> scripts;
 
-
 #include "../Headers/AddObject.h"
 #include "../Headers/PLayer.h"
 #include "../Headers/Render.h"
@@ -49,9 +48,6 @@ using namespace sf;
 
 #define HEIGHT 800
 #define WIDTH 800
-
-
-
 
 int main(int argc, char* argv[]) {
     ImGuiContext* ctx2 = ImGui::CreateContext();
@@ -96,6 +92,16 @@ int main(int argc, char* argv[]) {
         x = 100;
         y = 100;
         z = 100;
+        const int n = 10;
+
+        std::srand(3232);
+
+        float points[n*3];
+        for (int i = 0; i < n*3; i+=3) {
+            points[i] = (float)std::rand() / RAND_MAX;
+            points[i+1] = (float)std::rand() / RAND_MAX;
+            points[i+2] = (float)std::rand() / RAND_MAX;
+        }
 
         glEnable(GL_TEXTURE_3D);
         PFNGLTEXIMAGE3DPROC glTexImage3D;
@@ -107,27 +113,53 @@ int main(int argc, char* argv[]) {
         
         GLuint cloudtex;
         glGenTextures(1, &cloudtex);
-        glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, x, y, z, 0, GL_RGBA, GL_FLOAT, NULL);
-        glBindTexture(GL_TEXTURE_3D, 0);
-        glFramebufferTexture3D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_3D, cloudtex, 0, 0);
+        glBindTexture(GL_TEXTURE_2D, cloudtex);
+        
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, x, y, 0, GL_RGBA, GL_FLOAT, NULL);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, cloudtex, 0);
+
+        //GLenum DrawBuffers[1] = { GL_COLOR_ATTACHMENT0 };
+       // glDrawBuffers(1, DrawBuffers); // "1" is the size of DrawBuffers
+       
+
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+            std::cout << "ERRROR WITH CLOUD BUFFER\n";
+
+        glBindFramebuffer(GL_FRAMEBUFFER, cloudbuffer); 
+        glDrawBuffer(GL_COLOR_ATTACHMENT0);
+        glViewport(0, 0, x, y);
+
 
         Cube cloudbox = Cube(sf::Vector3f(0, 5, 0), sf::Vector3f(0, 0, 0), 2, &cloudtex);
         cloudbox.CreateVerticesLegacy();
         cloudbox.material.loadShader(GL_VERTEX_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\cloud.vs");
         cloudbox.material.loadShader(GL_FRAGMENT_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\cloud.fs");
         cloudbox.material.CreateShaders();
-        //cloudbox.material.specifyVertexAttributes_mesh();
         cloudbox.material.specifyVertexAttributes(cloudbox.material.getShaderProgram());
 
         glUseProgram(cloudbox.material.getShaderProgram());
         glBindVertexArray(cloudbox.material.getVAO());
 
-        for (int i = 0; i < z; ++i) {
+        int sh_location = glGetUniformLocation(cloudbox.material.getShaderProgram(), "point_pos");
+        glUniform3fv(sh_location, n, points);
+
+        
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, cloudtex, 0);
+        cloudbox.Draw();
+        //glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        /*for (int i = 0; i < z; ++i) {
             glFramebufferTexture3D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_3D, cloudtex, 0, i);
             glDrawArrays(GL_POINTS, 0, cloudbox.vertices.size());
-        }
+        }*/
 
         glBindVertexArray(0);
+        glUseProgram(0);
+        glBindBuffer(GL_FRAMEBUFFER, 0);
+        
 
     
 
@@ -262,7 +294,18 @@ int main(int argc, char* argv[]) {
         sun.SetPos(pl.GetPos() + sun_spawn_pos);
 
         for (int i = 0; i < obj_list.size(); i++)
-            obj_list[i]->Draw();
+            obj_list[i]->Draw();    
+
+        //draw clouds
+        glDeleteProgram(cloudbox.material.getShaderProgram());
+        cloudbox.material.loadShader(GL_FRAGMENT_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\cloudrender.fs");
+        cloudbox.material.CreateShaders();
+        glUseProgram(cloudbox.material.getShaderProgram());
+        glBindVertexArray(cloudbox.material.getVAO());
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, cloudtex);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
 
         if (selected != -1)
             obj_win.SetObject(obj_list[selected]);
@@ -283,7 +326,8 @@ int main(int argc, char* argv[]) {
         }
         
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)){
-            screen.setColorBuffer(*sun.getShadowMap());
+            //screen.setColorBuffer(*sun.getShadowMap());
+            screen.setColorBuffer(cloudtex);
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
             screen.setColorBuffer(t);
@@ -295,7 +339,11 @@ int main(int argc, char* argv[]) {
         screen.addLightSource(&sun);
         screen.Draw();
 
+
         
+        
+
+
         ImGui::SFML::Render(window);
 
         

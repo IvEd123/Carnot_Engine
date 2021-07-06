@@ -15,5 +15,6 @@ void main(){
             min_dist = dist;
         }
     }
+    
     outColor = vec4(min_dist, min_dist, min_dist, 1);
 }

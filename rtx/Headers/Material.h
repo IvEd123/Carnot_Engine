@@ -38,6 +38,7 @@ public:
     void                                    bindTexture(GLuint texture);
     void                                    bindTexture(GLuint texure, const GLchar* name);
     void                                    specifyVertexAttributes(GLuint shaderProgram);
+    void                                    specifyVertexAttributes3D(GLuint shaderProgram);
     void                                    specifyVertexAttributes_screen(GLuint shaderProgram);
     void                                    specifyVertexAttributes_terrain(GLuint shaderProgram);
     void                                    specifyVertexAttributes_mesh();

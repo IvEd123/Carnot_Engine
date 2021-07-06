@@ -160,6 +160,20 @@ void Material::specifyVertexAttributes(GLuint shaderProgram) {
     std::cout << "posattrib " << posAttrib << " texattrib " << texAttrib << std::endl;
 }
 
+void Material::specifyVertexAttributes3D(GLuint shaderProgram) {
+    glBindVertexArray(vao);
+    std::cout << "SCENE" << std::endl;
+    GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
+    glEnableVertexAttribArray(posAttrib);
+    glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), 0);
+
+    GLint texAttrib = glGetAttribLocation(shaderProgram, "texcoord");
+    glEnableVertexAttribArray(texAttrib);
+    glVertexAttribPointer(texAttrib, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+    glBindVertexArray(0);
+    std::cout << "posattrib " << posAttrib << " texattrib3d " << texAttrib << std::endl;
+}
+
 void Material::specifyVertexAttributes_screen(GLuint shaderProgram) {
     glBindVertexArray(vao);
     std::cout << "SCREEN" << std::endl;

@@ -86,6 +86,11 @@ int main(int argc, char* argv[]) {
 
     int error;
 
+    float time_passed = 0;
+    float _time = clock.getElapsedTime().asSeconds() * 100;
+    
+    float size = 20.f;
+
     //cloud map
     
         int x, y, z;
@@ -94,7 +99,7 @@ int main(int argc, char* argv[]) {
         z = 100;
         const int n = 10;
 
-        std::srand(3232);
+        std::srand(_time);
 
         float points[n*3];
         for (int i = 0; i < n*3; i+=3) {
@@ -135,12 +140,12 @@ int main(int argc, char* argv[]) {
         glViewport(0, 0, x, y);
 
 
-        Cube cloudbox = Cube(sf::Vector3f(0, 5, 0), sf::Vector3f(0, 0, 0), 2, &cloudtex);
+        Cube cloudbox = Cube(sf::Vector3f(0, 2, 0), sf::Vector3f(0, 0, 0), 2, &cloudtex);
         cloudbox.CreateVerticesLegacy();
         cloudbox.material.loadShader(GL_VERTEX_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\cloud.vs");
         cloudbox.material.loadShader(GL_FRAGMENT_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\cloud.fs");
         cloudbox.material.CreateShaders();
-        cloudbox.material.specifyVertexAttributes(cloudbox.material.getShaderProgram());
+        cloudbox.material.specifyVertexAttributes3D(cloudbox.material.getShaderProgram());
 
         glUseProgram(cloudbox.material.getShaderProgram());
         glBindVertexArray(cloudbox.material.getVAO());
@@ -157,6 +162,7 @@ int main(int argc, char* argv[]) {
         for (int i = 0; i < z; ++i) {
             int layer_loc = glGetUniformLocation(cloudbox.material.getShaderProgram(), "layer");
             glUniform1f(layer_loc, (float)i / (float)z);
+            //glFramebufferTexture3D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_3D, cloudtex, 0, i);
             glFramebufferTexture3D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_3D, cloudtex, 0, i);
             glDrawArrays(GL_TRIANGLES, 0, cloudbox.vertices.size());
         }
@@ -196,7 +202,7 @@ int main(int argc, char* argv[]) {
     sf::Vector3f sun_spawn_pov = sun.GetPov();
 
     const unsigned int t = *screen.getColorBuffer();
-    float time_passed = 0;
+    
     bool pause = 0;
     bool pause_prev = 0;
 
@@ -216,6 +222,10 @@ int main(int argc, char* argv[]) {
 
     for ever{
         
+
+        float Dtime = clock.getElapsedTime().asSeconds() * 100;
+
+        time_passed += Dtime;
         Event event;
         while (window.pollEvent(event)) {
             ImGui::SFML::ProcessEvent(event);
@@ -248,9 +258,7 @@ int main(int argc, char* argv[]) {
             //ShowCursor(false);
         }
         
-        float Dtime = clock.getElapsedTime().asSeconds() * 100;
-        time_passed += Dtime;
-        float size = 20.f;
+        
         
         ImGui::SFML::Update(window, clock.restart());
         ImGui::ShowDemoWindow();

@@ -56,6 +56,7 @@ public:
 
     void                                    setUniModel(GLuint uniform) { uniModel = uniform; }
     void                                    setModel(glm::mat4 _model) { model = _model; }
+    void                                    setTexture(GLuint _texture) { texture = _texture; }
 
     std::string                             GetVSPath() { return vertexShader_path; }
     

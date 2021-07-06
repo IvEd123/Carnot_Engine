@@ -297,24 +297,20 @@ void Cube::CreateVerticesLegacy() {
 void Cube::Draw(){
     UpdateModelMatrix();
     material.updateUniforms();
-    glUseProgram(material.getShaderProgram());
     glBindVertexArray(material.getVAO());
+    glUseProgram(material.getShaderProgram());
+    
     material.setModel(glm::mat4(1.0f));
 
-    //material.setModel(glm::mat4(1.0f));
+       glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, material.getTexture()); 
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, material.getTexture());
-    
     GLuint uniSize = glGetUniformLocation(material.getShaderProgram(), "size");
     glUniform1f(uniSize, size);
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, material.getTexture());
+    
 
-    //glTranslatef(pos.x, pos.y, pos.y);
     glDrawArrays(GL_TRIANGLES, 0, 36);
-    //glTranslatef(-pos.x, -pos.y, -pos.y);
     glBindVertexArray(0);
 }
 

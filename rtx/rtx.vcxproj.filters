@@ -212,5 +212,8 @@
     <None Include="Shaders\cloudrender.fs">
       <Filter>shaders\cloud</Filter>
     </None>
+    <None Include="Shaders\cloudrenderer.vs">
+      <Filter>shaders\cloud</Filter>
+    </None>
   </ItemGroup>
 </Project>

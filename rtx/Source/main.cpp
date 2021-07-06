@@ -298,13 +298,22 @@ int main(int argc, char* argv[]) {
 
         //draw clouds
         glDeleteProgram(cloudbox.material.getShaderProgram());
+        cloudbox.material.loadShader(GL_VERTEX_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\cloudrenderer.vs");
         cloudbox.material.loadShader(GL_FRAGMENT_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\cloudrender.fs");
+        
         cloudbox.material.CreateShaders();
+        cloudbox.material.setTexture(cloudtex);
+        
+        
+     /*cloudbox.UpdateModelMatrix();
+    cloudbox.material.updateUniforms();
         glUseProgram(cloudbox.material.getShaderProgram());
         glBindVertexArray(cloudbox.material.getVAO());
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, cloudtex);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindTexture(GL_TEXTURE_2D, cloudbox.material.getTexture());*/
+        
+        //glDrawArrays(GL_TRIANGLES, 0, 36);
+        cloudbox.Draw();
 
 
         if (selected != -1)

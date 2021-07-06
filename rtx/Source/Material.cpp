@@ -268,8 +268,10 @@ void Material::updateUniforms() {
     GLuint uniProj = glGetUniformLocation(shaderProgram, "proj");
     glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(_Pl.proj));
 
-    GLuint lightSpaceMatrix = glGetUniformLocation(shaderProgram, "lightSpaceMatrix");
-    glUniformMatrix4fv(lightSpaceMatrix, 1, GL_FALSE, glm::value_ptr(*lightSpaceMatrixPtr));
+    if (lightSpaceMatrixPtr != nullptr) {
+        GLuint lightSpaceMatrix = glGetUniformLocation(shaderProgram, "lightSpaceMatrix");
+        glUniformMatrix4fv(lightSpaceMatrix, 1, GL_FALSE, glm::value_ptr(*lightSpaceMatrixPtr));
+    }
 
     uniModel = glGetUniformLocation(shaderProgram, "model");
 

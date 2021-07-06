@@ -199,6 +199,7 @@
     <None Include="Shaders\cloud.fs" />
     <None Include="Shaders\cloud.vs" />
     <None Include="Shaders\cloudrender.fs" />
+    <None Include="Shaders\cloudrenderer.vs" />
     <None Include="Shaders\dirt.fs" />
     <None Include="Shaders\mesh.fs" />
     <None Include="Shaders\mesh.vs" />

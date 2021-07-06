@@ -113,11 +113,14 @@ int main(int argc, char* argv[]) {
         
         GLuint cloudtex;
         glGenTextures(1, &cloudtex);
-        glBindTexture(GL_TEXTURE_2D, cloudtex);
+        glBindTexture(GL_TEXTURE_3D, cloudtex);
         
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, x, y, 0, GL_RGBA, GL_FLOAT, NULL);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, x, y, z, 0, GL_RGBA, GL_FLOAT, NULL);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
         glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, cloudtex, 0);
 
         //GLenum DrawBuffers[1] = { GL_COLOR_ATTACHMENT0 };
@@ -147,14 +150,16 @@ int main(int argc, char* argv[]) {
 
         
 
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, cloudtex, 0);
-        cloudbox.Draw();
+        //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, cloudtex, 0);
+       // cloudbox.Draw();
         //glDrawArrays(GL_TRIANGLES, 0, 36);
 
-        /*for (int i = 0; i < z; ++i) {
+        for (int i = 0; i < z; ++i) {
+            int layer_loc = glGetUniformLocation(cloudbox.material.getShaderProgram(), "layer");
+            glUniform1f(layer_loc, (float)i / (float)z);
             glFramebufferTexture3D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_3D, cloudtex, 0, i);
-            glDrawArrays(GL_POINTS, 0, cloudbox.vertices.size());
-        }*/
+            glDrawArrays(GL_TRIANGLES, 0, cloudbox.vertices.size());
+        }
 
         glBindVertexArray(0);
         glUseProgram(0);
@@ -305,12 +310,12 @@ int main(int argc, char* argv[]) {
         cloudbox.material.setTexture(cloudtex);
         
         
-     /*cloudbox.UpdateModelMatrix();
-    cloudbox.material.updateUniforms();
-        glUseProgram(cloudbox.material.getShaderProgram());
-        glBindVertexArray(cloudbox.material.getVAO());
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, cloudbox.material.getTexture());*/
+        //cloudbox.UpdateModelMatrix();
+        //cloudbox.material.updateUniforms();
+        //glUseProgram(cloudbox.material.getShaderProgram());
+        //glBindVertexArray(cloudbox.material.getVAO());
+        //glActiveTexture(GL_TEXTURE0);
+        //glBindTexture(GL_TEXTURE_3D, cloudbox.material.getTexture());
         
         //glDrawArrays(GL_TRIANGLES, 0, 36);
         cloudbox.Draw();

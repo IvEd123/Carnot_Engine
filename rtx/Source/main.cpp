@@ -97,20 +97,18 @@ int main(int argc, char* argv[]) {
         x = 100;
         y = 100;
         z = 100;
-        const int n = 10;
+        const int n = 20;
 
         std::srand(_time);
 
         float points[n*3];
-        for (int i = 0; i < n*3; i+=3) {
+        for (int i = 0; i < n*3; i++) {
             points[i] = (float)std::rand() / RAND_MAX;
-            points[i+1] = (float)std::rand() / RAND_MAX;
-            points[i+2] = (float)std::rand() / RAND_MAX;
         }
 
         glEnable(GL_TEXTURE_3D);
-        PFNGLTEXIMAGE3DPROC glTexImage3D;
-        glTexImage3D = (PFNGLTEXIMAGE3DPROC)wglGetProcAddress("glTexImage3D");
+        //PFNGLTEXIMAGE3DPROC glTexImage3D;
+        //glTexImage3D = (PFNGLTEXIMAGE3DPROC)wglGetProcAddress("glTexImage3D");
 
         GLuint cloudbuffer;
         glGenFramebuffers(1, &cloudbuffer);
@@ -118,14 +116,14 @@ int main(int argc, char* argv[]) {
         
         GLuint cloudtex;
         glGenTextures(1, &cloudtex);
-        glBindTexture(GL_TEXTURE_3D, cloudtex);
+        glBindTexture(GL_TEXTURE_2D, cloudtex);
         
-        glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, x, y, z, 0, GL_RGBA, GL_FLOAT, NULL);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, x*z, y, 0, GL_RGBA, GL_FLOAT, NULL);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_REPEAT);
         glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, cloudtex, 0);
 
         //GLenum DrawBuffers[1] = { GL_COLOR_ATTACHMENT0 };
@@ -137,41 +135,43 @@ int main(int argc, char* argv[]) {
 
         glBindFramebuffer(GL_FRAMEBUFFER, cloudbuffer); 
         glDrawBuffer(GL_COLOR_ATTACHMENT0);
-        glViewport(0, 0, x, y);
+        glViewport(0, 0, x*z, y);
 
 
-        Cube cloudbox = Cube(sf::Vector3f(0, 2, 0), sf::Vector3f(0, 0, 0), 2, &cloudtex);
+        Cube cloudbox = Cube(sf::Vector3f(0, 1.7, 0), sf::Vector3f(0, 0, 0), 1, &cloudtex);
+        cloudbox.SetSize(1);
         cloudbox.CreateVerticesLegacy();
         cloudbox.material.loadShader(GL_VERTEX_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\cloud.vs");
         cloudbox.material.loadShader(GL_FRAGMENT_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\cloud.fs");
         cloudbox.material.CreateShaders();
         cloudbox.material.specifyVertexAttributes3D(cloudbox.material.getShaderProgram());
-
+        cloudbox.SetRot(sf::Vector3f(0, 90, 0));
         glUseProgram(cloudbox.material.getShaderProgram());
         glBindVertexArray(cloudbox.material.getVAO());
 
         int sh_location = glGetUniformLocation(cloudbox.material.getShaderProgram(), "point_pos");
         glUniform3fv(sh_location, n, points);
 
-        
 
-        //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, cloudtex, 0);
-       // cloudbox.Draw();
-        //glDrawArrays(GL_TRIANGLES, 0, 36);
+        int layer_loc = glGetUniformLocation(cloudbox.material.getShaderProgram(), "layers");
+        glUniform1i(layer_loc, z);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, cloudtex, 0);
+        cloudbox.Draw();
+        glDrawArrays(GL_TRIANGLES, 0, 36);
 
-        for (int i = 0; i < z; ++i) {
-            int layer_loc = glGetUniformLocation(cloudbox.material.getShaderProgram(), "layer");
-            glUniform1f(layer_loc, (float)i / (float)z);
+        /*for (int i = 0; i < z; i++) {
             //glFramebufferTexture3D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_3D, cloudtex, 0, i);
             glFramebufferTexture3D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_3D, cloudtex, 0, i);
             glDrawArrays(GL_TRIANGLES, 0, cloudbox.vertices.size());
-        }
+        }*/
+
+       cloudbox.material.bindTexture("C:\\Users\\IvEda\\Desktop\\tex.jpg");
 
         glBindVertexArray(0);
         glUseProgram(0);
         glBindBuffer(GL_FRAMEBUFFER, 0);
         
-
+        glViewport(0, 0, WIDTH, HEIGHT);
     
 
     //light
@@ -314,18 +314,22 @@ int main(int argc, char* argv[]) {
         cloudbox.material.loadShader(GL_VERTEX_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\cloudrenderer.vs");
         cloudbox.material.loadShader(GL_FRAGMENT_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\cloudrender.fs");
         
+        float DensityThreshold = 0.5, DensityMultiplier = 10;
+
+        ImGui::Begin("cloud");
+        //ImGui::InputFloat("Threshold", &DensityThreshold);
+        //ImGui::InputFloat("mult", &DensityMultiplier);
+        ImGui::End(); // end window*/
+
+
+        //cloudbox.material.attachUniform("DensityThreshold", DensityThreshold);
+        //cloudbox.material.attachUniform("DensityMultiplier", DensityMultiplier);
+
+        cloudbox.SetRot(cloudbox.GetRot() + sf::Vector3f(0, 0.2, 0));
+
         cloudbox.material.CreateShaders();
         cloudbox.material.setTexture(cloudtex);
-        
-        
-        //cloudbox.UpdateModelMatrix();
-        //cloudbox.material.updateUniforms();
-        //glUseProgram(cloudbox.material.getShaderProgram());
-        //glBindVertexArray(cloudbox.material.getVAO());
-        //glActiveTexture(GL_TEXTURE0);
-        //glBindTexture(GL_TEXTURE_3D, cloudbox.material.getTexture());
-        
-        //glDrawArrays(GL_TRIANGLES, 0, 36);
+        cloudbox.material.attachUniform("time", time_passed);
         cloudbox.Draw();
 
 

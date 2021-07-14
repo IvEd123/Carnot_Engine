@@ -92,11 +92,11 @@ void GeometricObject::SetRot(sf::Vector3f _rot){
 }
 
 void GeometricObject::SetSize(float s) {
-    size = s / 2;
+    size = s;
 }
 
 float GeometricObject::GetSize() {
-    return size * 2;
+    return size;
 }
 
 float* GeometricObject::GetSizePtr() {
@@ -118,7 +118,7 @@ int GeometricObject::GetType() {
 //                          
 
 Cube::Cube(float _size){
-    size = _size * 2;
+    size = _size;
     pos = sf::Vector3f(0, 0, 0);
     rot = sf::Vector3f(0, 0, 0);
 
@@ -240,55 +240,55 @@ void Cube::CreateVertices() {
 
 void Cube::CreateVerticesLegacy() {
      vertices = {
-       //x      y       z   u       v       w  
-       -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
-        0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
-        0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 0.0f,
-        0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 0.0f,
-       -0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-       -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+       //x      y       z  
+       -0.5f, -0.5f, -0.5f,
+        0.5f, -0.5f, -0.5f,
+        0.5f,  0.5f, -0.5f,
+        0.5f,  0.5f, -0.5f,
+       -0.5f,  0.5f, -0.5f,
+       -0.5f, -0.5f, -0.5f,
 
-       -0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
-        0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 1.0f,
-        0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f,
-        0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 1.0f,
-       -0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
-       -0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
+       -0.5f, -0.5f,  0.5f,
+        0.5f, -0.5f,  0.5f,
+        0.5f,  0.5f,  0.5f,
+        0.5f,  0.5f,  0.5f,
+       -0.5f,  0.5f,  0.5f,
+       -0.5f, -0.5f,  0.5f,
 
-       -0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 1.0f,
-       -0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 0.0f,
-       -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-       -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-       -0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
-       -0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 1.0f,
+       -0.5f,  0.5f,  0.5f,
+       -0.5f,  0.5f, -0.5f,
+       -0.5f, -0.5f, -0.5f,
+       -0.5f, -0.5f, -0.5f,
+       -0.5f, -0.5f,  0.5f,
+       -0.5f,  0.5f,  0.5f,
 
-        0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 1.0f,
-        0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 0.0f,
-        0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-        0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-        0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
-        0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 1.0f,
+        0.5f,  0.5f,  0.5f,
+        0.5f,  0.5f, -0.5f,
+        0.5f, -0.5f, -0.5f,
+        0.5f, -0.5f, -0.5f,
+        0.5f, -0.5f,  0.5f,
+        0.5f,  0.5f,  0.5f,
 
-       -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-        0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f,
-        0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 1.0f,
-        0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 1.0f,
-       -0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
-       -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+       -0.5f, -0.5f, -0.5f,
+        0.5f, -0.5f, -0.5f,
+        0.5f, -0.5f,  0.5f,
+        0.5f, -0.5f,  0.5f,
+       -0.5f, -0.5f,  0.5f,
+       -0.5f, -0.5f, -0.5f,
 
-       -0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-        0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 0.0f,
-        0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 1.0f,
-        0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 1.0f,
-       -0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 1.0f,
-       -0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+       -0.5f,  0.5f, -0.5f,
+        0.5f,  0.5f, -0.5f,
+        0.5f,  0.5f,  0.5f,
+        0.5f,  0.5f,  0.5f,
+       -0.5f,  0.5f,  0.5f,
+       -0.5f,  0.5f, -0.5f,
 
-       -1.0f, -1.0f, -0.5f, 0.0f, 0.0f, 0.0f,
-        1.0f, -1.0f, -0.5f, 1.0f, 0.0f, 0.0f,
-        1.0f,  1.0f, -0.5f, 1.0f, 1.0f, 0.0f,
-        1.0f,  1.0f, -0.5f, 1.0f, 1.0f, 0.0f,
-       -1.0f,  1.0f, -0.5f, 0.0f, 1.0f, 0.0f,
-       -1.0f, -1.0f, -0.5f, 0.0f, 0.0f, 0.0f
+       -1.0f, -1.0f, -0.5f,
+        1.0f, -1.0f, -0.5f,
+        1.0f,  1.0f, -0.5f,
+        1.0f,  1.0f, -0.5f,
+       -1.0f,  1.0f, -0.5f,
+       -1.0f, -1.0f, -0.5f
     };
 
     //material.createVAO_VBO_mesh((*vert_vec3)[array_index], (*uv_vec2)[array_index], (*norm_vec3)[array_index]);
@@ -304,13 +304,17 @@ void Cube::Draw(){
     material.setModel(glm::mat4(1.0f));
 
        glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_3D, material.getTexture()); 
+    glBindTexture(GL_TEXTURE_2D, material.getTexture()); 
 
-    GLuint uniSize = glGetUniformLocation(material.getShaderProgram(), "size");
-    glUniform1f(uniSize, size);
 
     GLuint uniEye = glGetUniformLocation(material.getShaderProgram(), "eyepos");
     glUniform3f(uniEye, _pl.GetPos().x, _pl.GetPos().y, _pl.GetPos().z);
+
+    GLuint uniPos = glGetUniformLocation(material.getShaderProgram(), "pos");
+    glUniform3f(uniPos, pos.x, pos.y, pos.z);
+
+    GLuint uniSize = glGetUniformLocation(material.getShaderProgram(), "size");
+    glUniform3f(uniSize, size, size, size);
 
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);

@@ -72,7 +72,7 @@ public:
 
 class Cube : public GeometricObject {
 private:
-    
+    std::string                             model_path;
     
 public:
     Cube(float _size);
@@ -81,9 +81,9 @@ public:
     ~Cube();
 
     void                                    Draw();
-    void                                    CreateVertices();
+    void                                    CreateVertices() {};
     void                                    CreateVerticesLegacy();
-    void                                    setModel(char* path) {}
+    void                                    setModel(char* path);
 
 };
 

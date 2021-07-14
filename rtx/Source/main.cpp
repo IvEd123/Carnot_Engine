@@ -90,7 +90,7 @@ int main(int argc, char* argv[]) {
     float _time = clock.getElapsedTime().asSeconds() * 100;
     
     float size = 20.f;
-
+    
     //cloud map
     
         int x, y, z;
@@ -145,7 +145,6 @@ int main(int argc, char* argv[]) {
         cloudbox.material.loadShader(GL_FRAGMENT_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\cloud.fs");
         cloudbox.material.CreateShaders();
         cloudbox.material.specifyVertexAttributes3D(cloudbox.material.getShaderProgram());
-        cloudbox.SetRot(sf::Vector3f(0, 90, 0));
         glUseProgram(cloudbox.material.getShaderProgram());
         glBindVertexArray(cloudbox.material.getVAO());
 
@@ -163,10 +162,10 @@ int main(int argc, char* argv[]) {
             //glFramebufferTexture3D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_3D, cloudtex, 0, i);
             glFramebufferTexture3D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_3D, cloudtex, 0, i);
             glDrawArrays(GL_TRIANGLES, 0, cloudbox.vertices.size());
-        }*/
+        }
 
        cloudbox.material.bindTexture("C:\\Users\\IvEda\\Desktop\\tex.jpg");
-
+      */ 
         glBindVertexArray(0);
         glUseProgram(0);
         glBindBuffer(GL_FRAMEBUFFER, 0);
@@ -309,7 +308,11 @@ int main(int argc, char* argv[]) {
         for (int i = 0; i < obj_list.size(); i++)
             obj_list[i]->Draw();    
 
+        
+
         //draw clouds
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
         glDeleteProgram(cloudbox.material.getShaderProgram());
         cloudbox.material.loadShader(GL_VERTEX_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\cloudrenderer.vs");
         cloudbox.material.loadShader(GL_FRAGMENT_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\cloudrender.fs");
@@ -319,19 +322,20 @@ int main(int argc, char* argv[]) {
         ImGui::Begin("cloud");
         //ImGui::InputFloat("Threshold", &DensityThreshold);
         //ImGui::InputFloat("mult", &DensityMultiplier);
-        ImGui::End(); // end window*/
+        ImGui::End(); // end window
 
 
         //cloudbox.material.attachUniform("DensityThreshold", DensityThreshold);
         //cloudbox.material.attachUniform("DensityMultiplier", DensityMultiplier);
 
-        cloudbox.SetRot(cloudbox.GetRot() + sf::Vector3f(0, 0.2, 0));
 
         cloudbox.material.CreateShaders();
         cloudbox.material.setTexture(cloudtex);
         cloudbox.material.attachUniform("time", time_passed);
         cloudbox.Draw();
 
+        glDisable(GL_CULL_FACE);
+        
 
         if (selected != -1)
             obj_win.SetObject(obj_list[selected]);
@@ -352,8 +356,8 @@ int main(int argc, char* argv[]) {
         }
         
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)){
-            //screen.setColorBuffer(*sun.getShadowMap());
-            screen.setColorBuffer(cloudtex);
+            screen.setColorBuffer(*sun.getShadowMap());
+
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
             screen.setColorBuffer(t);

@@ -148,151 +148,20 @@ Cube::Cube() {
     material = *(new Material());
 }
 
-void Cube::CreateVertices() {
-    (*vert_vec3)[array_index]= {
-        glm::vec3(-0.5f, -0.5f, -0.5f),     //FRONT
-        glm::vec3(0.5f, -0.5f, -0.5f),
-        glm::vec3(0.5f,  0.5f, -0.5f),
-        glm::vec3(0.5f,  0.5f, -0.5f),
-        glm::vec3(-0.5f,  0.5f, -0.5f),
-        glm::vec3(-0.5f, -0.5f, -0.5f),
 
-        glm::vec3(-0.5f, -0.5f,  0.5f),    //BACK
-        glm::vec3(0.5f, -0.5f,  0.5f),
-        glm::vec3(0.5f,  0.5f,  0.5f),
-        glm::vec3(0.5f,  0.5f,  0.5f),
-        glm::vec3(-0.5f,  0.5f,  0.5f),
-        glm::vec3(-0.5f, -0.5f,  0.5f),
-
-        glm::vec3(-0.5f,  0.5f,  0.5f),   //LEFT
-        glm::vec3(-0.5f,  0.5f, -0.5f),
-        glm::vec3(-0.5f, -0.5f, -0.5f),
-        glm::vec3(-0.5f, -0.5f, -0.5f),
-        glm::vec3(-0.5f, -0.5f,  0.5f),
-        glm::vec3(-0.5f,  0.5f,  0.5f),
-
-        glm::vec3(0.5f,  0.5f,  0.5f),  //RIGHT
-        glm::vec3(0.5f,  0.5f, -0.5f),
-        glm::vec3(0.5f, -0.5f, -0.5f),
-        glm::vec3(0.5f, -0.5f, -0.5f),
-        glm::vec3(0.5f, -0.5f,  0.5f),
-        glm::vec3(0.5f,  0.5f,  0.5f),
-
-        glm::vec3(-0.5f, -0.5f, -0.5f),  //DOWN
-        glm::vec3(0.5f, -0.5f, -0.5f),
-        glm::vec3(0.5f, -0.5f,  0.5f),
-        glm::vec3(0.5f, -0.5f,  0.5f),
-        glm::vec3(-0.5f, -0.5f,  0.5f),
-        glm::vec3(-0.5f, -0.5f, -0.5f),
-
-        glm::vec3(-0.5f,  0.5f, -0.5f),   //UP
-        glm::vec3(0.5f,  0.5f, -0.5f),
-        glm::vec3(0.5f,  0.5f,  0.5f),
-        glm::vec3(0.5f,  0.5f,  0.5f),
-        glm::vec3(-0.5f,  0.5f,  0.5f),
-        glm::vec3(-0.5f,  0.5f, -0.5f)
-    };
-    (*uv_vec2)[array_index] = {
-        glm::vec2(0.25, 0.33),   //FRONT
-        glm::vec2(0.50, 0.33),
-        glm::vec2(0.50, 0.66),
-        glm::vec2(0.50, 0.66),
-        glm::vec2(0.25, 0.66),
-        glm::vec2(0.25, 0.33),
-
-        glm::vec2(1.00, 0.33),   //BACK
-        glm::vec2(0.75, 0.33),
-        glm::vec2(0.75, 0.66),
-        glm::vec2(0.75, 0.66),
-        glm::vec2(1.00, 0.66),
-        glm::vec2(1.00, 0.33),
-
-        glm::vec2(1.00, 0.66),   //LEFT
-        glm::vec2(0.25, 0.66),
-        glm::vec2(0.25, 0.33),
-        glm::vec2(0.25, 0.33),
-        glm::vec2(1.00, 0.33),
-        glm::vec2(1.00, 0.66),
-
-        glm::vec2(0.75, 0.66),   //RIGHT
-        glm::vec2(0.50, 0.66),
-        glm::vec2(0.50, 0.33),
-        glm::vec2(0.50, 0.33),
-        glm::vec2(0.75, 0.33),
-        glm::vec2(0.75, 0.66),
-
-        glm::vec2(0.25, 0.33),   //DOWN
-        glm::vec2(0.50, 0.33),
-        glm::vec2(0.50, 0.00),
-        glm::vec2(0.50, 0.00),
-        glm::vec2(0.25, 0.00),
-        glm::vec2(0.25, 0.33),
-
-        glm::vec2(0.25, 0.66),   //UP
-        glm::vec2(0.50, 0.66),
-        glm::vec2(0.50, 1.00),
-        glm::vec2(0.50, 1.00),
-        glm::vec2(0.25, 1.00),
-        glm::vec2(0.25, 0.66)
-    };
-    material.createVAO_VBO_mesh((*vert_vec3)[array_index], (*uv_vec2)[array_index], (*norm_vec3)[array_index]);
-}
 
 void Cube::CreateVerticesLegacy() {
-     vertices = {
-       //x      y       z  
-       -0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f, -0.5f,
-        0.5f,  0.5f, -0.5f,
-        0.5f,  0.5f, -0.5f,
-       -0.5f,  0.5f, -0.5f,
-       -0.5f, -0.5f, -0.5f,
-
-       -0.5f, -0.5f,  0.5f,
-        0.5f, -0.5f,  0.5f,
-        0.5f,  0.5f,  0.5f,
-        0.5f,  0.5f,  0.5f,
-       -0.5f,  0.5f,  0.5f,
-       -0.5f, -0.5f,  0.5f,
-
-       -0.5f,  0.5f,  0.5f,
-       -0.5f,  0.5f, -0.5f,
-       -0.5f, -0.5f, -0.5f,
-       -0.5f, -0.5f, -0.5f,
-       -0.5f, -0.5f,  0.5f,
-       -0.5f,  0.5f,  0.5f,
-
-        0.5f,  0.5f,  0.5f,
-        0.5f,  0.5f, -0.5f,
-        0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f,  0.5f,
-        0.5f,  0.5f,  0.5f,
-
-       -0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f,  0.5f,
-        0.5f, -0.5f,  0.5f,
-       -0.5f, -0.5f,  0.5f,
-       -0.5f, -0.5f, -0.5f,
-
-       -0.5f,  0.5f, -0.5f,
-        0.5f,  0.5f, -0.5f,
-        0.5f,  0.5f,  0.5f,
-        0.5f,  0.5f,  0.5f,
-       -0.5f,  0.5f,  0.5f,
-       -0.5f,  0.5f, -0.5f,
-
-       -1.0f, -1.0f, -0.5f,
-        1.0f, -1.0f, -0.5f,
-        1.0f,  1.0f, -0.5f,
-        1.0f,  1.0f, -0.5f,
-       -1.0f,  1.0f, -0.5f,
-       -1.0f, -1.0f, -0.5f
-    };
+    setModel((char*)"C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Meshes\\cube.obj");
 
     //material.createVAO_VBO_mesh((*vert_vec3)[array_index], (*uv_vec2)[array_index], (*norm_vec3)[array_index]);
     material.createVAO_VBO(vertices);
+}
+
+
+
+void Cube::setModel(char* path) {
+    model_path = path;
+    OBJLoader_v(path, this);
 }
 
 void Cube::Draw(){
@@ -314,7 +183,7 @@ void Cube::Draw(){
     glUniform3f(uniPos, pos.x, pos.y, pos.z);
 
     GLuint uniSize = glGetUniformLocation(material.getShaderProgram(), "size");
-    glUniform3f(uniSize, size, size, size);
+    glUniform3f(uniSize, size*4, size, size);
 
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);

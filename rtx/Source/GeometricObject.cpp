@@ -183,7 +183,10 @@ void Cube::Draw(){
     glUniform3f(uniPos, pos.x, pos.y, pos.z);
 
     GLuint uniSize = glGetUniformLocation(material.getShaderProgram(), "size");
-    glUniform3f(uniSize, size*4, size, size);
+    glUniform3f(uniSize, size, size, size);
+
+    GLuint uniLight = glGetUniformLocation(material.getShaderProgram(), "light");
+    glUniform3f(uniLight, material.sun_pos.x, material.sun_pos.y, material.sun_pos.z);
 
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);

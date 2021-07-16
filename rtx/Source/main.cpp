@@ -171,7 +171,7 @@ int main(int argc, char* argv[]) {
         glBindBuffer(GL_FRAMEBUFFER, 0);
         
         glViewport(0, 0, WIDTH, HEIGHT);
-    
+        
 
     //light
     LightSource sun = LightSource();
@@ -210,6 +210,8 @@ int main(int argc, char* argv[]) {
     sf.SetName("test");
 
     sf.Load();
+
+    cloudbox.addLightSource(&sun);
     for (int i = 0; i < obj_list.size(); i++) 
         obj_list[i]->addLightSource(&sun);
     

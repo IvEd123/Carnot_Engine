@@ -30,7 +30,7 @@ public:
     
     glm::mat4 *                             lightSpaceMatrixPtr;
     unsigned int *                          shadowmap;
-    glm::vec3                               sun_pos;
+    glm::vec3   *                            sun_pos;
 
     int                                     CreateShaders();
     void                                    loadShader(GLenum type, const GLchar* path);

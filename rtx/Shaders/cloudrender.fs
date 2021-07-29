@@ -14,16 +14,18 @@ uniform vec3 light;
 
 vec3 LightColor = vec3(1, 1, 1);
 
-const int num_of_steps = 20;
-float DensityThreshold = 0.75;
+vec4 phaseParams = vec4(0.72, 0.33, 1, 0.74);
+
+const int num_of_steps = 10;
+float DensityThreshold = 0.3;
 float DensityMultiplier = 50;
 float lightAbsorptionThroughCloud = 0.85;
 
-const int num_of_steps_inside = 20;
+const int num_of_steps_inside = 30;
 float lightAbsorptionTowardSun = 1;
-float darknessThreshold  = 0.07;
+float darknessThreshold  = 0.2;
 
-float k = sin(time*0.01)*0.5;
+float k = sin(time*0.01);
 
 out vec4 outColor;
 
@@ -33,8 +35,20 @@ vec3 toLocal(vec3 v){
 
 
 vec2 posToUVW(vec3 v){
-    return vec2((v.x + 0.5)*0.01 +round(v.z*100)*.01 + 0.5, v.y + 0.5);
+    return mod(vec2((v.x +0.5)*0.01 +floor(v.z*100)*.01, v.y ), vec2(1.0));
 }
+
+ float hg(float a, float g) {
+    float g2 = g*g;
+    return (1-g2) / (4*3.1415*pow(1+g2-2*g*(a), 1.5));
+}
+
+float phase(float a) {
+    float blend = .5;
+    float hgBlend = hg(a,phaseParams.x) * (1-blend) + hg(a,-phaseParams.y) * blend;
+    return phaseParams.z + hgBlend*phaseParams.w;
+}
+
 
 vec2 intersect (vec3 origin, vec3 dir){
 	vec3 t0 = (vert_min - origin) / dir;
@@ -96,14 +110,18 @@ void main() {
 	float transmittance = 1;
 	vec3 lightEnergy = vec3(0);
 
+	float phaseVal = phase(dot(dir, dirToLight));
+
 	while(dstTravelled < dstInsideBox){
 
 		vec3 rayPos = origin + dir * (dstToBox +  dstTravelled);
 		float density = GetSample(rayPos);
 
+
+
 		if(density > 0){
 			float lightTransmittance = lightmarch(rayPos);
-			lightEnergy += density * step * lightTransmittance * transmittance;
+			lightEnergy += density * step * lightTransmittance * transmittance * phaseVal;
 			transmittance *= exp( - density * step * lightAbsorptionThroughCloud);
 			if (transmittance < 0.01)
 				break;
@@ -132,11 +150,15 @@ void main() {
 	vec3 color = cloudCol + vec3(1) * transmittance;
 
 	outColor = vec4(color, 1 - transmittance);
+	/*if(k < 0)
+		outColor = vec4(vec3(GetSample(FragPos)*0.5), 1);
+	else
 	//outColor = vec4(vec3(dot(dir, normalize(light - FragPos)  )  ), 1);
 	//outColor = vec4(vec3(GetSample(FragPos)), 1);
-	//outColor = vec4( toLocal(FragPos) , 1);
-	//outColor = vec4(vec3(1), 1  - exp(-t.y));  
+		outColor = vec4( posToUVW(FragPos) , 1, 1);
+	//outColor = vec4(vec3(1), 1  - exp(-t.y));  */
 	//outColor = vec4(vec3(t.x + t.y)*0.3, 1);
 	//outColor = texture(tex, vec2(texCoord.x + texCoord.z, texCoord.y));
-	//outColor = texture(tex, vec2(texCoord.x + texCoord.z, texCoord.y));
+	//outColor = texture(tex, vec2(posToUVW( FragPos)));
+	//outColor = vec4(1);
 }

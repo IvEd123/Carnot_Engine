@@ -40,7 +40,7 @@ void GeometricObject::UpdateModelMatrix() {
 void GeometricObject::addLightSource(LightSource* source) {
     material.lightSpaceMatrixPtr = source->getProjMatrix();
     material.shadowmap = source->getShadowMap();
-    material.sun_pos = ConvertSFML2GLM(source->GetPos());
+    material.sun_pos = (glm::vec3*)source->GetPosPtr();
     glBindVertexArray(material.getVAO());
     glUseProgram(material.getShaderProgram());
     glUniform1i(glGetUniformLocation(material.getShaderProgram(), "shadowMap"), 1);
@@ -183,10 +183,10 @@ void Cube::Draw(){
     glUniform3f(uniPos, pos.x, pos.y, pos.z);
 
     GLuint uniSize = glGetUniformLocation(material.getShaderProgram(), "size");
-    glUniform3f(uniSize, size, size, size);
+    glUniform3f(uniSize,size_v.x, size_v.y,  size_v.z);
 
     GLuint uniLight = glGetUniformLocation(material.getShaderProgram(), "light");
-    glUniform3f(uniLight, material.sun_pos.x, material.sun_pos.y, material.sun_pos.z);
+    glUniform3f(uniLight, material.sun_pos->x, material.sun_pos->y, material.sun_pos->z);
 
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);
@@ -237,7 +237,7 @@ void Screen::Draw() {
     glUseProgram(material.getShaderProgram());
     glBindVertexArray(material.getVAO());
 
-    glm::mat4 mat = glm::translate(glm::mat4(1.0), material.sun_pos);
+    glm::mat4 mat = glm::translate(glm::mat4(1.0), *material.sun_pos);
         
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, tex);
@@ -402,7 +402,7 @@ void Mesh::Draw() {
     glUniform1f(uniSize, size);
 
     GLuint uniLight = glGetUniformLocation(material.getShaderProgram(), "light");
-    glUniform3f(uniLight, material.sun_pos.x, material.sun_pos.y, material.sun_pos.z);
+    glUniform3f(uniLight, material.sun_pos->x, material.sun_pos->y, material.sun_pos->z);
         
 
     glActiveTexture(GL_TEXTURE1);
@@ -455,7 +455,7 @@ void Plane::Draw(){
     glUniform3f(uniEye, _pl.GetPos().x, _pl.GetPos().y, _pl.GetPos().z);
     
     GLuint uniLight = glGetUniformLocation(material.getShaderProgram(), "light");
-    glUniform3f(uniLight, material.sun_pos.x, material.sun_pos.y, material.sun_pos.z);
+    glUniform3f(uniLight, material.sun_pos->x, material.sun_pos->y, material.sun_pos->z);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, material.getTexture());

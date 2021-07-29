@@ -19,13 +19,13 @@ out vec3 translation;
 out mat4 model_out;
 
 void main(){
-	gl_Position =  proj * view * model  *  vec4(position , 1);
+	gl_Position =  proj * view * model  *  vec4(position*size , 1);
 	
-	TexCoord = vec3((position.x + 0.5)*0.01, position.y + 0.5, position.z);
+	TexCoord = vec3((position.x )*0.01, position.y + 0.5, position.z);
 
-	FragPos = (model  *  vec4(position , 1)).xyz;
-	translation = FragPos -  position;
-	vert_min = (model  *  vec4(vec3(-0.5) , 1)).xyz;
-	vert_max = (model  *  vec4(vec3( 0.5) , 1)).xyz;
+	FragPos = (model  *  vec4(position*size , 1)).xyz;
+	translation = FragPos -  position*size;
+	vert_min = (model  *  vec4(vec3(-0.5)*size , 1)).xyz;
+	vert_max = (model  *  vec4(vec3( 0.5)*size , 1)).xyz;
 	model_out = model;
 }

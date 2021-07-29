@@ -115,13 +115,6 @@ int main(int argc, char* argv[]) {
 
     std::srand(_time);
 
-   const int num_of_points = pointsGrid * pointsGrid * pointsGrid;
-
-    float points[num_of_points * 3];
-
-    for (int i = 0; i < num_of_points * 3; i++) {
-        points[i] = (float)std::rand() / RAND_MAX;
-    }
 
     GLuint cloudbuffer;
     glGenFramebuffers(1, &cloudbuffer);
@@ -149,7 +142,7 @@ int main(int argc, char* argv[]) {
 
     Cube cloudbox = Cube(sf::Vector3f(0, 5, 0), sf::Vector3f(0, 0, 0), 1, &cloudtex);
     cloudbox.SetSize(1);
-    cloudbox.size_v = sf::Vector3f(10, 1, 10);
+    cloudbox.size_v = sf::Vector3f(10, 2, 10);
     cloudbox.CreateVerticesLegacy();
     cloudbox.material.loadShader(GL_VERTEX_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\cloud.vs");
     cloudbox.material.loadShader(GL_FRAGMENT_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\cloud.fs");
@@ -160,12 +153,6 @@ int main(int argc, char* argv[]) {
 
     int grid_res_loc = glGetUniformLocation(cloudbox.material.getShaderProgram(), "grid_resolution");
     glUniform1i(grid_res_loc, pointsGrid);
-
-    int point_num_loc = glGetUniformLocation(cloudbox.material.getShaderProgram(), "points_num");
-    glUniform1i(point_num_loc, num_of_points);
-
-    int points_location = glGetUniformLocation(cloudbox.material.getShaderProgram(), "point_pos");
-    glUniform3fv(points_location, num_of_points, points);
 
     int layer_loc = glGetUniformLocation(cloudbox.material.getShaderProgram(), "layers");
     glUniform1i(layer_loc, cloudTexRes.z);

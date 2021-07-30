@@ -111,7 +111,7 @@ int main(int argc, char* argv[]) {
     cloudTexRes.y = 100;
     cloudTexRes.z = 100;
 
-    const int pointsGrid = 5;
+    const int pointsGrid = 7; //must be multiple of 7
 
     std::srand(_time);
 

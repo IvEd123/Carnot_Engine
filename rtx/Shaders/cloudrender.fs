@@ -40,59 +40,12 @@ vec3 toLocal(vec3 v){
 
 
 vec2 posToUVW(vec3 v){
-	vec3 v_s = v * cloudScale + cloudOffset;
-    return mod(vec2((v_s.x +0.5)*0.01 +floor(v_s.z*100)*.01, v_s.y ), vec2(1.0));
+
+    return mod(vec2((v.x +0.5)*0.01 +floor(v.z*100)*.01, v.y ), vec2(1.0));
 }
 
 vec3 random( vec3 p ) {
     return fract(sin(vec3(dot(p,vec3(0.250,0.350, 0.546)),dot(p,vec3(269.5,183.3, 0.354)),dot(p,vec3(269.5, 0.347,183.3)) ))*43758.5453);
-}
-
-
-
-float simple_interpolate(in float a, in float b, in float x){
-   return a + smoothstep(0.0,1.0,x) * (b-a);
-}
-
-float noise (vec3 st){
-    vec3 i = floor(st);
-    vec3 f = fract(st);
-
-    float a = random(i).r;
-    float b = random(i + vec3(1.0, 0.0, 0.0)).r;
-    float c = random(i + vec3(0.0, 1.0, 0.0)).r;
-    float d = random(i + vec3(1.0, 1.0, 0.0)).r;
-    float a1 = random(i + vec3(0.0, 0.0, 1.0)).r;
-    float b1 = random(i + vec3(1.0, 0.0, 1.0)).r;
-    float c1 = random(i + vec3(0.0, 1.0, 1.0)).r;
-    float d1 = random(i + vec3(1.0, 1.0, 1.0)).r;
-
-    float i1 = simple_interpolate(a, a1, f.z);
-    float i2 = simple_interpolate(b, b1, f.z);
-    float i3 = simple_interpolate(c, c1, f.z);
-    float i4 = simple_interpolate(d, d1, f.z);
-
-    float ii1 = simple_interpolate(i1, i2, f.x);
-    float ii2 = simple_interpolate(i3, i4, f.x);
-
-    return simple_interpolate(ii1, ii2, f.y);
-}
-
-#define OCTAVES 6
-
-float perlin(vec3 st){
-    float value = 0.0;
-    
-    float amplitude = 0.5;
-    float freq = 0.0;
-
-    for (int i = 0; i < OCTAVES; i++){
-        value += amplitude * noise(st);
-        st *= 2.0;
-        amplitude *= 0.5;
-    }
-
-    return value;
 }
 
 
@@ -125,11 +78,13 @@ vec2 intersect (vec3 origin, vec3 dir){
 
 float GetSample(vec3 pos){
     
-    vec2 uv = posToUVW(toLocal( pos)) ;
+    vec2 uv = posToUVW(toLocal( pos * cloudScale + cloudOffset)) ;
+    vec2 uv_unscaled = posToUVW(toLocal( pos + cloudOffset)) ;
 
-    float col = texture(tex,   uv).r - texture(tex,   uv).g * texture(tex,   uv).b ;
+    float col = texture(tex,   uv).r * 0.625 + texture(tex,   uv).g * 0.250 + texture(tex,   uv).b * 0.125;
+
 	float h = vert_max.y - vert_min.y;
-	col *= 1 - (pos.y - vert_min.y) / h;
+	col *= 1 - (pos.y - vert_min.y) / h ;
     col = max (0, col - DensityThreshold) * DensityMultiplier ;
     return col;
 }

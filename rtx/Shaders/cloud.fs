@@ -14,12 +14,12 @@ vec3 hash33(vec3 p)
 }
 
 
-in vec2 TexCoord;
+in vec3 TexCoord;
 in vec3 FragPos;
 
 layout(location = 0)  out vec4 outColor;
 
-
+uniform float layer;
 uniform int grid_resolution;
 uniform int layers;
 
@@ -116,15 +116,15 @@ float worley(vec3 st, float scale){
 
 
 void main(){      
-    vec3 pos ;
-    pos.x = mod( gl_FragCoord.x, layers);
-    pos.y = gl_FragCoord.y;
-    pos.z = floor(gl_FragCoord.x / layers);
+    vec3 pos = vec3(gl_FragCoord.xy, (layer));
+    //pos.x = mod( gl_FragCoord.x, layers);
+    //pos.y = gl_FragCoord.y;
+    //pos.z = floor(gl_FragCoord.x / layers);
 
-    pos /= float(layers);
-
-    
+    //pos /= float(layers);
 
     
-    outColor = vec4(worley(pos, 1), worley(pos, 2), worley(pos, 4) , 1);
+
+    //outColor = vec4(TexCoord, 1);
+    outColor = vec4(worley(TexCoord, 1), worley(TexCoord, 2), worley(TexCoord, 4) , 1);
 }

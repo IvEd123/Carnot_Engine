@@ -172,8 +172,8 @@ void Cube::Draw(){
     
     material.setModel(glm::mat4(1.0f));
 
-       glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, material.getTexture()); 
+      // glActiveTexture(GL_TEXTURE0);
+    //glBindTexture(GL_TEXTURE_3D, material.getTexture()); 
 
 
     GLuint uniEye = glGetUniformLocation(material.getShaderProgram(), "eyepos");

@@ -7,7 +7,9 @@ in vec3 vert_max;
 in vec3 translation;
 in mat4 model_out;
 
-uniform sampler2D tex;
+uniform vec3 tex_res;
+
+uniform sampler3D tex;
 uniform vec3 eyepos;
 uniform float time;
 uniform vec3 light;
@@ -46,7 +48,9 @@ vec3 toLocal(vec3 v){
 
 
 vec2 posToUVW(vec3 v){
-
+	//v -= vert_min;
+	//v = mod(v, vec3(1.0));
+	//return  mod(vec2(floor(v.z*tex_res.z)/tex_res.z + (v.x) / tex_res.z + 0.5, v.y), vec2(1.0));
     return mod(vec2((v.x +0.5)*0.01 +floor(v.z*100)*.01, v.y ), vec2(1.0));
 }
 
@@ -84,11 +88,13 @@ vec2 intersect (vec3 origin, vec3 dir){
 
 float GetSample(vec3 pos){
     
-    vec2 uv1 = posToUVW(toLocal( pos * cloudScale * scale_coeff + cloudOffset)) ;
-    vec2 uv2 = posToUVW(toLocal( pos * (secondLayerScale * cloudScale) * scale_coeff + secondLayerOffset + cloudOffset)) ;
-    vec2 uv3 = posToUVW(toLocal( pos * (thirdLayerScale * secondLayerScale * cloudScale) * scale_coeff + thirdLayerOffset + secondLayerOffset + cloudOffset)) ;
+    //vec2 uv1 = posToUVW(toLocal( pos * cloudScale * scale_coeff + cloudOffset)) ;
+    //vec2 uv2 = posToUVW(toLocal( pos * (secondLayerScale * cloudScale) * scale_coeff + secondLayerOffset + cloudOffset)) ;
+    //vec2 uv3 = posToUVW(toLocal( pos * (thirdLayerScale * secondLayerScale * cloudScale) * scale_coeff + thirdLayerOffset + secondLayerOffset + cloudOffset)) ;
 
-    float col = texture(tex,   uv1).r * 0.625 + texture(tex,   uv2).g * 0.250 + texture(tex,   uv3).b * 0.125;
+    float col = texture(tex, pos * cloudScale * scale_coeff + cloudOffset).r * 0.625
+			  + texture(tex, pos * (secondLayerScale * cloudScale) * scale_coeff + secondLayerOffset + cloudOffset).g * 0.250 
+			  + texture(tex, pos * (thirdLayerScale * secondLayerScale * cloudScale) * scale_coeff + thirdLayerOffset + secondLayerOffset + cloudOffset).b * 0.125;
 
 	float h = vert_max.y - vert_min.y;
 	col *= 1 - (pos.y - vert_min.y) / h ;
@@ -116,7 +122,7 @@ float lightmarch(vec3 position){
 
 void main() {
 	vec3 texCoord = TexCoord;
-	texCoord.z = round(TexCoord.z*100)*.01 + 0.5;
+	//texCoord.z = round(TexCoord.z*tex_res.z)/tex_res.z + 0.5;
 	vec3 dirToLight = normalize(light - eyepos);
 
 	vec3 origin = eyepos;
@@ -161,11 +167,17 @@ void main() {
 		outColor = vec4(vec3(GetSample(FragPos)*0.5), 1);
 	else
 	//outColor = vec4(vec3(dot(dir, normalize(light - FragPos)  )  ), 1);
-	//outColor = vec4(vec3(GetSample(FragPos)), 1);
-		outColor = vec4( posToUVW(FragPos) , 1, 1);
+	//outColor = vec4(vec3(GetSample(FragPos)), 1);*/
+		//outColor = vec4( posToUVW(FragPos) , 1, 1);
 	//outColor = vec4(vec3(1), 1  - exp(-t.y));  */
 	//outColor = vec4(vec3(t.x + t.y)*0.3, 1);
 	//outColor = texture(tex, vec2(texCoord.x + texCoord.z, texCoord.y));
-	//outColor = vec4( texture(tex, vec2(posToUVW( FragPos))).a, 0, 0  , 1); 
+	//outColor = vec4( texture(tex, vec2(posToUVW( FragPos))).r, 0, 0  , 1);
+	//outColor = texture(tex, FragPos);
 	//outColor = vec4(1);
 }
+
+
+//vec2 a -> vec3 p; vec3 res
+//p = vec3( (a.x - floor(a.x * res.z) / res.z) * res.z, a.y, floor(a.x * res.z) / res.z);
+//a = vec2( p.z + p.x / res.z, p.y);

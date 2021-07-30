@@ -17,7 +17,13 @@ uniform vec3 LightColor;
 uniform vec3 cloudScale;
 uniform vec3 cloudOffset;
 
-vec4 phaseParams = vec4(0.72, 0.33, 1, 0.74);
+uniform vec3 secondLayerScale;
+uniform vec3 secondLayerOffset;
+
+uniform vec3 thirdLayerScale;
+uniform vec3 thirdLayerOffset;
+
+uniform vec4 phaseParams;
 
 
 uniform  int num_of_steps;
@@ -30,6 +36,7 @@ uniform float lightAbsorptionTowardSun;
 uniform float darknessThreshold;
 
 float k = sin(time*0.01);
+const float scale_coeff = 0.1;
 
 out vec4 outColor;
 
@@ -77,10 +84,11 @@ vec2 intersect (vec3 origin, vec3 dir){
 
 float GetSample(vec3 pos){
     
-    vec2 uv = posToUVW(toLocal( pos * cloudScale + cloudOffset)) ;
-    //vec2 uv_unscaled = posToUVW(toLocal( pos + cloudOffset)) ;
+    vec2 uv1 = posToUVW(toLocal( pos * cloudScale * scale_coeff + cloudOffset)) ;
+    vec2 uv2 = posToUVW(toLocal( pos * (secondLayerScale * cloudScale) * scale_coeff + secondLayerOffset + cloudOffset)) ;
+    vec2 uv3 = posToUVW(toLocal( pos * (thirdLayerScale * secondLayerScale * cloudScale) * scale_coeff + thirdLayerOffset + secondLayerOffset + cloudOffset)) ;
 
-    float col = texture(tex,   uv).r * 0.625 + texture(tex,   uv).g * 0.250 + texture(tex,   uv).b * 0.125;
+    float col = texture(tex,   uv1).r * 0.625 + texture(tex,   uv2).g * 0.250 + texture(tex,   uv3).b * 0.125;
 
 	float h = vert_max.y - vert_min.y;
 	col *= 1 - (pos.y - vert_min.y) / h ;

@@ -304,10 +304,16 @@ int main(int argc, char* argv[]) {
         glCullFace(GL_BACK);
         
         
+        static glm::vec4 phaseParams = glm::vec4(0.72, 0.33, 1, 0.74);
+
         static glm::vec3
             LightColor = glm::vec3(1, 1, 1),
-            cloudScale = glm::vec3(0.15),
-            cloudOffset = glm::vec3(0);
+            cloudScale = glm::vec3(1),
+            cloudOffset = glm::vec3(0),
+            secondLayerScale = glm::vec3(1),
+            secondLayerOffset = glm::vec3(0),
+            thirdLayerScale = glm::vec3(1),
+            thirdLayerOffset = glm::vec3(0);
 
         static float
             DensityThreshold = 0.3,
@@ -319,16 +325,29 @@ int main(int argc, char* argv[]) {
             num_of_steps = 40,
             num_of_steps_inside = 50;
         ImGui::Begin("cloud");
-        ImGui::InputInt("Steps for shape", &num_of_steps);
-        ImGui::InputInt("Steps for shading", &num_of_steps_inside);
-        ImGui::InputFloat3("Cloud scale", &cloudScale.x);
-        ImGui::InputFloat3("Cloud offset", &cloudOffset.x);
-        ImGui::SliderFloat("Threshold", &DensityThreshold, 0.0, 1.0);
-        ImGui::SliderFloat("Density Multiplier", &DensityMultiplier, 0.0, 100.0);
-        ImGui::ColorPicker3("Light Color", &LightColor.x);
-        ImGui::SliderFloat("light Absorption Through Cloud", &lightAbsorptionThroughCloud, 0.0, 1.0);
-        ImGui::SliderFloat("light Absorption Toward Sun", &lightAbsorptionTowardSun, 0.0, 2.0);
-        ImGui::SliderFloat("darknessThreshold", &darknessThreshold, 0.0, 1.0);
+            ImGui::Text("March settings");
+                ImGui::InputInt("Steps for shape", &num_of_steps);
+                ImGui::InputInt("Steps for shading", &num_of_steps_inside);
+            ImGui::Text("Base shape");
+                ImGui::InputFloat3("Cloud scale", &cloudScale.x);
+                ImGui::InputFloat3("Cloud offset", &cloudOffset.x);
+                ImGui::SliderFloat("Threshold", &DensityThreshold, 0.0, 1.0);
+                ImGui::SliderFloat("Density Multiplier", &DensityMultiplier, 0.0, 100.0);
+            ImGui::Text("Detail parametrs");
+                ImGui::InputFloat3("Noise 2nd layer scale", &secondLayerScale.x);
+                ImGui::InputFloat3("Noise 2nd layer offset", &secondLayerOffset.x);
+                ImGui::InputFloat3("Noise 3rd layer scale", &thirdLayerScale.x);
+                ImGui::InputFloat3("Noise 3rd layer offset", &thirdLayerOffset.x);
+            ImGui::Text("Lighting");
+                ImGui::ColorPicker3("Light Color", &LightColor.x);
+                ImGui::SliderFloat("light Absorption Through Cloud", &lightAbsorptionThroughCloud, 0.0, 1.0);
+                ImGui::SliderFloat("light Absorption Toward Sun", &lightAbsorptionTowardSun, 0.0, 2.0);
+                ImGui::SliderFloat("darknessThreshold", &darknessThreshold, 0.0, 1.0);
+
+                ImGui::SliderFloat("Froward scattering", &phaseParams.x, 0.0, 1.0);
+                ImGui::SliderFloat("Back scattering", &phaseParams.y, 0.0, 1.0);
+                ImGui::SliderFloat("Base brightness", &phaseParams.z, 0.0, 1.0);
+                ImGui::SliderFloat("Phase factor", &phaseParams.w, 0.0, 1.0);
 
         ImGui::End(); // end window
 
@@ -342,6 +361,12 @@ int main(int argc, char* argv[]) {
         cloudbox.material.attachUniform("LightColor", LightColor);
         cloudbox.material.attachUniform("cloudScale", cloudScale);
         cloudbox.material.attachUniform("cloudOffset", cloudOffset);
+        cloudbox.material.attachUniform("secondLayerScale", secondLayerScale);
+        cloudbox.material.attachUniform("secondLayerOffset", secondLayerOffset);
+        cloudbox.material.attachUniform("thirdLayerScale", thirdLayerScale);
+        cloudbox.material.attachUniform("thirdLayerOffset", thirdLayerOffset);
+        cloudbox.material.attachUniform("phaseParams", phaseParams);
+
 
 
 

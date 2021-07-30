@@ -49,6 +49,7 @@ public:
     void                                    attachUniform(const char* name, float value);
     void                                    attachUniform(const char* name, int value);
     void                                    attachUniform(const char* name, glm::vec3 value);
+    void                                    attachUniform(const char* name, glm::vec4 value);
     void                                    attachUniform(const char* name, GLuint tex);
 
     GLuint                                  getVAO() { return vao; }

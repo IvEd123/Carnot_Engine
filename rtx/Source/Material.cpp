@@ -263,6 +263,20 @@ void Material::attachUniform(const char* name, float value) {
     glUseProgram(0);
 }
 
+void Material::attachUniform(const char* name, int value) {
+    glUseProgram(shaderProgram);
+    GLuint Uni = glGetUniformLocation(shaderProgram, name);
+    glUniform1i(Uni, value);
+    glUseProgram(0);
+}
+
+void Material::attachUniform(const char* name, glm::vec3 value) {
+    glUseProgram(shaderProgram);
+    GLuint Uni = glGetUniformLocation(shaderProgram, name);
+    glUniform3f(Uni, value.x, value.y, value.z);
+    glUseProgram(0);
+}
+
 void Material::attachUniform(const char* name, GLuint tex) {
     glUseProgram(shaderProgram);
     GLuint Uni = glGetUniformLocation(shaderProgram, name);

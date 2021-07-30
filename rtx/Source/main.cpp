@@ -304,16 +304,44 @@ int main(int argc, char* argv[]) {
         glCullFace(GL_BACK);
         
         
-        float DensityThreshold = 0.5, DensityMultiplier = 10;
+        static glm::vec3
+            LightColor = glm::vec3(1, 1, 1),
+            cloudScale = glm::vec3(0.15),
+            cloudOffset = glm::vec3(0);
 
+        static float
+            DensityThreshold = 0.3,
+            DensityMultiplier = 50,
+            lightAbsorptionThroughCloud = 0.85,
+            lightAbsorptionTowardSun = 2.0,
+            darknessThreshold = 0.2;
+        static int
+            num_of_steps = 40,
+            num_of_steps_inside = 50;
         ImGui::Begin("cloud");
-        //ImGui::InputFloat("Threshold", &DensityThreshold);
-        //ImGui::InputFloat("mult", &DensityMultiplier);
+        ImGui::InputInt("Steps for shape", &num_of_steps);
+        ImGui::InputInt("Steps for shading", &num_of_steps_inside);
+        ImGui::InputFloat3("Cloud scale", &cloudScale.x);
+        ImGui::InputFloat3("Cloud offset", &cloudOffset.x);
+        ImGui::SliderFloat("Threshold", &DensityThreshold, 0.0, 1.0);
+        ImGui::SliderFloat("Density Multiplier", &DensityMultiplier, 0.0, 100.0);
+        ImGui::ColorPicker3("Light Color", &LightColor.x);
+        ImGui::SliderFloat("light Absorption Through Cloud", &lightAbsorptionThroughCloud, 0.0, 1.0);
+        ImGui::SliderFloat("light Absorption Toward Sun", &lightAbsorptionTowardSun, 0.0, 2.0);
+        ImGui::SliderFloat("darknessThreshold", &darknessThreshold, 0.0, 1.0);
+
         ImGui::End(); // end window
 
-
-        //cloudbox.material.attachUniform("DensityThreshold", DensityThreshold);
-        //cloudbox.material.attachUniform("DensityMultiplier", DensityMultiplier);
+        cloudbox.material.attachUniform("DensityThreshold", DensityThreshold);
+        cloudbox.material.attachUniform("lightAbsorptionTowardSun", lightAbsorptionTowardSun);
+        cloudbox.material.attachUniform("darknessThreshold", darknessThreshold);
+        cloudbox.material.attachUniform("DensityMultiplier", DensityMultiplier);
+        cloudbox.material.attachUniform("num_of_steps", num_of_steps);
+        cloudbox.material.attachUniform("num_of_steps_inside", num_of_steps_inside);
+        cloudbox.material.attachUniform("lightAbsorptionThroughCloud", lightAbsorptionThroughCloud);
+        cloudbox.material.attachUniform("LightColor", LightColor);
+        cloudbox.material.attachUniform("cloudScale", cloudScale);
+        cloudbox.material.attachUniform("cloudOffset", cloudOffset);
 
 
 

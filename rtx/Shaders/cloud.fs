@@ -126,5 +126,5 @@ void main(){
     
 
     
-    outColor = vec4(worley(pos, 1), worley(pos, 2), worley(pos, 4) , perlin(pos));
+    outColor = vec4(worley(pos, 1), worley(pos, 2), worley(pos, 4) , 1);
 }

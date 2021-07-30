@@ -47,6 +47,8 @@ public:
     void                                    createVAO_VBO_mesh(std::vector<glm::vec3>& vert_vec3, std::vector<glm::vec2>& uv_vec2, std::vector<glm::vec3>& norm_vec3);
 
     void                                    attachUniform(const char* name, float value);
+    void                                    attachUniform(const char* name, int value);
+    void                                    attachUniform(const char* name, glm::vec3 value);
     void                                    attachUniform(const char* name, GLuint tex);
 
     GLuint                                  getVAO() { return vao; }

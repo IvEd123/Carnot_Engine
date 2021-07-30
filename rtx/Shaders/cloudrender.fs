@@ -12,23 +12,22 @@ uniform vec3 eyepos;
 uniform float time;
 uniform vec3 light;
 
-vec3 LightColor = vec3(1, 1, 1);
+uniform vec3 LightColor;
 
-vec3 cloudScale = vec3(0.15);
-vec3 cloudOffset = vec3(0);
+uniform vec3 cloudScale;
+uniform vec3 cloudOffset;
 
 vec4 phaseParams = vec4(0.72, 0.33, 1, 0.74);
 
-float heightOffset = 2.0;
 
-const int num_of_steps = 40;
-float DensityThreshold = 0.3;
-float DensityMultiplier = 50;
-float lightAbsorptionThroughCloud = 0.85;
+uniform  int num_of_steps;
+uniform float DensityThreshold;
+uniform float DensityMultiplier;
+uniform float lightAbsorptionThroughCloud;
 
-const int num_of_steps_inside = 50;
-float lightAbsorptionTowardSun = 1;
-float darknessThreshold  = 0.2;
+uniform  int num_of_steps_inside;
+uniform float lightAbsorptionTowardSun;
+uniform float darknessThreshold;
 
 float k = sin(time*0.01);
 
@@ -79,7 +78,7 @@ vec2 intersect (vec3 origin, vec3 dir){
 float GetSample(vec3 pos){
     
     vec2 uv = posToUVW(toLocal( pos * cloudScale + cloudOffset)) ;
-    vec2 uv_unscaled = posToUVW(toLocal( pos + cloudOffset)) ;
+    //vec2 uv_unscaled = posToUVW(toLocal( pos + cloudOffset)) ;
 
     float col = texture(tex,   uv).r * 0.625 + texture(tex,   uv).g * 0.250 + texture(tex,   uv).b * 0.125;
 
@@ -142,23 +141,7 @@ void main() {
 			if (transmittance < 0.01)
 				break;
 		}
-		/*
-		float currentDensity = 0;
-		if(totalDensity > 0){
-			vec3 dir_in = normalize(light - rayPos);
-			float inside2 = intersect(rayPos, dir_in).y;
-			float step_inside = inside2 / num_of_steps_inside;
-			float dstTravelled2 = 0;
-
-			while (dstTravelled2 < inside2){
-				 vec3 rayPos2 = rayPos + dir_in * dstTravelled2;
-				 currentDensity += GetSample(rayPos2) / num_of_steps_inside;
-				 dstTravelled2 +=step_inside;
-			}
-
-		}
-		transmittance += currentDensity;
-		*/
+	
 		dstTravelled += step;
 	}
 
@@ -175,6 +158,6 @@ void main() {
 	//outColor = vec4(vec3(1), 1  - exp(-t.y));  */
 	//outColor = vec4(vec3(t.x + t.y)*0.3, 1);
 	//outColor = texture(tex, vec2(texCoord.x + texCoord.z, texCoord.y));
-	//outColor = texture(tex, vec2(posToUVW( FragPos)));
+	//outColor = vec4( texture(tex, vec2(posToUVW( FragPos))).a, 0, 0  , 1); 
 	//outColor = vec4(1);
 }

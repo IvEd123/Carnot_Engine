@@ -30,7 +30,7 @@ public:
     
     glm::mat4 *                             lightSpaceMatrixPtr;
     unsigned int *                          shadowmap;
-    glm::vec3                               sun_pos;
+    glm::vec3   *                            sun_pos;
 
     int                                     CreateShaders();
     void                                    loadShader(GLenum type, const GLchar* path);
@@ -38,6 +38,7 @@ public:
     void                                    bindTexture(GLuint texture);
     void                                    bindTexture(GLuint texure, const GLchar* name);
     void                                    specifyVertexAttributes(GLuint shaderProgram);
+    void                                    specifyVertexAttributes3D(GLuint shaderProgram);
     void                                    specifyVertexAttributes_screen(GLuint shaderProgram);
     void                                    specifyVertexAttributes_terrain(GLuint shaderProgram);
     void                                    specifyVertexAttributes_mesh();
@@ -46,6 +47,9 @@ public:
     void                                    createVAO_VBO_mesh(std::vector<glm::vec3>& vert_vec3, std::vector<glm::vec2>& uv_vec2, std::vector<glm::vec3>& norm_vec3);
 
     void                                    attachUniform(const char* name, float value);
+    void                                    attachUniform(const char* name, int value);
+    void                                    attachUniform(const char* name, glm::vec3 value);
+    void                                    attachUniform(const char* name, glm::vec4 value);
     void                                    attachUniform(const char* name, GLuint tex);
 
     GLuint                                  getVAO() { return vao; }
@@ -56,6 +60,7 @@ public:
 
     void                                    setUniModel(GLuint uniform) { uniModel = uniform; }
     void                                    setModel(glm::mat4 _model) { model = _model; }
+    void                                    setTexture(GLuint _texture) { texture = _texture; }
 
     std::string                             GetVSPath() { return vertexShader_path; }
     

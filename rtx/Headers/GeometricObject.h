@@ -72,7 +72,7 @@ public:
 
 class Cube : public GeometricObject {
 private:
-    
+    std::string                             model_path;
     
 public:
     Cube(float _size);
@@ -81,8 +81,11 @@ public:
     ~Cube();
 
     void                                    Draw();
-    void                                    CreateVertices();
-    void                                    setModel(char* path) {}
+    void                                    CreateVertices() {};
+    void                                    CreateVerticesLegacy();
+    void                                    setModel(char* path);
+
+    sf::Vector3f size_v;
 
 };
 
@@ -198,6 +201,7 @@ public:
     unsigned int *                          getShadowMap();
 
     sf::Vector3f                            GetPos() { return pos; }
+    sf::Vector3f  *                          GetPosPtr() { return &pos; }
     void                                    SetPos(sf::Vector3f _pos) { pos = _pos; }
     sf::Vector3f                            GetPov() { return pov; }
     void                                    SetPov(sf::Vector3f _pov) { pov = _pov; }

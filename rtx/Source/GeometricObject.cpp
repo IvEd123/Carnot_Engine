@@ -40,7 +40,7 @@ void GeometricObject::UpdateModelMatrix() {
 void GeometricObject::addLightSource(LightSource* source) {
     material.lightSpaceMatrixPtr = source->getProjMatrix();
     material.shadowmap = source->getShadowMap();
-    material.sun_pos = ConvertSFML2GLM(source->GetPos());
+    material.sun_pos = (glm::vec3*)source->GetPosPtr();
     glBindVertexArray(material.getVAO());
     glUseProgram(material.getShaderProgram());
     glUniform1i(glGetUniformLocation(material.getShaderProgram(), "shadowMap"), 1);
@@ -92,11 +92,11 @@ void GeometricObject::SetRot(sf::Vector3f _rot){
 }
 
 void GeometricObject::SetSize(float s) {
-    size = s / 2;
+    size = s;
 }
 
 float GeometricObject::GetSize() {
-    return size * 2;
+    return size;
 }
 
 float* GeometricObject::GetSizePtr() {
@@ -118,7 +118,7 @@ int GeometricObject::GetType() {
 //                          
 
 Cube::Cube(float _size){
-    size = _size * 2;
+    size = _size;
     pos = sf::Vector3f(0, 0, 0);
     rot = sf::Vector3f(0, 0, 0);
 
@@ -131,6 +131,7 @@ Cube::Cube(sf::Vector3f _pos, sf::Vector3f _rot, float _size, GLuint* _texture){
     pos = _pos;
     rot = _rot;
     size = _size;
+    material.bindTexture(*_texture);
 }
 
 Cube::~Cube() {
@@ -147,117 +148,47 @@ Cube::Cube() {
     material = *(new Material());
 }
 
-void Cube::CreateVertices() {
-    (*vert_vec3)[array_index]= {
-        glm::vec3(-0.5f, -0.5f, -0.5f),     //FRONT
-        glm::vec3(0.5f, -0.5f, -0.5f),
-        glm::vec3(0.5f,  0.5f, -0.5f),
-        glm::vec3(0.5f,  0.5f, -0.5f),
-        glm::vec3(-0.5f,  0.5f, -0.5f),
-        glm::vec3(-0.5f, -0.5f, -0.5f),
 
-        glm::vec3(-0.5f, -0.5f,  0.5f),    //BACK
-        glm::vec3(0.5f, -0.5f,  0.5f),
-        glm::vec3(0.5f,  0.5f,  0.5f),
-        glm::vec3(0.5f,  0.5f,  0.5f),
-        glm::vec3(-0.5f,  0.5f,  0.5f),
-        glm::vec3(-0.5f, -0.5f,  0.5f),
 
-        glm::vec3(-0.5f,  0.5f,  0.5f),   //LEFT
-        glm::vec3(-0.5f,  0.5f, -0.5f),
-        glm::vec3(-0.5f, -0.5f, -0.5f),
-        glm::vec3(-0.5f, -0.5f, -0.5f),
-        glm::vec3(-0.5f, -0.5f,  0.5f),
-        glm::vec3(-0.5f,  0.5f,  0.5f),
+void Cube::CreateVerticesLegacy() {
+    setModel((char*)"C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Meshes\\cube.obj");
 
-        glm::vec3(0.5f,  0.5f,  0.5f),  //RIGHT
-        glm::vec3(0.5f,  0.5f, -0.5f),
-        glm::vec3(0.5f, -0.5f, -0.5f),
-        glm::vec3(0.5f, -0.5f, -0.5f),
-        glm::vec3(0.5f, -0.5f,  0.5f),
-        glm::vec3(0.5f,  0.5f,  0.5f),
+    //material.createVAO_VBO_mesh((*vert_vec3)[array_index], (*uv_vec2)[array_index], (*norm_vec3)[array_index]);
+    material.createVAO_VBO(vertices);
+}
 
-        glm::vec3(-0.5f, -0.5f, -0.5f),  //DOWN
-        glm::vec3(0.5f, -0.5f, -0.5f),
-        glm::vec3(0.5f, -0.5f,  0.5f),
-        glm::vec3(0.5f, -0.5f,  0.5f),
-        glm::vec3(-0.5f, -0.5f,  0.5f),
-        glm::vec3(-0.5f, -0.5f, -0.5f),
 
-        glm::vec3(-0.5f,  0.5f, -0.5f),   //UP
-        glm::vec3(0.5f,  0.5f, -0.5f),
-        glm::vec3(0.5f,  0.5f,  0.5f),
-        glm::vec3(0.5f,  0.5f,  0.5f),
-        glm::vec3(-0.5f,  0.5f,  0.5f),
-        glm::vec3(-0.5f,  0.5f, -0.5f)
-    };
-    (*uv_vec2)[array_index] = {
-        glm::vec2(0.25, 0.33),   //FRONT
-        glm::vec2(0.50, 0.33),
-        glm::vec2(0.50, 0.66),
-        glm::vec2(0.50, 0.66),
-        glm::vec2(0.25, 0.66),
-        glm::vec2(0.25, 0.33),
 
-        glm::vec2(1.00, 0.33),   //BACK
-        glm::vec2(0.75, 0.33),
-        glm::vec2(0.75, 0.66),
-        glm::vec2(0.75, 0.66),
-        glm::vec2(1.00, 0.66),
-        glm::vec2(1.00, 0.33),
-
-        glm::vec2(1.00, 0.66),   //LEFT
-        glm::vec2(0.25, 0.66),
-        glm::vec2(0.25, 0.33),
-        glm::vec2(0.25, 0.33),
-        glm::vec2(1.00, 0.33),
-        glm::vec2(1.00, 0.66),
-
-        glm::vec2(0.75, 0.66),   //RIGHT
-        glm::vec2(0.50, 0.66),
-        glm::vec2(0.50, 0.33),
-        glm::vec2(0.50, 0.33),
-        glm::vec2(0.75, 0.33),
-        glm::vec2(0.75, 0.66),
-
-        glm::vec2(0.25, 0.33),   //DOWN
-        glm::vec2(0.50, 0.33),
-        glm::vec2(0.50, 0.00),
-        glm::vec2(0.50, 0.00),
-        glm::vec2(0.25, 0.00),
-        glm::vec2(0.25, 0.33),
-
-        glm::vec2(0.25, 0.66),   //UP
-        glm::vec2(0.50, 0.66),
-        glm::vec2(0.50, 1.00),
-        glm::vec2(0.50, 1.00),
-        glm::vec2(0.25, 1.00),
-        glm::vec2(0.25, 0.66)
-    };
-    material.createVAO_VBO_mesh((*vert_vec3)[array_index], (*uv_vec2)[array_index], (*norm_vec3)[array_index]);
+void Cube::setModel(char* path) {
+    model_path = path;
+    OBJLoader_v(path, this);
 }
 
 void Cube::Draw(){
     UpdateModelMatrix();
     material.updateUniforms();
-    glUseProgram(material.getShaderProgram());
     glBindVertexArray(material.getVAO());
+    glUseProgram(material.getShaderProgram());
+    
     material.setModel(glm::mat4(1.0f));
 
-    //material.setModel(glm::mat4(1.0f));
+      // glActiveTexture(GL_TEXTURE0);
+    //glBindTexture(GL_TEXTURE_3D, material.getTexture()); 
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, material.getTexture());
-    
+
+    GLuint uniEye = glGetUniformLocation(material.getShaderProgram(), "eyepos");
+    glUniform3f(uniEye, _pl.GetPos().x, _pl.GetPos().y, _pl.GetPos().z);
+
+    GLuint uniPos = glGetUniformLocation(material.getShaderProgram(), "pos");
+    glUniform3f(uniPos, pos.x, pos.y, pos.z);
+
     GLuint uniSize = glGetUniformLocation(material.getShaderProgram(), "size");
-    glUniform1f(uniSize, size);
+    glUniform3f(uniSize,size_v.x, size_v.y,  size_v.z);
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, material.getTexture());
+    GLuint uniLight = glGetUniformLocation(material.getShaderProgram(), "light");
+    glUniform3f(uniLight, material.sun_pos->x, material.sun_pos->y, material.sun_pos->z);
 
-    //glTranslatef(pos.x, pos.y, pos.y);
     glDrawArrays(GL_TRIANGLES, 0, 36);
-    //glTranslatef(-pos.x, -pos.y, -pos.y);
     glBindVertexArray(0);
 }
 
@@ -306,7 +237,7 @@ void Screen::Draw() {
     glUseProgram(material.getShaderProgram());
     glBindVertexArray(material.getVAO());
 
-    glm::mat4 mat = glm::translate(glm::mat4(1.0), material.sun_pos);
+    glm::mat4 mat = glm::translate(glm::mat4(1.0), *material.sun_pos);
         
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, tex);
@@ -470,8 +401,11 @@ void Mesh::Draw() {
     GLuint uniSize = glGetUniformLocation(material.getShaderProgram(), "size");
     glUniform1f(uniSize, size);
 
+    GLuint uniEye = glGetUniformLocation(material.getShaderProgram(), "eye");
+    glUniform3f(uniEye, _pl.GetPos().x, _pl.GetPos().y, _pl.GetPos().z);
+
     GLuint uniLight = glGetUniformLocation(material.getShaderProgram(), "light");
-    glUniform3f(uniLight, material.sun_pos.x, material.sun_pos.y, material.sun_pos.z);
+    glUniform3f(uniLight, material.sun_pos->x, material.sun_pos->y, material.sun_pos->z);
         
 
     glActiveTexture(GL_TEXTURE1);
@@ -524,7 +458,7 @@ void Plane::Draw(){
     glUniform3f(uniEye, _pl.GetPos().x, _pl.GetPos().y, _pl.GetPos().z);
     
     GLuint uniLight = glGetUniformLocation(material.getShaderProgram(), "light");
-    glUniform3f(uniLight, material.sun_pos.x, material.sun_pos.y, material.sun_pos.z);
+    glUniform3f(uniLight, material.sun_pos->x, material.sun_pos->y, material.sun_pos->z);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, material.getTexture());

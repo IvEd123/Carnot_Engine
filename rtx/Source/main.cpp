@@ -32,7 +32,6 @@ std::vector<std::vector<glm::vec3>> array_of_normals;
 std::vector<std::vector<glm::vec2>> array_of_uvs;
 std::vector<DLLScriptHandler> scripts;
 
-
 #include "../Headers/AddObject.h"
 #include "../Headers/PLayer.h"
 #include "../Headers/Render.h"
@@ -50,14 +49,13 @@ using namespace sf;
 #define HEIGHT 800
 #define WIDTH 800
 
-
-
-
 int main(int argc, char* argv[]) {
     ImGuiContext* ctx2 = ImGui::CreateContext();
     ImGui::SetCurrentContext(ctx2);
     Player& pl = Player::Get();
     pl.SetPos(Vector3f(0, 2, 0));
+
+   
 
     std::cout << argv[0] << std::endl;
     std::string path = argv[0];
@@ -74,7 +72,7 @@ int main(int argc, char* argv[]) {
 
     err().rdbuf(NULL);
     RenderWindow window(VideoMode(WIDTH, HEIGHT), "win", 7u, settings);
-    window.setFramerateLimit(60);
+    //window.setFramerateLimit(60);
     ImGui::SFML::Init(window);
     assert(window.getSettings().depthBits == 24);
     glewExperimental = GL_TRUE;
@@ -88,7 +86,13 @@ int main(int argc, char* argv[]) {
 
     int error;
 
-
+    float time_passed = 0;
+    float _time = clock.getElapsedTime().asSeconds() * 100;
+    
+    float size = 20.f;
+    
+   
+        
 
     //light
     LightSource sun = LightSource();
@@ -99,6 +103,79 @@ int main(int argc, char* argv[]) {
         std::cout << error << std::endl;
     sun.SetPos(Vector3f(20, 20, 00));
     sun.SetRot(Vector3f(180, 0, 0));
+
+    //cloud map
+
+    glEnable(GL_TEXTURE_3D);
+
+    sf::Vector3f cloudTexRes;
+    cloudTexRes.x = 200;
+    cloudTexRes.y = 200;
+    cloudTexRes.z = 200;
+
+    const int pointsGrid = 7; //must be multiple of 7
+
+    std::srand(_time);
+
+
+    GLuint cloudbuffer;
+    glGenFramebuffers(1, &cloudbuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, cloudbuffer);
+
+    GLuint cloudtex;
+    glGenTextures(1, &cloudtex);
+    glBindTexture(GL_TEXTURE_3D, cloudtex);
+
+    glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, cloudTexRes.x , cloudTexRes.y, cloudTexRes.z,0, GL_RGBA, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_REPEAT);
+    glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, cloudtex, 0);
+
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        std::cout << "ERRROR WITH CLOUD BUFFER\n";
+
+    glBindFramebuffer(GL_FRAMEBUFFER, cloudbuffer);
+    glDrawBuffer(GL_COLOR_ATTACHMENT0);
+    glViewport(0, 0, cloudTexRes.x, cloudTexRes.y);
+
+
+    Cube cloudbox = Cube(sf::Vector3f(0, 5, 0), sf::Vector3f(0, 0, 0), 1, &cloudtex);
+    cloudbox.SetSize(1);
+    cloudbox.size_v = sf::Vector3f(5, 2, 5);
+    cloudbox.CreateVerticesLegacy();
+    cloudbox.material.loadShader(GL_VERTEX_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\cloud.vs");
+    cloudbox.material.loadShader(GL_FRAGMENT_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\cloud.fs");
+    cloudbox.material.CreateShaders();
+    cloudbox.material.specifyVertexAttributes3D(cloudbox.material.getShaderProgram());
+    glUseProgram(cloudbox.material.getShaderProgram());
+    glBindVertexArray(cloudbox.material.getVAO());
+
+    int grid_res_loc = glGetUniformLocation(cloudbox.material.getShaderProgram(), "grid_resolution");
+    glUniform1i(grid_res_loc, pointsGrid);
+
+    int layer_loc = glGetUniformLocation(cloudbox.material.getShaderProgram(), "layers");
+    glUniform1i(layer_loc, cloudTexRes.z);
+
+    for (int i = 0; i < cloudTexRes.z; ++i) {
+        int layer_loc = glGetUniformLocation(cloudbox.material.getShaderProgram(), "layer");
+        glUniform1f(layer_loc, (float)i / (float)cloudTexRes.z);
+        glFramebufferTexture3D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_3D, cloudtex, 0, i);
+        glDrawArrays(GL_TRIANGLES, 0, cloudbox.vertices.size());
+    }
+
+   // glFramebufferTexture3D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, cloudtex, 0);
+    cloudbox.addLightSource(&sun);
+   // cloudbox.Draw();
+
+    glBindVertexArray(0);
+    glUseProgram(0);
+    glBindBuffer(GL_FRAMEBUFFER, 0);
+
+    glViewport(0, 0, WIDTH, HEIGHT);
 
     //framebuffer
     Screen screen = Screen();
@@ -118,7 +195,7 @@ int main(int argc, char* argv[]) {
     sf::Vector3f sun_spawn_pov = sun.GetPov();
 
     const unsigned int t = *screen.getColorBuffer();
-    float time_passed = 0;
+    
     bool pause = 0;
     bool pause_prev = 0;
 
@@ -127,6 +204,8 @@ int main(int argc, char* argv[]) {
     sf.SetName("test");
 
     sf.Load();
+
+    
     for (int i = 0; i < obj_list.size(); i++) 
         obj_list[i]->addLightSource(&sun);
     
@@ -134,10 +213,17 @@ int main(int argc, char* argv[]) {
         scripts[i].Start();
 
     GUI_Object obj_win = GUI_Object();
-
+    glDeleteProgram(cloudbox.material.getShaderProgram());
+    cloudbox.material.loadShader(GL_VERTEX_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\cloudrenderer.vs");
+    cloudbox.material.loadShader(GL_FRAGMENT_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\cloudrender.fs");
+    cloudbox.material.CreateShaders();
 
     for ever{
         
+
+        float Dtime = clock.getElapsedTime().asSeconds() * 100;
+
+        time_passed += Dtime;
         Event event;
         while (window.pollEvent(event)) {
             ImGui::SFML::ProcessEvent(event);
@@ -170,9 +256,7 @@ int main(int argc, char* argv[]) {
             //ShowCursor(false);
         }
         
-        float Dtime = clock.getElapsedTime().asSeconds() * 100;
-        time_passed += Dtime;
-        float size = 20.f;
+        
         
         ImGui::SFML::Update(window, clock.restart());
         ImGui::ShowDemoWindow();
@@ -191,8 +275,6 @@ int main(int argc, char* argv[]) {
         }
         ImGui::End(); // end window*/
 
-        //helpful gui tutorial
-        //https://docs.unity3d.com/ru/current/Manual/gui-Controls.html
 
         //clear depth buffer
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -221,7 +303,91 @@ int main(int argc, char* argv[]) {
         sun.SetPos(pl.GetPos() + sun_spawn_pos);
 
         for (int i = 0; i < obj_list.size(); i++)
-            obj_list[i]->Draw();
+            obj_list[i]->Draw();    
+
+        
+
+        //draw clouds
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+        glEnable(GL_TEXTURE_3D);
+        
+        static glm::vec4 phaseParams = glm::vec4(0.72, 0.33, 1, 0.74);
+
+        static glm::vec3
+            LightColor = glm::vec3(1, 1, 1),
+            cloudScale = glm::vec3(1.5),
+            cloudOffset = glm::vec3(0),
+            secondLayerScale = glm::vec3(1),
+            secondLayerOffset = glm::vec3(0),
+            thirdLayerScale = glm::vec3(1),
+            thirdLayerOffset = glm::vec3(0);
+
+        static float
+            DensityThreshold = 0.3,
+            DensityMultiplier = 50,
+            lightAbsorptionThroughCloud = 0.85,
+            lightAbsorptionTowardSun = 2.0,
+            darknessThreshold = 0.2;
+        static int
+            num_of_steps = 33,
+            num_of_steps_inside = 25;
+
+
+        ImGui::Begin("cloud");
+            ImGui::Text("March settings");
+                ImGui::InputInt("Steps for shape", &num_of_steps);
+                ImGui::InputInt("Steps for shading", &num_of_steps_inside);
+            ImGui::Text("Base shape");
+                ImGui::InputFloat3("Cloud scale", &cloudScale.x);
+                ImGui::InputFloat3("Cloud offset", &cloudOffset.x);
+                ImGui::SliderFloat("Threshold", &DensityThreshold, 0.0, 1.0);
+                ImGui::SliderFloat("Density Multiplier", &DensityMultiplier, 0.0, 100.0);
+            ImGui::Text("Detail parametrs");
+                ImGui::InputFloat3("Noise 2nd layer scale", &secondLayerScale.x);
+                ImGui::InputFloat3("Noise 2nd layer offset", &secondLayerOffset.x);
+                ImGui::InputFloat3("Noise 3rd layer scale", &thirdLayerScale.x);
+                ImGui::InputFloat3("Noise 3rd layer offset", &thirdLayerOffset.x);
+            ImGui::Text("Lighting");
+                ImGui::ColorPicker3("Light Color", &LightColor.x);
+                ImGui::SliderFloat("light Absorption Through Cloud", &lightAbsorptionThroughCloud, 0.0, 1.0);
+                ImGui::SliderFloat("light Absorption Toward Sun", &lightAbsorptionTowardSun, 0.0, 2.0);
+                ImGui::SliderFloat("darknessThreshold", &darknessThreshold, 0.0, 1.0);
+
+                ImGui::SliderFloat("Froward scattering", &phaseParams.x, 0.0, 1.0);
+                ImGui::SliderFloat("Back scattering", &phaseParams.y, 0.0, 1.0);
+                ImGui::SliderFloat("Base brightness", &phaseParams.z, 0.0, 1.0);
+                ImGui::SliderFloat("Phase factor", &phaseParams.w, 0.0, 1.0);
+
+        ImGui::End(); 
+
+        cloudbox.material.attachUniform("DensityThreshold", DensityThreshold);
+        cloudbox.material.attachUniform("lightAbsorptionTowardSun", lightAbsorptionTowardSun);
+        cloudbox.material.attachUniform("darknessThreshold", darknessThreshold);
+        cloudbox.material.attachUniform("DensityMultiplier", DensityMultiplier);
+        cloudbox.material.attachUniform("num_of_steps", num_of_steps);
+        cloudbox.material.attachUniform("num_of_steps_inside", num_of_steps_inside);
+        cloudbox.material.attachUniform("lightAbsorptionThroughCloud", lightAbsorptionThroughCloud);
+        cloudbox.material.attachUniform("LightColor", LightColor);
+        cloudbox.material.attachUniform("cloudScale", cloudScale);
+        cloudbox.material.attachUniform("cloudOffset", cloudOffset);
+        cloudbox.material.attachUniform("secondLayerScale", secondLayerScale);
+        cloudbox.material.attachUniform("secondLayerOffset", secondLayerOffset);
+        cloudbox.material.attachUniform("thirdLayerScale", thirdLayerScale);
+        cloudbox.material.attachUniform("thirdLayerOffset", thirdLayerOffset);
+        cloudbox.material.attachUniform("phaseParams", phaseParams);
+
+        cloudbox.material.attachUniform("tex_res", glm::vec3(cloudTexRes.x, cloudTexRes.y, cloudTexRes.z));
+
+
+        //cloudbox.material.setTexture(cloudtex);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_3D,cloudtex);
+        cloudbox.material.attachUniform("time", time_passed);
+        cloudbox.Draw();
+
+        glDisable(GL_CULL_FACE);
+        glDisable(GL_TEXTURE_3D);
 
         if (selected != -1)
             obj_win.SetObject(obj_list[selected]);
@@ -243,6 +409,7 @@ int main(int argc, char* argv[]) {
         
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)){
             screen.setColorBuffer(*sun.getShadowMap());
+
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
             screen.setColorBuffer(t);
@@ -254,7 +421,11 @@ int main(int argc, char* argv[]) {
         screen.addLightSource(&sun);
         screen.Draw();
 
+
         
+        
+
+
         ImGui::SFML::Render(window);
 
         

@@ -160,6 +160,17 @@ void Material::specifyVertexAttributes(GLuint shaderProgram) {
     std::cout << "posattrib " << posAttrib << " texattrib " << texAttrib << std::endl;
 }
 
+void Material::specifyVertexAttributes3D(GLuint shaderProgram) {
+    glBindVertexArray(vao);
+    std::cout << "SCENE" << std::endl;
+    GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
+    glEnableVertexAttribArray(posAttrib);
+    glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), 0);
+
+    
+    std::cout << "posattrib " << posAttrib << std::endl;
+}
+
 void Material::specifyVertexAttributes_screen(GLuint shaderProgram) {
     glBindVertexArray(vao);
     std::cout << "SCREEN" << std::endl;
@@ -252,6 +263,27 @@ void Material::attachUniform(const char* name, float value) {
     glUseProgram(0);
 }
 
+void Material::attachUniform(const char* name, int value) {
+    glUseProgram(shaderProgram);
+    GLuint Uni = glGetUniformLocation(shaderProgram, name);
+    glUniform1i(Uni, value);
+    glUseProgram(0);
+}
+
+void Material::attachUniform(const char* name, glm::vec3 value) {
+    glUseProgram(shaderProgram);
+    GLuint Uni = glGetUniformLocation(shaderProgram, name);
+    glUniform3f(Uni, value.x, value.y, value.z);
+    glUseProgram(0);
+}
+
+void Material::attachUniform(const char* name, glm::vec4 value) {
+    glUseProgram(shaderProgram);
+    GLuint Uni = glGetUniformLocation(shaderProgram, name);
+    glUniform4f(Uni, value.x, value.y, value.z, value.w);
+    glUseProgram(0);
+}
+
 void Material::attachUniform(const char* name, GLuint tex) {
     glUseProgram(shaderProgram);
     GLuint Uni = glGetUniformLocation(shaderProgram, name);
@@ -268,8 +300,10 @@ void Material::updateUniforms() {
     GLuint uniProj = glGetUniformLocation(shaderProgram, "proj");
     glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(_Pl.proj));
 
-    GLuint lightSpaceMatrix = glGetUniformLocation(shaderProgram, "lightSpaceMatrix");
-    glUniformMatrix4fv(lightSpaceMatrix, 1, GL_FALSE, glm::value_ptr(*lightSpaceMatrixPtr));
+    if (lightSpaceMatrixPtr != nullptr) {
+        GLuint lightSpaceMatrix = glGetUniformLocation(shaderProgram, "lightSpaceMatrix");
+        glUniformMatrix4fv(lightSpaceMatrix, 1, GL_FALSE, glm::value_ptr(*lightSpaceMatrixPtr));
+    }
 
     uniModel = glGetUniformLocation(shaderProgram, "model");
 

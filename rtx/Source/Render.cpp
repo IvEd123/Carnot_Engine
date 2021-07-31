@@ -198,3 +198,19 @@ void OBJLoader(const char* path, GeometricObject* object) {
 
     return;
 }
+
+void OBJLoader_v(const char* path, GeometricObject* object) {
+    objl::Loader loader;
+    loader.LoadFile(path);
+
+    for (int i = 0; i < loader.LoadedVertices.size(); i++) {
+        object->vertices.push_back(toglmv3(loader.LoadedVertices[i].Position).x);
+        object->vertices.push_back(toglmv3(loader.LoadedVertices[i].Position).y);
+        object->vertices.push_back(toglmv3(loader.LoadedVertices[i].Position).z);
+        //(*object->vert_vec3)[object->array_index].push_back(toglmv3(loader.LoadedVertices[i].Position));
+        //(*object->norm_vec3)[object->array_index].push_back(toglmv3(loader.LoadedVertices[i].Normal));
+        //(*object->uv_vec2)[object->array_index].push_back(toglmv2(loader.LoadedVertices[i].TextureCoordinate));
+    }
+
+    return;
+}

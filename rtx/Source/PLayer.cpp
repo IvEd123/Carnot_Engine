@@ -34,6 +34,10 @@ void Player::MoveLegacy(sf::Vector2f ang) {
 
 void Player::Move(sf::Vector2f ang, float Dtime) {
 	
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+		pos.y += 0.1;
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::F))
+		pos.y -= 0.1;
 
 	if (velocity.x * velocity.x + velocity.z * velocity.z <= max_speed * max_speed) {
 

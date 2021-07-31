@@ -32,6 +32,8 @@ void bindTexture(const char* path, const char* name, GLuint* handler, Material* 
 
 void OBJLoader(const char* path, GeometricObject* object);
 
+void OBJLoader_v(const char* path, GeometricObject* object);
+
 void OBJLoaderLegacy(const char* path, GeometricObject* object);
 
 enum GeometryType{

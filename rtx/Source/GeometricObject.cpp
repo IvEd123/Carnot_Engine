@@ -401,6 +401,9 @@ void Mesh::Draw() {
     GLuint uniSize = glGetUniformLocation(material.getShaderProgram(), "size");
     glUniform1f(uniSize, size);
 
+    GLuint uniEye = glGetUniformLocation(material.getShaderProgram(), "eye");
+    glUniform3f(uniEye, _pl.GetPos().x, _pl.GetPos().y, _pl.GetPos().z);
+
     GLuint uniLight = glGetUniformLocation(material.getShaderProgram(), "light");
     glUniform3f(uniLight, material.sun_pos->x, material.sun_pos->y, material.sun_pos->z);
         

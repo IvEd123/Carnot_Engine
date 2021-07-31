@@ -87,14 +87,14 @@ vec2 intersect (vec3 origin, vec3 dir){
 }
 
 float GetSample(vec3 pos){
-    
-    //vec2 uv1 = posToUVW(toLocal( pos * cloudScale * scale_coeff + cloudOffset)) ;
-    //vec2 uv2 = posToUVW(toLocal( pos * (secondLayerScale * cloudScale) * scale_coeff + secondLayerOffset + cloudOffset)) ;
-    //vec2 uv3 = posToUVW(toLocal( pos * (thirdLayerScale * secondLayerScale * cloudScale) * scale_coeff + thirdLayerOffset + secondLayerOffset + cloudOffset)) ;
+	vec3 uvw1 = mod(pos * cloudScale * scale_coeff + cloudOffset, vec3(1.0));
+	vec3 uvw2 = mod(pos * secondLayerScale * scale_coeff + secondLayerOffset, vec3(1.0));
+	vec3 uvw3 = mod(pos * thirdLayerScale * scale_coeff + thirdLayerOffset, vec3(1.0));
 
-    float col = texture(tex, pos * cloudScale * scale_coeff + cloudOffset).r * 0.625
-			  + texture(tex, pos * (secondLayerScale * cloudScale) * scale_coeff + secondLayerOffset + cloudOffset).g * 0.250 
-			  + texture(tex, pos * (thirdLayerScale * secondLayerScale * cloudScale) * scale_coeff + thirdLayerOffset + secondLayerOffset + cloudOffset).b * 0.125;
+
+    float col = texture(tex, uvw1).r * 0.625
+			  + texture(tex, uvw2).g * 0.250 
+			  + texture(tex, uvw3).b * 0.125;
 
 	float h = vert_max.y - vert_min.y;
 	col *= 1 - (pos.y - vert_min.y) / h ;

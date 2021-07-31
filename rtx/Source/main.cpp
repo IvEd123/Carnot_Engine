@@ -72,7 +72,7 @@ int main(int argc, char* argv[]) {
 
     err().rdbuf(NULL);
     RenderWindow window(VideoMode(WIDTH, HEIGHT), "win", 7u, settings);
-    window.setFramerateLimit(60);
+    //window.setFramerateLimit(60);
     ImGui::SFML::Init(window);
     assert(window.getSettings().depthBits == 24);
     glewExperimental = GL_TRUE;
@@ -145,7 +145,7 @@ int main(int argc, char* argv[]) {
 
     Cube cloudbox = Cube(sf::Vector3f(0, 5, 0), sf::Vector3f(0, 0, 0), 1, &cloudtex);
     cloudbox.SetSize(1);
-    cloudbox.size_v = sf::Vector3f(50, 20, 50);
+    cloudbox.size_v = sf::Vector3f(5, 2, 5);
     cloudbox.CreateVerticesLegacy();
     cloudbox.material.loadShader(GL_VERTEX_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\cloud.vs");
     cloudbox.material.loadShader(GL_FRAGMENT_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\cloud.fs");
@@ -330,8 +330,8 @@ int main(int argc, char* argv[]) {
             lightAbsorptionTowardSun = 2.0,
             darknessThreshold = 0.2;
         static int
-            num_of_steps = 10,
-            num_of_steps_inside = 20;
+            num_of_steps = 33,
+            num_of_steps_inside = 25;
 
 
         ImGui::Begin("cloud");

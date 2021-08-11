@@ -24,7 +24,7 @@ out vec3 Normal;
 
 
 void main(){
-    vs_out.FragPos = vec3(model  * vec4(position * size, 1.0));
+    vs_out.FragPos = vec3(model  * vec4(position * 0.5 * size, 1.0));
     vs_out.FragPosLightSpace = lightSpaceMatrix *  vec4(vs_out.FragPos, 1.0);
     vs_out.depthMVP = lightSpaceMatrix;
 
@@ -33,7 +33,7 @@ void main(){
 
     Normal = normal;
     
-    gl_Position = proj * view * model * vec4( position * size, 1.0);
+    gl_Position = proj * view * model * vec4( position * 0.5 * size, 1.0);
 
 
 }

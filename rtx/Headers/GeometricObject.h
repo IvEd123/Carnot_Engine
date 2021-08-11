@@ -163,6 +163,49 @@ private:
 };
 
 
+class Cloudbox : public Cube {
+public:
+    Cloudbox(sf::Vector3f _pos, sf::Vector3f _res, sf::Vector3f size);
+    void                                    RenderCloud();
+    void                                    renderTexture(int SCREEN_WIDTH, int SCREEN_HEIGHT);
+    struct                                  CloudParams {
+        glm::vec4                           phaseParams = glm::vec4(0.72, 0.33, 1, 0.74);
+
+        glm::vec3
+                                            LightColor = glm::vec3(1, 1, 1),
+                                            cloudScale = glm::vec3(1.5),
+                                            cloudOffset = glm::vec3(0),
+                                            secondLayerScale = glm::vec3(1),
+                                            secondLayerOffset = glm::vec3(0),
+                                            thirdLayerScale = glm::vec3(1),
+                                            thirdLayerOffset = glm::vec3(0);
+
+        float
+                                            DensityThreshold = 0.3,
+                                            DensityMultiplier = 50,
+                                            lightAbsorptionThroughCloud = 0.85,
+                                            lightAbsorptionTowardSun = 2.0,
+                                            darknessThreshold = 0.2;
+
+        int
+                                            num_of_steps = 50,
+                                            num_of_steps_inside = 25;
+    };
+    CloudParams                             cloudParams;
+    void                                    recreateShaders();
+private:
+    sf::Vector3f                            cloudTexRes;
+    const int                               pointsGrid = 7;
+    GLuint                                  cloudbuffer;
+    GLuint                                  cloudtex;
+
+    void                                    initBuffer();
+    void                                    initTexture();
+    void                                    attachBuffer();
+    
+    void                                    uniforms();
+};
+
 
 //LIGHT
 

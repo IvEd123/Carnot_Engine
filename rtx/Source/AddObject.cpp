@@ -36,7 +36,7 @@ void AddObject(GeometryType type, std::string name) {
     vect->push_back(object);
     vect->back()->SetName(name);
     vect->back()->SetType(type);
-    vect->back()->SetSize(1);
+    vect->back()->SetSize(sf::Vector3f(1, 1, 1));
     set_pointers_to_arrays(vect->back());
     if (type != MESH)
         vect->back()->CreateVertices();

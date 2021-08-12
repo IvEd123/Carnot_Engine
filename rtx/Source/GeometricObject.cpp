@@ -91,15 +91,15 @@ void GeometricObject::SetRot(sf::Vector3f _rot){
     rot = _rot;
 }
 
-void GeometricObject::SetSize(float s) {
+void GeometricObject::SetSize(sf::Vector3f s) {
     size = s;
 }
 
-float GeometricObject::GetSize() {
+sf::Vector3f GeometricObject::GetSize() {
     return size;
 }
 
-float* GeometricObject::GetSizePtr() {
+sf::Vector3f* GeometricObject::GetSizePtr() {
     return &size;
 }
 
@@ -117,7 +117,7 @@ int GeometricObject::GetType() {
 //  `Y88P `Y88P' 888P' 8888 
 //                          
 
-Cube::Cube(float _size){
+Cube::Cube(sf::Vector3f _size){
     size = _size;
     pos = sf::Vector3f(0, 0, 0);
     rot = sf::Vector3f(0, 0, 0);
@@ -127,7 +127,7 @@ Cube::Cube(float _size){
     
 }
 
-Cube::Cube(sf::Vector3f _pos, sf::Vector3f _rot, float _size, GLuint* _texture){
+Cube::Cube(sf::Vector3f _pos, sf::Vector3f _rot, sf::Vector3f _size, GLuint* _texture){
     pos = _pos;
     rot = _rot;
     size = _size;
@@ -140,7 +140,7 @@ Cube::~Cube() {
 }
 
 Cube::Cube() {
-    size = 1;
+    size = sf::Vector3f(1, 1, 1);
     pos = sf::Vector3f(0, 0, 0);
     rot = sf::Vector3f(0, 0, 0);
 
@@ -183,7 +183,7 @@ void Cube::Draw(){
     glUniform3f(uniPos, pos.x, pos.y, pos.z);
 
     GLuint uniSize = glGetUniformLocation(material.getShaderProgram(), "size");
-    glUniform3f(uniSize,size_v.x, size_v.y,  size_v.z);
+    glUniform3f(uniSize,size.x, size.y,  size.z);
 
     GLuint uniLight = glGetUniformLocation(material.getShaderProgram(), "light");
     glUniform3f(uniLight, material.sun_pos->x, material.sun_pos->y, material.sun_pos->z);
@@ -363,7 +363,7 @@ Mesh::Mesh( char* path){
     rot = sf::Vector3f(0, 0, 0);
     OBJLoader(path, this);
 
-    size = 1.0;
+    size = sf::Vector3f( 1, 1, 1);
 
     material = Material();
 }
@@ -399,7 +399,7 @@ void Mesh::Draw() {
     glBindTexture(GL_TEXTURE_2D, material.getTexture());
 
     GLuint uniSize = glGetUniformLocation(material.getShaderProgram(), "size");
-    glUniform1f(uniSize, size);
+    glUniform3f(uniSize, size.x, size.y, size.z);
 
     GLuint uniEye = glGetUniformLocation(material.getShaderProgram(), "eye");
     glUniform3f(uniEye, _pl.GetPos().x, _pl.GetPos().y, _pl.GetPos().z);
@@ -449,7 +449,7 @@ void Plane::Draw(){
     material.setModel(glm::mat4(1.0f));
 
     GLuint uniSize = glGetUniformLocation(material.getShaderProgram(), "size");
-    glUniform1f(uniSize, size);
+    glUniform3f(uniSize, size.x, size.y, size.z);
     
     GLuint uniRepeat = glGetUniformLocation(material.getShaderProgram(), "repeat");
     glUniform1f(uniRepeat, texture_repeat);
@@ -601,7 +601,7 @@ void LightSource::Draw(std::vector <GeometricObject*> obj_list) {
             glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model));
 
             GLuint size_loc = glGetUniformLocation(ShaderProgram, "size");
-            glUniform1f(size_loc, obj_list[i]->GetSize());
+            glUniform3f(size_loc, obj_list[i]->GetSize().x, obj_list[i]->GetSize().y, obj_list[i]->GetSize().z);
 
             glBindVertexArray(obj_list[i]->material.getVAO());
 

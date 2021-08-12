@@ -16,7 +16,7 @@
 typedef struct gameobject {
 	sf::Vector3f* pos;
 	sf::Vector3f* rot;
-	float* size;
+	sf::Vector3f* size;
 };
 
 typedef int (*UPDFUNCPTR) (gameobject*);

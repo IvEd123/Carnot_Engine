@@ -60,7 +60,7 @@ protected:
 	char *name;
 	sf::Vector3f *pos;
 	sf::Vector3f *rot;
-	float* size;
+	sf::Vector3f* size;
 };
 
 class GUI_cloud : public GUI_Object  {

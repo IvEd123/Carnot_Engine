@@ -9,7 +9,7 @@ uniform mat4 proj;
 
 uniform sampler2D heightmap;
 
-uniform float size;
+uniform vec3 size;
 uniform float height;
 uniform float res;
 

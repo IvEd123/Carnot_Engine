@@ -31,7 +31,7 @@ GUI_Object::GUI_Object(){
 	name = default_name;
 	pos = &default_vec;
 	rot = &default_vec;
-	size = &default_float;
+	size = &default_vec;
 }
 
 void GUI_Object::SetObject(GeometricObject* obj) {
@@ -45,7 +45,7 @@ void GUI_Object::Update() {
 	Begin(name);
 	InputFloat3("Position", vec_to_ptr(pos));
 	InputFloat3("Rotation", vec_to_ptr(rot));
-	InputFloat("Size", size);
+	InputFloat3("Size", vec_to_ptr(size));
 	if (TreeNode("material"))
 		Text("mat");
 
@@ -57,7 +57,7 @@ void GUI_cloud::Update(){
     ImGui::Begin("cloud");
     InputFloat3("Position", vec_to_ptr(pos));
     InputFloat3("Rotation", vec_to_ptr(rot));
-    InputFloat("Size", size);
+    InputFloat3("Size",  vec_to_ptr(size));
     ImGui::Text("March settings");
     ImGui::InputInt("Steps for shape", &(cloudParamsStruct->num_of_steps));
     ImGui::InputInt("Steps for shading", &(cloudParamsStruct->num_of_steps_inside));

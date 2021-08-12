@@ -28,7 +28,7 @@ private:
 protected:
     
     int                                     type;
-    float                                   size;
+    sf::Vector3f                            size;
     sf::Vector3f                            pos;
     sf::Vector3f                            rot;
     
@@ -47,12 +47,12 @@ public:
     void                                    SetPos(sf::Vector3f _pos);
     sf::Vector3f                            GetRot();
     void                                    SetRot(sf::Vector3f _rot);
-    void                                    SetSize(float s);
-    float                                   GetSize();
+    void                                    SetSize(sf::Vector3f s);
+    sf::Vector3f                            GetSize();
     
     sf::Vector3f *                          GetPosPtr();
     sf::Vector3f *                          GetRotPtr();
-    float        *                          GetSizePtr();
+    sf::Vector3f *                          GetSizePtr();
 
     Material                                material;
     bool                                    cast_shadow = true;
@@ -75,8 +75,8 @@ private:
     std::string                             model_path;
     
 public:
-    Cube(float _size);
-    Cube(sf::Vector3f _pos, sf::Vector3f _rot, float _size, GLuint* _texture);
+    Cube(sf::Vector3f _size);
+    Cube(sf::Vector3f _pos, sf::Vector3f _rot, sf::Vector3f _size, GLuint* _texture);
     Cube();
     ~Cube();
 

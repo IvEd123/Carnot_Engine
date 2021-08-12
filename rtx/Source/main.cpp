@@ -238,14 +238,14 @@ int main(int argc, char* argv[]) {
         sun.SetPov(pl.GetPos() + sun_spawn_pov);
         sun.SetPos(pl.GetPos() + sun_spawn_pos);
 
-        gui_cloud.Update();
-        cloudbox.RenderCloud();
+        
 
 
         for (int i = 0; i < obj_list.size(); i++)
             obj_list[i]->Draw();    
 
-        
+        gui_cloud.Update();
+        cloudbox.RenderCloud();
 
        
 

@@ -192,6 +192,34 @@ void Cube::Draw(){
     glBindVertexArray(0);
 }
 
+void Cube::Draw(sf::Vector3f cameraPos){
+    UpdateModelMatrix();
+    material.updateUniforms();
+    glBindVertexArray(material.getVAO());
+    glUseProgram(material.getShaderProgram());
+    
+    material.setModel(glm::mat4(1.0f));
+
+      // glActiveTexture(GL_TEXTURE0);
+    //glBindTexture(GL_TEXTURE_3D, material.getTexture()); 
+
+
+    GLuint uniEye = glGetUniformLocation(material.getShaderProgram(), "eyepos");
+    glUniform3f(uniEye, _pl.GetPos().x, _pl.GetPos().y, _pl.GetPos().z);
+
+    GLuint uniPos = glGetUniformLocation(material.getShaderProgram(), "pos");
+    glUniform3f(uniPos, pos.x, pos.y, pos.z);
+
+    GLuint uniSize = glGetUniformLocation(material.getShaderProgram(), "size");
+    glUniform3f(uniSize,size.x, size.y,  size.z);
+
+    GLuint uniLight = glGetUniformLocation(material.getShaderProgram(), "light");
+    glUniform3f(uniLight, material.sun_pos->x, material.sun_pos->y, material.sun_pos->z);
+
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glBindVertexArray(0);
+}
+
 //  .d88b. .d88b 888b. 8888 8888 8888 8b  8 
 //  YPwww. 8P    8  .8 8www 8www 8www 8Ybm8 
 //      d8 8b    8wwK' 8    8    8    8  "8 
@@ -411,6 +439,9 @@ void Mesh::Draw() {
     glActiveTexture(GL_TEXTURE1);
     unsigned int sm = *material.shadowmap;
     glBindTexture(GL_TEXTURE_2D, sm);
+    
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, material.getEnvironmentMap());
 
     glDrawArrays(GL_TRIANGLES, 0,  (*vert_vec3)[array_index].size());
 
@@ -677,7 +708,13 @@ int LightSource::CreateShaderProgram() {
 }
 
 
-
+ //     _____ _                 _ ____            
+//    / ____| |               | |  _ \           
+//   | |    | | ___  _   _  __| | |_) | _____  __
+//   | |    | |/ _ \| | | |/ _` |  _ < / _ \ \/ /
+//   | |____| | (_) | |_| | (_| | |_) | (_) >  < 
+//    \_____|_|\___/ \__,_|\__,_|____/ \___/_/\_\
+//                                               
 
  Cloudbox::Cloudbox(sf::Vector3f _pos, sf::Vector3f _res, sf::Vector3f size) {
     pos = _pos;
@@ -724,6 +761,7 @@ int LightSource::CreateShaderProgram() {
     }
 
 
+    glGenerateMipmap(GL_TEXTURE_3D);
 
     glBindVertexArray(0);
     glUseProgram(0);
@@ -748,7 +786,7 @@ int LightSource::CreateShaderProgram() {
      glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
      glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
      glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-     glGenerateMipmap(GL_TEXTURE_3D);
+     
 
      material.bindTexture(cloudtex);
  }
@@ -790,4 +828,191 @@ int LightSource::CreateShaderProgram() {
 
      material.attachUniform("tex_res", glm::vec3(cloudTexRes.x, cloudTexRes.y, cloudTexRes.z));
  }
+ 
 
+ //     _____ _  ____     __
+ //    / ____| |/ /\ \   / /
+ //   | (___ | ' /  \ \_/ / 
+ //    \___ \|  <    \   /  
+ //    ____) | . \    | |   
+ //   |_____/|_|\_\   |_|   
+ //                         
+ //                        
+
+
+ void Sky::Camera::switchToFace(int faceIndex) {
+     switch (faceIndex){
+     case 0:
+         pitch = 0;
+         yaw = 90;
+         break;
+     case 1:
+         pitch = 0;
+         yaw = -90;
+         break;
+     case 2:
+         pitch = -90;
+         yaw = 180;
+         break;
+     case 3:
+         pitch = 90;
+         yaw = 180;
+         break;
+     case 4:
+         pitch = 0;
+         yaw = 180;
+         break;
+     case 5:
+         pitch = 0;
+         yaw = 0;
+         break;
+     default:
+         break;
+     }
+ }
+
+ void Sky::Camera::createMatrices() {
+    float scale = (float)((1.f / tan(M_PI / 2.f)));
+    float frustrum_length = 100;
+
+    proj = glm::perspective(M_PI_2, 1.0, 0.1, 100.0);
+    
+ }
+
+ void Sky::updateMatrices() {
+     camera.view = glm::mat4(1.0f);
+     
+     camera.view = glm::rotate(camera.view, glm::radians(180.f ), glm::vec3(0.0, 0.0, 1.0));
+     camera.view = glm::rotate(camera.view, glm::radians(camera.pitch ), glm::vec3(1.0, 0.0, 0.0));
+     camera.view = glm::rotate(camera.view, glm::radians(camera.yaw ),   glm::vec3(0.0, 1.0, 0.0));
+     camera.view = glm::translate(camera.view, ConvertSFML2GLM(-camera.cameraPos));
+    //add from tutorial if doesn't work
+ }
+
+ void Sky::Cloud::initTexture(int res){
+     glGenTextures(1, &cloudCubeMap);
+     glBindTexture(GL_TEXTURE_CUBE_MAP, cloudCubeMap);
+
+     for (int i = 0; i < 6; i++) {
+         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, res, res, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+     }
+     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+ }
+
+ void Sky::RenderCloud() {
+    
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_FRONT);
+    glEnable(GL_TEXTURE_3D);
+
+    cloudsOnSky.cloudbox->uniforms();
+    //cloudsOnSky.cloudbox->material.updateUniforms();
+
+    glUseProgram(cloudsOnSky.cloudbox->material.getShaderProgram());
+    glBindVertexArray(cloudsOnSky.cloudbox->material.getVAO());
+     
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_3D, cloudsOnSky.cloudbox->GetTexture());
+
+    cloudsOnSky.cloudbox->material.setModel(glm::mat4(1.0));
+
+    GLuint uniView = glGetUniformLocation(cloudsOnSky.cloudbox->material.getShaderProgram(), "view");
+    glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(camera.view));
+
+    GLuint uniProj = glGetUniformLocation(cloudsOnSky.cloudbox->material.getShaderProgram(), "proj");
+    glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(camera.proj));
+
+
+
+    GLuint uniModel = glGetUniformLocation(cloudsOnSky.cloudbox->material.getShaderProgram(), "model");
+    glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(cloudsOnSky.cloudbox->material.getModel()));
+
+
+
+    GLuint uniEye = glGetUniformLocation(cloudsOnSky.cloudbox->material.getShaderProgram(), "eyepos");
+    glUniform3f(uniEye, camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z);
+
+    GLuint uniPos = glGetUniformLocation(cloudsOnSky.cloudbox->material.getShaderProgram(), "pos");
+    glUniform3f(uniPos, cloudsOnSky.cloudbox->GetPos().x, cloudsOnSky.cloudbox->GetPos().y, cloudsOnSky.cloudbox->GetPos().z);
+
+    GLuint uniSize = glGetUniformLocation(cloudsOnSky.cloudbox->material.getShaderProgram(), "size");
+    glUniform3f(uniSize, cloudsOnSky.cloudbox->GetSize().x, cloudsOnSky.cloudbox->GetSize().y, cloudsOnSky.cloudbox->GetSize().z);
+
+    GLuint uniLight = glGetUniformLocation(cloudsOnSky.cloudbox->material.getShaderProgram(), "light");
+    glUniform3f(uniLight, cloudsOnSky.cloudbox->material.sun_pos->x, cloudsOnSky.cloudbox->material.sun_pos->y, cloudsOnSky.cloudbox->material.sun_pos->z);
+
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glBindVertexArray(0);
+    glUseProgram(0);
+
+    glDisable(GL_CULL_FACE);
+    glDisable(GL_TEXTURE_3D);
+ }
+
+ void Sky::initTexture(){
+     glGenTextures(1, &skyBoxTexture);
+     glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTexture);
+     std::cout << "glerror " << glGetError() << std::endl;
+     for (int i = 0; i < 6; i++) {
+         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, cubemapRes, cubemapRes, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+     }
+     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+ }
+
+ Sky::Sky(Cloudbox* _cloudbox) {
+     std::cout << "glerror " << glGetError() << std::endl;
+     cloudsOnSky.cloudbox = _cloudbox;
+     camera.cameraPos.x = cloudsOnSky.cloudbox->GetPos().x;
+     camera.cameraPos.y = cloudsOnSky.cloudbox->GetPos().y - cloudsOnSky.cloudbox->GetSize().y / 2.f;
+     camera.cameraPos.z = cloudsOnSky.cloudbox->GetPos().z;
+
+     initTexture();
+     skyBoxFrameBuffer = createFrameBuffer(cubemapRes, cubemapRes);
+     camera.createMatrices();
+ }
+
+ void Sky::setRadius() {
+
+ }
+
+ void Sky::setCloudBoxPosition() {
+
+ }
+
+ void Sky::initFramebuffer() {
+     glGenBuffers(1, &skyBoxFrameBuffer);
+
+     //glBindFramebuffer(GL_FRAMEBUFFER, skyBoxFrameBuffer);
+     //if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+      //   std::cout << "ERRROR WITH CLOUD BUFFER " << glCheckFramebufferStatus(GL_FRAMEBUFFER) << std::endl;
+    // glDrawBuffer(GL_COLOR_ATTACHMENT0);
+     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+     
+ }
+
+ void Sky::Render() {
+    glViewport(0, 0, cubemapRes, cubemapRes);
+    glBindFramebuffer(GL_FRAMEBUFFER, skyBoxFrameBuffer);
+     
+    for (int i = 0; i < 6; i++) {
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, skyBoxTexture, 0);
+        camera.switchToFace(i);  
+        updateMatrices();
+        RenderCloud();
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+ }
+
+ GLuint Sky::GetTex() {
+     return skyBoxTexture;
+ }

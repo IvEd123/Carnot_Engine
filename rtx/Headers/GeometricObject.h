@@ -81,6 +81,7 @@ public:
     ~Cube();
 
     void                                    Draw();
+    void                                    Draw(sf::Vector3f);
     void                                    CreateVertices() {};
     void                                    CreateVerticesLegacy();
     void                                    setModel(char* path);
@@ -193,6 +194,8 @@ public:
     };
     CloudParams                             cloudParams;
     void                                    recreateShaders();
+    void                                    uniforms();
+    GLuint                                  GetTexture() { return cloudtex; }
 private:
     sf::Vector3f                            cloudTexRes;
     const int                               pointsGrid = 7;
@@ -203,7 +206,7 @@ private:
     void                                    initTexture();
     void                                    attachBuffer();
     
-    void                                    uniforms();
+    
 };
 
 
@@ -254,5 +257,51 @@ public:
     void                                    Draw(std::vector <GeometricObject*> obj_list);
 };
 
+
+class Sky {
+public:
+    Sky(Cloudbox*);
+    void                                    Render();
+    GLuint                                  GetTex();
+protected:
+    struct Cloud {
+        Cloudbox*                           cloudbox;
+        GLuint                              cloudCubeMap;
+        
+        
+        void                                initTexture(int res);
+    };
+    struct Camera {
+        sf::Vector3f                        cameraPos = sf::Vector3f(0, 0, 0);
+        float                               pitch = 0;
+        float                               yaw = 0;
+        glm::mat4                           proj; 
+        glm::mat4                           view;
+        
+        void                                createMatrices();
+        
+        void                                switchToFace(int faceIndex);
+    };
+
+    LightSource*                            sun;
+    struct Cloud                            cloudsOnSky;
+    struct Camera                           camera;
+    sf::Vector3f                            centerPos;
+    float                                   innerRadius; // R(a, b, ang) = ( b / 2 * sin(ang) - a ) / cos(ang)
+    float                                   outerRadius; // r = [R * cos(ang); R]
+    float                                   angle;       
+    GLuint                                  skyBoxTexture;
+    GLuint                                  skyBoxFrameBuffer;
+    GLuint buff;
+    int                                     cubemapRes = 512;
+
+    void                                    RenderCloud();
+    void                                    updateMatrices();
+    void                                    initFramebuffer();
+    //void                                  attachFramebuffer();
+    void                                    initTexture();
+    void                                    setRadius();
+    void                                    setCloudBoxPosition();
+};
 
 #endif

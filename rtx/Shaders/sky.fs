@@ -5,6 +5,8 @@ in vec2 Texcoord;
 uniform vec3 light;
 uniform vec3 eye;
 
+uniform samplerCube skybox;
+
 out vec4 outColor;
 
 in VS_OUT {
@@ -80,4 +82,7 @@ void main(){
 
      outColor = vec4(sky +  vec3(1-  tint, 1- tint, 0.0)*0.2 + vec3(cloud * (tint)) * 0.2 , 1.0);
      outColor.rgb += pow(max(dot(view_dir, light_dir), 0), 64.0);
+
+     //outColor = vec4( normalize(fs_in.FragPos), 1);
+     outColor = texture(skybox, normalize(fs_in.FragPos));
 }

@@ -94,6 +94,15 @@ GLuint createFrameBuffer(int width, int height, GLuint* depghstencil, GLuint *co
     return frameBuffer;
 }
 
+GLuint createFrameBuffer(int width, int height){
+    GLuint frameBuffer;
+    glGenFramebuffers(1, &frameBuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+
+
+    return frameBuffer;
+}
+
 void bindTexture(const char* path, const char* name, GLuint* handler, Material* material, int i) {
     *handler = loadTexture(path);
     glBindVertexArray(material->getVAO());

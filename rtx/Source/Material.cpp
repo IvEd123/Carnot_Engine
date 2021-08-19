@@ -146,6 +146,7 @@ void Material::bindTexture(GLuint texure, const GLchar* name) {
     glBindVertexArray(0);
 }
 
+
 void Material::specifyVertexAttributes(GLuint shaderProgram) {
     glBindVertexArray(vao);
     std::cout << "SCENE" << std::endl;
@@ -306,7 +307,6 @@ void Material::updateUniforms() {
     }
 
     uniModel = glGetUniformLocation(shaderProgram, "model");
-
     glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(_Pl.proj));
 
     glUniformMatrix4fv(getUniModel(), 1, GL_FALSE, glm::value_ptr(getModel()));

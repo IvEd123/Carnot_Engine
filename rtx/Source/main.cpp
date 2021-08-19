@@ -106,7 +106,7 @@ int main(int argc, char* argv[]) {
 
     //cloud map
     glEnable(GL_TEXTURE_3D);
-    Cloudbox cloudbox = Cloudbox(sf::Vector3f(0, 5, 0), sf::Vector3f(225, 256, 256), sf::Vector3f(1, 1, 1));
+    Cloudbox cloudbox = Cloudbox(sf::Vector3f(0, 0, 0), sf::Vector3f(225, 256, 256), sf::Vector3f(1, 1, 1));
     cloudbox.material.loadShader(GL_VERTEX_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\cloud.vs");
     cloudbox.material.loadShader(GL_FRAGMENT_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\cloud.fs");
     cloudbox.material.CreateShaders();
@@ -114,6 +114,11 @@ int main(int argc, char* argv[]) {
     cloudbox.renderTexture(WIDTH, HEIGHT);
     cloudbox.recreateShaders();
     cloudbox.addLightSource(&sun);
+
+
+    std::cout << "glerror " << glGetError() << std::endl;
+    Sky sky = Sky(&cloudbox);
+
 
     //framebuffer
     Screen screen = Screen();
@@ -154,6 +159,12 @@ int main(int argc, char* argv[]) {
     GUI_cloud gui_cloud = GUI_cloud();
     gui_cloud.SetObject(&cloudbox);
 
+    
+    //cloudbox.RenderCloud();
+   
+    
+        sky.Render();
+        glViewport(0, 0, WIDTH, HEIGHT);
     for ever{
         
 
@@ -238,15 +249,18 @@ int main(int argc, char* argv[]) {
         sun.SetPov(pl.GetPos() + sun_spawn_pov);
         sun.SetPos(pl.GetPos() + sun_spawn_pos);
 
-        
-
-
-        for (int i = 0; i < obj_list.size(); i++)
-            obj_list[i]->Draw();    
-
         gui_cloud.Update();
-        cloudbox.RenderCloud();
+        //std::cout << "clear glerror " << glGetError() << std::endl;
 
+        glBindFramebuffer(GL_FRAMEBUFFER, screen.frameBuffer);
+        
+        obj_list[0]->material.setEnvironmentMap(sky.GetTex());
+        for (int i = 0; i < obj_list.size(); i++)
+            obj_list[i]->Draw();   
+
+
+        
+        
        
 
         if (selected != -1)

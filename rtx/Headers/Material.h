@@ -57,10 +57,12 @@ public:
     GLuint                                  getUniModel() { return uniModel; }
     glm::mat4                               getModel() { return model; }
     GLuint                                  getTexture() { return texture; }
+    GLuint                                  getEnvironmentMap() { return environmentCubeMap; }
 
     void                                    setUniModel(GLuint uniform) { uniModel = uniform; }
     void                                    setModel(glm::mat4 _model) { model = _model; }
     void                                    setTexture(GLuint _texture) { texture = _texture; }
+    void                                    setEnvironmentMap(GLuint _texture) { environmentCubeMap = _texture; }
 
     std::string                             GetVSPath() { return vertexShader_path; }
     
@@ -76,6 +78,7 @@ private:
     GLuint                                  norm_buff;
     GLuint                                  uv_buff;
     GLuint                                  texture;
+    GLuint                                  environmentCubeMap;
     GLuint                                  vertexShader;
     GLuint                                  geometryShader;
     GLuint                                  fragmentShader;

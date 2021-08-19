@@ -168,7 +168,7 @@ void main() {
 	else
 	//outColor = vec4(vec3(dot(dir, normalize(light - FragPos)  )  ), 1);
 	//outColor = vec4(vec3(GetSample(FragPos)), 1);*/
-		//outColor = vec4( posToUVW(FragPos) , 1, 1);
+	//outColor = vec4( posToUVW(FragPos) , 1, 1);
 	//outColor = vec4(vec3(1), 1  - exp(-t.y));  */
 	//outColor = vec4(vec3(t.x + t.y)*0.3, 1);
 	//outColor = texture(tex, vec2(texCoord.x + texCoord.z, texCoord.y));

@@ -163,8 +163,7 @@ int main(int argc, char* argv[]) {
     //cloudbox.RenderCloud();
    
     
-        sky.Render();
-        glViewport(0, 0, WIDTH, HEIGHT);
+        
     for ever{
         
 
@@ -251,14 +250,17 @@ int main(int argc, char* argv[]) {
 
         gui_cloud.Update();
         //std::cout << "clear glerror " << glGetError() << std::endl;
-
+        sky.Render();
+        glViewport(0, 0, WIDTH, HEIGHT);
         glBindFramebuffer(GL_FRAMEBUFFER, screen.frameBuffer);
         
         obj_list[0]->material.setEnvironmentMap(sky.GetTex());
         for (int i = 0; i < obj_list.size(); i++)
             obj_list[i]->Draw();   
 
-
+        sf::Vector3f p = cloudbox.GetPos();
+        p.y = 0;
+        //cloudbox.RenderCloud(0.5, 1, p);
         
         
        

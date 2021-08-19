@@ -167,7 +167,7 @@ private:
 class Cloudbox : public Cube {
 public:
     Cloudbox(sf::Vector3f _pos, sf::Vector3f _res, sf::Vector3f size);
-    void                                    RenderCloud();
+    void                                    RenderCloud(float innerRadius, float outerRadius, sf::Vector3f center);
     void                                    renderTexture(int SCREEN_WIDTH, int SCREEN_HEIGHT);
     struct                                  CloudParams {
         glm::vec4                           phaseParams = glm::vec4(0.72, 0.33, 1, 0.74);
@@ -289,11 +289,11 @@ protected:
     sf::Vector3f                            centerPos;
     float                                   innerRadius; // R(a, b, ang) = ( b / 2 * sin(ang) - a ) / cos(ang)
     float                                   outerRadius; // r = [R * cos(ang); R]
-    float                                   angle;       
+    float                                   angle = M_PI_4;       
     GLuint                                  skyBoxTexture;
     GLuint                                  skyBoxFrameBuffer;
     GLuint buff;
-    int                                     cubemapRes = 512;
+    int                                     cubemapRes = 128;
 
     void                                    RenderCloud();
     void                                    updateMatrices();

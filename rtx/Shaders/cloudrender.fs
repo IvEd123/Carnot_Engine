@@ -28,6 +28,10 @@ uniform vec3 thirdLayerOffset;
 uniform vec4 phaseParams;
 
 
+uniform float r;
+uniform float R;
+uniform vec3 center;
+
 uniform  int num_of_steps;
 uniform float DensityThreshold;
 uniform float DensityMultiplier;
@@ -96,7 +100,7 @@ float GetSample(vec3 pos){
 			  + texture(tex, uvw2).g * 0.250 
 			  + texture(tex, uvw3).b * 0.125;
 
-	float h = vert_max.y - vert_min.y;
+	float h = abs(R - r);
 	col *= 1 - (pos.y - vert_min.y) / h ;
     col = max (0, col - DensityThreshold) * DensityMultiplier ;
     return col;
@@ -142,18 +146,22 @@ void main() {
 	float phaseVal = phase(dot(dir, dirToLight));
 
 	while(dstTravelled < dstInsideBox){
-
+		
+		
 		vec3 rayPos = origin + dir * (dstToBox +  dstTravelled);
-		float density = GetSample(rayPos);
+
+		if(length(rayPos - center) > r && length(rayPos - center) < R  ){
+			float density = GetSample(rayPos);
 
 
 
-		if(density > 0){
-			float lightTransmittance = lightmarch(rayPos);
-			lightEnergy += density * step * lightTransmittance * transmittance * phaseVal;
-			transmittance *= exp( - density * step * lightAbsorptionThroughCloud);
-			if (transmittance < 0.01)
-				break;
+			if(density > 0){
+				float lightTransmittance = lightmarch(rayPos);
+				lightEnergy += density * step * lightTransmittance * transmittance * phaseVal;
+				transmittance *= exp( - density * step * lightAbsorptionThroughCloud);
+				if (transmittance < 0.01)
+					break;
+			}
 		}
 	
 		dstTravelled += step;

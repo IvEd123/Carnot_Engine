@@ -168,7 +168,7 @@ void main() {
 	}
 
 	vec3 cloudCol = lightEnergy * LightColor;
-	vec3 color = cloudCol + vec3(1) * transmittance;
+	vec3 color = cloudCol + vec3(0.53, 0.8, 0.92) * transmittance;
 
 	outColor = vec4(color, 1 - transmittance);
 	/*if(k < 0)

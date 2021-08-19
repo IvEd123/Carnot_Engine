@@ -994,9 +994,6 @@ int LightSource::CreateShaderProgram() {
  }
 
  void Sky::setRadius() {
-     //float                                   innerRadius; // R(a, b, ang) = ( b / 2 * sin(ang) - a ) / cos(ang)
-     //float                                   outerRadius; // r = [R * cos(ang); R]
-
      centerPos = cloudsOnSky.cloudbox->GetPos();
      centerPos.y -= cloudsOnSky.cloudbox->GetSize().y / 2.f;
      outerRadius = cloudsOnSky.cloudbox->GetSize().y;

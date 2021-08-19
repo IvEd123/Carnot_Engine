@@ -162,10 +162,10 @@ int main(int argc, char* argv[]) {
     
     //cloudbox.RenderCloud();
    
-    
+    unsigned int counter = 0;
         
     for ever{
-        
+        counter++;
 
         float Dtime = clock.getElapsedTime().asSeconds() * 100;
 
@@ -250,9 +250,12 @@ int main(int argc, char* argv[]) {
 
         gui_cloud.Update();
         //std::cout << "clear glerror " << glGetError() << std::endl;
-        sky.Render();
-        glViewport(0, 0, WIDTH, HEIGHT);
-        glBindFramebuffer(GL_FRAMEBUFFER, screen.frameBuffer);
+        if (counter % 10 == 0) {
+            sky.Render();
+            glViewport(0, 0, WIDTH, HEIGHT);
+            glBindFramebuffer(GL_FRAMEBUFFER, screen.frameBuffer);
+        }
+        
         
         obj_list[0]->material.setEnvironmentMap(sky.GetTex());
         for (int i = 0; i < obj_list.size(); i++)

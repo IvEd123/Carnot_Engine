@@ -174,11 +174,11 @@ public:
 
         glm::vec3
                                             LightColor = glm::vec3(1, 1, 1),
-                                            cloudScale = glm::vec3(1.5),
+                                            cloudScale = glm::vec3(10),
                                             cloudOffset = glm::vec3(0),
-                                            secondLayerScale = glm::vec3(1),
+                                            secondLayerScale = glm::vec3(10),
                                             secondLayerOffset = glm::vec3(0),
-                                            thirdLayerScale = glm::vec3(1),
+                                            thirdLayerScale = glm::vec3(10),
                                             thirdLayerOffset = glm::vec3(0);
 
         float
@@ -293,7 +293,7 @@ protected:
     GLuint                                  skyBoxTexture;
     GLuint                                  skyBoxFrameBuffer;
     GLuint buff;
-    int                                     cubemapRes = 128;
+    int                                     cubemapRes = 512;
 
     void                                    RenderCloud();
     void                                    updateMatrices();

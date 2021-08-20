@@ -106,7 +106,7 @@ int main(int argc, char* argv[]) {
 
     //cloud map
     glEnable(GL_TEXTURE_3D);
-    Cloudbox cloudbox = Cloudbox(sf::Vector3f(0, 0, 0), sf::Vector3f(225, 256, 256), sf::Vector3f(1, 1, 1));
+    Cloudbox cloudbox = Cloudbox(sf::Vector3f(0, 0, 0), sf::Vector3f(128, 128, 128), sf::Vector3f(5, 1, 5));
     cloudbox.material.loadShader(GL_VERTEX_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\cloud.vs");
     cloudbox.material.loadShader(GL_FRAGMENT_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\cloud.fs");
     cloudbox.material.CreateShaders();
@@ -248,10 +248,18 @@ int main(int argc, char* argv[]) {
         sun.SetPov(pl.GetPos() + sun_spawn_pov);
         sun.SetPos(pl.GetPos() + sun_spawn_pos);
 
+
+        ImGui::Begin("sky");
+        ImGui::InputFloat("R", &sky.outerRadius);
+        ImGui::InputFloat("r", &sky.innerRadius);
+        ImGui::InputFloat3("cp", &sky.centerPos.x);
+        ImGui::InputFloat("atmosphere curveture", &sky.angle);
+        ImGui::End();
         gui_cloud.Update();
         //std::cout << "clear glerror " << glGetError() << std::endl;
         if (counter % 10 == 0) {
-            sky.Render();
+            //std::cout << counter / 10 % 6 << std::endl;
+            sky.Render(counter / 10 % 6);
             glViewport(0, 0, WIDTH, HEIGHT);
             glBindFramebuffer(GL_FRAMEBUFFER, screen.frameBuffer);
         }

@@ -76,7 +76,7 @@ float phase(float a) {
 }
 
 
-vec2 intersect (vec3 origin, vec3 dir){
+vec2 intersectBox(vec3 origin, vec3 dir){
 	vec3 t0 = (vert_min - origin) / dir;
 	vec3 t1 = (vert_max - origin) / dir;
 	vec3 tmin = min(t0, t1);
@@ -88,6 +88,22 @@ vec2 intersect (vec3 origin, vec3 dir){
 	float dstToBox = max (0, dstA);
 	float dstInsideBox = max (0, dstB - dstToBox);
 	return vec2(dstToBox, dstInsideBox);
+}
+
+vec2 intersectSpheres(vec3 origin, vec3 dir){
+	vec3 k = origin - center;
+	float b = dot(k, dir);
+	float c = dot(k, k) - r*r;
+	float C = dot(k, k) - R*R;
+	float d = b*b - c;
+	float D = b*b - C;
+
+	float t1 =-b + sqrt(d);
+	float t2 =-b + sqrt(D);
+
+
+	return vec2(t1, t2);
+
 }
 
 float GetSample(vec3 pos){
@@ -108,7 +124,7 @@ float GetSample(vec3 pos){
 
 float lightmarch(vec3 position){
 	vec3 dirToLight = normalize(light - eyepos);
-	float dstInsideBox = intersect(position, dirToLight).y;
+	float dstInsideBox = intersectBox(position, dirToLight).y;
 
 	float stepSize = dstInsideBox / num_of_steps_inside;
 	float totalDensity = 0;
@@ -132,11 +148,11 @@ void main() {
 	vec3 origin = eyepos;
 	vec3 dir = normalize(FragPos - eyepos);
 
-	vec2 t = intersect(origin, dir);
+	vec2 t = intersectBox(origin, dir);
+	vec2 ts = intersectSpheres(origin, dir);
 
-
-	float dstInsideBox = t.y;
-	float dstToBox = t.x;
+	float dstInsideBox = ts.y - ts.x;
+	float dstToBox = ts.x;
 	float dstTravelled = 0;
 	float step = dstInsideBox / num_of_steps;
 	float totalDensity  = 0;
@@ -150,7 +166,7 @@ void main() {
 		
 		vec3 rayPos = origin + dir * (dstToBox +  dstTravelled);
 
-		if(length(rayPos - center) > r && length(rayPos - center) < R  ){
+
 			float density = GetSample(rayPos);
 
 
@@ -162,7 +178,7 @@ void main() {
 				if (transmittance < 0.01)
 					break;
 			}
-		}
+		
 	
 		dstTravelled += step;
 	}

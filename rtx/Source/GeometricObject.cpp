@@ -994,10 +994,19 @@ int LightSource::CreateShaderProgram() {
  }
 
  void Sky::setRadius() {
-     centerPos = cloudsOnSky.cloudbox->GetPos();
+     /*centerPos = cloudsOnSky.cloudbox->GetPos();
      centerPos.y -= cloudsOnSky.cloudbox->GetSize().y / 2.f;
      outerRadius = cloudsOnSky.cloudbox->GetSize().y;
-     innerRadius = 0.2;
+     innerRadius = 0.1;*/
+
+     outerRadius = std::min(cloudsOnSky.cloudbox->GetSize().x, cloudsOnSky.cloudbox->GetSize().z) / (2.f * sin(angle));
+
+     centerPos = cloudsOnSky.cloudbox->GetPos();
+     centerPos.y = cloudsOnSky.cloudbox->GetPos().y + cloudsOnSky.cloudbox->GetSize().y / 2 - outerRadius;
+
+     innerRadius = cloudsOnSky.cloudbox->GetPos().y - cloudsOnSky.cloudbox->GetSize().y - centerPos.y + 0.2f;
+
+
  }
 
  void Sky::setCloudBoxPosition() {
@@ -1010,16 +1019,18 @@ int LightSource::CreateShaderProgram() {
      
  }
 
- void Sky::Render() {
+ void Sky::Render(int i) {
+     setRadius();
+
     glViewport(0, 0, cubemapRes, cubemapRes);
     glBindFramebuffer(GL_FRAMEBUFFER, skyBoxFrameBuffer);
      
-    for (int i = 0; i < 6; i++) {
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, skyBoxTexture, 0);
-        camera.switchToFace(i);  
-        updateMatrices();
-        RenderCloud();
-    }
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, skyBoxTexture, 0);
+    camera.switchToFace(i);  
+    updateMatrices();
+    RenderCloud();
+
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
  }
 

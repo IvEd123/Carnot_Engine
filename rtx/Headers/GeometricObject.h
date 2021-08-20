@@ -261,8 +261,12 @@ public:
 class Sky {
 public:
     Sky(Cloudbox*);
-    void                                    Render();
+    void                                    Render(int i);
     GLuint                                  GetTex();
+    float                                   angle = glm::radians(75.f);  
+    sf::Vector3f                            centerPos;
+    float                                   innerRadius;
+    float                                   outerRadius;
 protected:
     struct Cloud {
         Cloudbox*                           cloudbox;
@@ -286,14 +290,12 @@ protected:
     LightSource*                            sun;
     struct Cloud                            cloudsOnSky;
     struct Camera                           camera;
-    sf::Vector3f                            centerPos;
-    float                                   innerRadius; // R(a, b, ang) = ( b / 2 * sin(ang) - a ) / cos(ang)
-    float                                   outerRadius; // r = [R * cos(ang); R]
-    float                                   angle = M_PI_4;       
+
+         
     GLuint                                  skyBoxTexture;
     GLuint                                  skyBoxFrameBuffer;
     GLuint buff;
-    int                                     cubemapRes = 512;
+    int                                     cubemapRes = 128;
 
     void                                    RenderCloud();
     void                                    updateMatrices();

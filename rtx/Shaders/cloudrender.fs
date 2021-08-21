@@ -184,24 +184,8 @@ void main() {
 	}
 
 	vec3 cloudCol = lightEnergy * LightColor;
-	vec3 color = cloudCol + vec3(0.53, 0.8, 0.92) * transmittance;
+	vec3 color = cloudCol + vec3(1) * transmittance;
 
 	outColor = vec4(color, 1 - transmittance);
-	/*if(k < 0)
-		outColor = vec4(vec3(GetSample(FragPos)*0.5), 1);
-	else
-	//outColor = vec4(vec3(dot(dir, normalize(light - FragPos)  )  ), 1);
-	//outColor = vec4(vec3(GetSample(FragPos)), 1);*/
-	//outColor = vec4( posToUVW(FragPos) , 1, 1);
-	//outColor = vec4(vec3(1), 1  - exp(-t.y));  */
-	//outColor = vec4(vec3(t.x + t.y)*0.3, 1);
-	//outColor = texture(tex, vec2(texCoord.x + texCoord.z, texCoord.y));
-	//outColor = vec4( texture(tex, vec2(posToUVW( FragPos))).r, 0, 0  , 1);
-	//outColor = texture(tex, FragPos);
-	//outColor = vec4(1);
+	
 }
-
-
-//vec2 a -> vec3 p; vec3 res
-//p = vec3( (a.x - floor(a.x * res.z) / res.z) * res.z, a.y, floor(a.x * res.z) / res.z);
-//a = vec2( p.z + p.x / res.z, p.y);

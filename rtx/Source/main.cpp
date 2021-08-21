@@ -118,6 +118,7 @@ int main(int argc, char* argv[]) {
 
     std::cout << "glerror " << glGetError() << std::endl;
     Sky sky = Sky(&cloudbox);
+    
 
 
     //framebuffer
@@ -155,6 +156,7 @@ int main(int argc, char* argv[]) {
     for (int i = 0; i < scripts.size(); i++)
         scripts[i].Start();
 
+    sky.initSky("C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\proceduralSky.fs", obj_list[0]);
     GUI_Object obj_win = GUI_Object();
     GUI_cloud gui_cloud = GUI_cloud();
     gui_cloud.SetObject(&cloudbox);
@@ -257,12 +259,12 @@ int main(int argc, char* argv[]) {
         ImGui::End();
         gui_cloud.Update();
         //std::cout << "clear glerror " << glGetError() << std::endl;
-        if (counter % 10 == 0) {
+        //if (counter % 10 == 0) {
             //std::cout << counter / 10 % 6 << std::endl;
-            sky.Render(counter / 10 % 6);
+            sky.Render();
             glViewport(0, 0, WIDTH, HEIGHT);
             glBindFramebuffer(GL_FRAMEBUFFER, screen.frameBuffer);
-        }
+       // }
         
         
         obj_list[0]->material.setEnvironmentMap(sky.GetTex());

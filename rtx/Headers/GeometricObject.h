@@ -261,13 +261,26 @@ public:
 class Sky {
 public:
     Sky(Cloudbox*);
-    void                                    Render(int i);
+    void                                    Render();
     GLuint                                  GetTex();
-    float                                   angle = glm::radians(75.f);  
+    float                                   angle = 0.5;  
     sf::Vector3f                            centerPos;
     float                                   innerRadius;
     float                                   outerRadius;
+    void                                    initSky(const std::string&, GeometricObject*);
 protected:
+    struct SkySphere {
+        Mesh*                               sphereMesh;
+        GLuint                              texture;
+
+        GLuint                              fragmentShader;
+        GLuint                              vertexShader;
+        GLuint                              shaderProgram;
+
+        void                                attachShader(const std::string&);
+        void                                createShaderProgram();
+        void                                initTexture(int res);
+    };
     struct Cloud {
         Cloudbox*                           cloudbox;
         GLuint                              cloudCubeMap;
@@ -290,17 +303,18 @@ protected:
     LightSource*                            sun;
     struct Cloud                            cloudsOnSky;
     struct Camera                           camera;
-
+    struct SkySphere                        skySphere;
          
     GLuint                                  skyBoxTexture;
     GLuint                                  skyBoxFrameBuffer;
     GLuint buff;
     int                                     cubemapRes = 128;
 
+    void                                    attachMeshToSky(GeometricObject*);
     void                                    RenderCloud();
+    void                                    RenderSky();
     void                                    updateMatrices();
     void                                    initFramebuffer();
-    //void                                  attachFramebuffer();
     void                                    initTexture();
     void                                    setRadius();
     void                                    setCloudBoxPosition();

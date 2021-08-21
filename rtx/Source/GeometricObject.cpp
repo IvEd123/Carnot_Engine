@@ -987,6 +987,9 @@ int LightSource::CreateShaderProgram() {
      camera.cameraPos.y = cloudsOnSky.cloudbox->GetPos().y - cloudsOnSky.cloudbox->GetSize().y / 2.f;
      camera.cameraPos.z = cloudsOnSky.cloudbox->GetPos().z;
 
+     
+     cloudsOnSky.initTexture(cubemapRes);
+     skySphere.initTexture(cubemapRes);
      initTexture();
      skyBoxFrameBuffer = createFrameBuffer(cubemapRes, cubemapRes);
      camera.createMatrices();
@@ -1019,21 +1022,97 @@ int LightSource::CreateShaderProgram() {
      
  }
 
- void Sky::Render(int i) {
+ void Sky::Render() {
      setRadius();
 
     glViewport(0, 0, cubemapRes, cubemapRes);
     glBindFramebuffer(GL_FRAMEBUFFER, skyBoxFrameBuffer);
      
-
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, skyBoxTexture, 0);
-    camera.switchToFace(i);  
-    updateMatrices();
-    RenderCloud();
-
+    for (int i = 0; i < 6; i++) {
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, skyBoxTexture, 0);
+        camera.switchToFace(i);
+        updateMatrices();
+        //
+        RenderSky();
+        RenderCloud();
+    }
+    
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
  }
 
  GLuint Sky::GetTex() {
      return skyBoxTexture;
+ }
+
+ void Sky::SkySphere::initTexture(int res) {
+     glGenTextures(1, &texture);
+     glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
+
+     for (int i = 0; i < 6; i++) {
+         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, res, res, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+
+     }
+     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+ }
+
+ void Sky::attachMeshToSky(GeometricObject* sky_obj) {
+     skySphere.sphereMesh = (Mesh*)sky_obj;
+ }
+
+ void Sky::SkySphere::attachShader(const std::string& fragment_shader_path) {
+     vertexShader = loadShader(GL_VERTEX_SHADER, sphereMesh->material.GetVSPath().c_str());
+     fragmentShader = loadShader(GL_FRAGMENT_SHADER, fragment_shader_path.c_str());
+
+ }
+
+ void Sky::SkySphere::createShaderProgram() {
+     shaderProgram = glCreateProgram();
+     glAttachShader(shaderProgram, vertexShader);
+     glAttachShader(shaderProgram, fragmentShader);
+
+     glLinkProgram(shaderProgram);
+ }
+
+ void Sky::initSky(const std::string& path_to_fragment_shader, GeometricObject* sky_obj) {
+     attachMeshToSky(sky_obj);
+     skySphere.attachShader(path_to_fragment_shader);
+     skySphere.createShaderProgram();
+ }
+
+ void Sky::RenderSky() {
+     glUseProgram(skySphere.shaderProgram);
+     glBindVertexArray(skySphere.sphereMesh->material.getVAO());
+
+     skySphere.sphereMesh->material.setModel(glm::mat4(1.0));
+
+     GLuint uniView = glGetUniformLocation(skySphere.shaderProgram, "view");
+     glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(camera.view));
+
+     GLuint uniProj = glGetUniformLocation(skySphere.shaderProgram, "proj");
+     glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(camera.proj));
+
+
+
+     GLuint uniModel = glGetUniformLocation(skySphere.shaderProgram, "model");
+     glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(skySphere.sphereMesh->material.getModel()));
+
+     GLuint uniEye = glGetUniformLocation(skySphere.shaderProgram, "eyepos");
+     glUniform3f(uniEye, camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z);
+
+     GLuint uniPos = glGetUniformLocation(skySphere.shaderProgram, "pos");
+     glUniform3f(uniPos, 0, 0, 0);
+
+     GLuint uniSize = glGetUniformLocation(skySphere.shaderProgram, "size");
+     glUniform3f(uniSize, 1.f, 1.f, 1.f);
+
+     GLuint uniLight = glGetUniformLocation(skySphere.shaderProgram, "light");
+     glUniform3f(uniLight, skySphere.sphereMesh->material.sun_pos->x, skySphere.sphereMesh->material.sun_pos->y, skySphere.sphereMesh->material.sun_pos->z);
+
+     glDrawArrays(GL_TRIANGLES, 0, 36);
+     glBindVertexArray(0);
+     glUseProgram(0);
  }

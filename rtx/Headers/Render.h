@@ -38,6 +38,8 @@ void OBJLoader_v(const char* path, GeometricObject* object);
 
 void OBJLoaderLegacy(const char* path, GeometricObject* object);
 
+int loadShader(GLenum type, const GLchar* path);
+
 enum GeometryType{
 	CUBE,
 	TERRAIN,

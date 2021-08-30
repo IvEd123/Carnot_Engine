@@ -182,8 +182,8 @@ public:
                                             thirdLayerOffset = glm::vec3(0);
 
         float
-                                            DensityThreshold = 0.3,
-                                            DensityMultiplier = 50,
+                                            DensityThreshold = 0.541,
+                                            DensityMultiplier = 72,
                                             lightAbsorptionThroughCloud = 0.85,
                                             lightAbsorptionTowardSun = 2.0,
                                             darknessThreshold = 0.2;
@@ -215,6 +215,7 @@ private:
 
 class LightSource {
 private:
+                            
     std::string                             name;
     sf::Vector3f                            pos;
     sf::Vector3f                            rot;
@@ -261,7 +262,7 @@ public:
 class Sky {
 public:
     Sky(Cloudbox*);
-    void                                    Render();
+    void                                    Render(int i);
     GLuint                                  GetTex();
     float                                   angle = 0.5;  
     sf::Vector3f                            centerPos;

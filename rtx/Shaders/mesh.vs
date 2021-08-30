@@ -21,7 +21,7 @@ out VS_OUT {
 
 out vec2 Texcoord;
 out vec3 Normal;
-
+out vec3 ViewDir;
 
 void main(){
     vs_out.FragPos = vec3(model  * vec4(position * 0.5 * size, 1.0));
@@ -36,4 +36,5 @@ void main(){
     gl_Position = proj * view * model * vec4( position * 0.5 * size, 1.0);
 
 
+    ViewDir = normalize(position);
 }

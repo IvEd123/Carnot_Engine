@@ -134,6 +134,8 @@ float lightmarch(vec3 position){
 		totalDensity += max(0, GetSample(position) * stepSize);
 	}
 
+
+
 	float transmittance = exp(-totalDensity * lightAbsorptionTowardSun);
 	return darknessThreshold + transmittance * (1 - darknessThreshold);
 }
@@ -143,7 +145,7 @@ float lightmarch(vec3 position){
 void main() {
 	vec3 texCoord = TexCoord;
 	//texCoord.z = round(TexCoord.z*tex_res.z)/tex_res.z + 0.5;
-	vec3 dirToLight = normalize(light - eyepos);
+	vec3 dirToLight = normalize(vec3(1, 0, 0));
 
 	vec3 origin = eyepos;
 	vec3 dir = normalize(FragPos - eyepos);
@@ -151,8 +153,8 @@ void main() {
 	vec2 t = intersectBox(origin, dir);
 	vec2 ts = intersectSpheres(origin, dir);
 
-	float dstInsideBox = ts.y - ts.x;
-	float dstToBox = ts.x;
+	float dstInsideBox = t.y - t.x;
+	float dstToBox = t.x;
 	float dstTravelled = 0;
 	float step = dstInsideBox / num_of_steps;
 	float totalDensity  = 0;
@@ -187,5 +189,5 @@ void main() {
 	vec3 color = cloudCol + vec3(1) * transmittance;
 
 	outColor = vec4(color, 1 - transmittance);
-	
+	//outColor = vec4(0);
 }

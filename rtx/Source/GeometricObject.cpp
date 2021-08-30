@@ -1000,14 +1000,18 @@ int LightSource::CreateShaderProgram() {
      /*centerPos = cloudsOnSky.cloudbox->GetPos();
      centerPos.y -= cloudsOnSky.cloudbox->GetSize().y / 2.f;
      outerRadius = cloudsOnSky.cloudbox->GetSize().y;
-     innerRadius = 0.1;*/
+     innerRadius = 0.1*/
 
-     outerRadius = std::min(cloudsOnSky.cloudbox->GetSize().x, cloudsOnSky.cloudbox->GetSize().z) / (2.f * sin(angle));
+     centerPos = sf::Vector3f(0, -6360e3, 0);
+     innerRadius =1.02;
+     outerRadius = 6420e3;
+
+     /*outerRadius = std::min(cloudsOnSky.cloudbox->GetSize().x, cloudsOnSky.cloudbox->GetSize().z) / (2.f * sin(angle));
 
      centerPos = cloudsOnSky.cloudbox->GetPos();
      centerPos.y = cloudsOnSky.cloudbox->GetPos().y + cloudsOnSky.cloudbox->GetSize().y / 2 - outerRadius;
 
-     innerRadius = cloudsOnSky.cloudbox->GetPos().y - cloudsOnSky.cloudbox->GetSize().y - centerPos.y + 0.2f;
+     innerRadius = cloudsOnSky.cloudbox->GetPos().y - cloudsOnSky.cloudbox->GetSize().y - centerPos.y + 0.2f;*/
 
 
  }
@@ -1022,20 +1026,20 @@ int LightSource::CreateShaderProgram() {
      
  }
 
- void Sky::Render() {
-     setRadius();
+ void Sky::Render(int i) {
+    // setRadius();
 
     glViewport(0, 0, cubemapRes, cubemapRes);
     glBindFramebuffer(GL_FRAMEBUFFER, skyBoxFrameBuffer);
      
-    for (int i = 0; i < 6; i++) {
+    //for (int i = 0; i < 6; i++) {
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, skyBoxTexture, 0);
         camera.switchToFace(i);
         updateMatrices();
         //
         RenderSky();
         RenderCloud();
-    }
+    //}
     
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
  }
@@ -1084,10 +1088,20 @@ int LightSource::CreateShaderProgram() {
  }
 
  void Sky::RenderSky() {
+
+
      glUseProgram(skySphere.shaderProgram);
      glBindVertexArray(skySphere.sphereMesh->material.getVAO());
 
      skySphere.sphereMesh->material.setModel(glm::mat4(1.0));
+/*
+     GLuint unirad = glGetUniformLocation(skySphere.shaderProgram, "r");
+     glUniform1f(unirad, innerRadius);
+     unirad = glGetUniformLocation(skySphere.shaderProgram, "R");
+     glUniform1f(unirad, outerRadius);
+
+     GLuint uniCent = glGetUniformLocation(skySphere.shaderProgram, "center");
+     glUniform3f(uniCent, ConvertSFML2GLM(centerPos).x, ConvertSFML2GLM(centerPos).y, ConvertSFML2GLM(centerPos).z);*/
 
      GLuint uniView = glGetUniformLocation(skySphere.shaderProgram, "view");
      glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(camera.view));
@@ -1095,24 +1109,25 @@ int LightSource::CreateShaderProgram() {
      GLuint uniProj = glGetUniformLocation(skySphere.shaderProgram, "proj");
      glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(camera.proj));
 
-
-
      GLuint uniModel = glGetUniformLocation(skySphere.shaderProgram, "model");
      glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(skySphere.sphereMesh->material.getModel()));
 
      GLuint uniEye = glGetUniformLocation(skySphere.shaderProgram, "eyepos");
-     glUniform3f(uniEye, camera.cameraPos.x, camera.cameraPos.y, camera.cameraPos.z);
+     glUniform3f(uniEye, 0, 0, 0);
 
      GLuint uniPos = glGetUniformLocation(skySphere.shaderProgram, "pos");
      glUniform3f(uniPos, 0, 0, 0);
 
      GLuint uniSize = glGetUniformLocation(skySphere.shaderProgram, "size");
-     glUniform3f(uniSize, 1.f, 1.f, 1.f);
+     glUniform3f(uniSize, .04f, .04f, .04f);
 
      GLuint uniLight = glGetUniformLocation(skySphere.shaderProgram, "light");
      glUniform3f(uniLight, skySphere.sphereMesh->material.sun_pos->x, skySphere.sphereMesh->material.sun_pos->y, skySphere.sphereMesh->material.sun_pos->z);
 
-     glDrawArrays(GL_TRIANGLES, 0, 36);
+     //GLuint uniViewDir = glGetUniformLocation(skySphere.shaderProgram, "ViewDir");
+     //glUniform3f(uniViewDir, )
+
+     glDrawArrays(GL_TRIANGLES, 0, (*skySphere.sphereMesh).vert_vec3[0][skySphere.sphereMesh->array_index].size());
      glBindVertexArray(0);
      glUseProgram(0);
  }

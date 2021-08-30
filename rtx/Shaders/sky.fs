@@ -15,6 +15,8 @@ in VS_OUT {
     mat4 depthMVP;
 } fs_in;
 
+in vec3 ViewDir;
+
 float random (in vec2 st) {
     return fract(sin(dot(st.xy, vec2(12.9898,78.233)))*43758.5453123);
 }
@@ -84,5 +86,5 @@ void main(){
      outColor.rgb += pow(max(dot(view_dir, light_dir), 0), 64.0);
 
      //outColor = vec4( normalize(fs_in.FragPos), 1);
-     outColor = texture(skybox, normalize(fs_in.FragPos));
+     outColor = texture(skybox, normalize(ViewDir));
 }

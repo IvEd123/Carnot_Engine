@@ -2,7 +2,7 @@
 
 #t 2
 #n skybox
-#m C:\Users\IvEda\Desktop\sfml\rtx\Meshes\skybox2.obj
+#m C:\Users\IvEda\Desktop\sfml\rtx\Meshes\skysphere.obj
 #s 10 10 10
 #p 0 0 0 
 #r 0 0 0 

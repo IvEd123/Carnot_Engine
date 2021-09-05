@@ -64,10 +64,12 @@ int SaveLoad::Load(){
 					LAST_OBJ_PTR->setModel(mesh_path);
 					file >> buffer;
 				}
-				float size;
+				sf::Vector3f size;
 				
 				if (buffer.compare("#s") == 0) {
-					file >> size;
+					file >> size.x;
+					file >> size.y;
+					file >> size.z;
 					LAST_OBJ_PTR->SetSize(size);
 
 					file >> buffer;
@@ -178,7 +180,7 @@ int SaveLoad::Save(std::vector<GeometricObject*>* obj_list, std::vector<LightSou
 		file << "#n " << (*obj_list)[i]->GetName() << std::endl;
 		if ((*obj_list)[i]->GetType() == MESH)
 			file << "#m " << ((Mesh*)(*obj_list)[i])->model_path << std::endl;
-		file << "#s " << (*obj_list)[i]->GetSize() << std::endl;
+		file << "#s " << (*obj_list)[i]->GetSize().x << (*obj_list)[i]->GetSize().y << (*obj_list)[i]->GetSize().z << std::endl;
 		file << "#p " << (*obj_list)[i]->GetPos().x << " " << (*obj_list)[i]->GetPos().y << " " << (*obj_list)[i]->GetPos().z << " " << std::endl;
 		file << "#r " << (*obj_list)[i]->GetRot().x << " " << (*obj_list)[i]->GetRot().y << " " << (*obj_list)[i]->GetRot().z << " " << std::endl;
 		file << "#vs " << (*obj_list)[i]->material.GetVSPath() << std::endl;

@@ -8,9 +8,8 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 proj;
 uniform mat4 lightSpaceMatrix;
-uniform float size;
+uniform vec3 size;
 
-uniform vec3 eye;
 
 
 out VS_OUT {
@@ -21,19 +20,21 @@ out VS_OUT {
 
 out vec2 Texcoord;
 out vec3 Normal;
-
+out vec3 ViewDir;
 
 void main(){
-    vs_out.FragPos = vec3(model  * vec4(position * size, 1.0));
+    vs_out.FragPos = vec3(model  * vec4(position * 0.5 * size, 1.0));
     vs_out.FragPosLightSpace = lightSpaceMatrix *  vec4(vs_out.FragPos, 1.0);
     vs_out.depthMVP = lightSpaceMatrix;
 
 
     Texcoord = texcoord;
 
-    Normal = normal;
+    Normal = normalize((model * vec4(normal, 0)).xyz);
+    //Normal = normal;
     
-    gl_Position = proj * view * model * vec4( position * size, 1.0);
+    gl_Position = proj * view * model * vec4( position * 0.5 * size, 1.0);
 
 
+    ViewDir = normalize(position);
 }

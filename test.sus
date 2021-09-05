@@ -3,7 +3,7 @@
 #t 2
 #n skybox
 #m C:\Users\IvEda\Desktop\sfml\rtx\Meshes\skysphere.obj
-#s 10
+#s 10 10 10
 #p 0 0 0 
 #r 0 0 0 
 #vs C:\Users\IvEda\Desktop\sfml\rtx\Shaders\mesh.vs
@@ -14,21 +14,21 @@
 
 #t 3
 #n ground
-#s 100
+#s 100 100 100
 #p 0 1 0 
 #r 5 0 0 
-#vs C:\Users\IvEda\Desktop\sfml\rtx\Shaders\plane.vs
-#fs C:\Users\IvEda\Desktop\sfml\rtx\Shaders\dirt.fs
+#vs C:\Users\IvEda\Desktop\sfml\rtx\Shaders\mesh.vs
+#fs C:\Users\IvEda\Desktop\sfml\rtx\Shaders\mesh.fs
 #sh 1
 #tex C:\Users\IvEda\Desktop\sfml\rtx\Textures\grass.jpg
 #end
 
 #t 3
 #n sea
-#s 300
-#p 100 0 100 
-#r 0 180 0 
-#vs C:\Users\IvEda\Desktop\sfml\rtx\Shaders\plane.vs
+#s 1000 1000 1000
+#p -250 0 -250
+#r 0 0 0 
+#vs C:\Users\IvEda\Desktop\sfml\rtx\Shaders\mesh.vs
 #fs C:\Users\IvEda\Desktop\sfml\rtx\Shaders\sea.fs
 #sh 1
 #end
@@ -36,7 +36,7 @@
 #t 2
 #n house
 #m C:\Users\IvEda\Desktop\sfml\rtx\Meshes\house.obj
-#s 0.03
+#s 0.03 0.03 0.03
 #p 15 0.7 2 
 #r 5 0 0 
 #vs C:\Users\IvEda\Desktop\sfml\rtx\Shaders\mesh.vs
@@ -48,7 +48,7 @@
 #t 2
 #n crowbar
 #m C:\Users\IvEda\Desktop\sfml\rtx\Meshes\model.obj
-#s 1
+#s 1 1 1
 #p 2 1.5 5 
 #r 90 0 0 
 #vs C:\Users\IvEda\Desktop\sfml\rtx\Shaders\mesh.vs

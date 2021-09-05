@@ -28,6 +28,8 @@ GLuint loadTexture(const GLchar* path);
 
 GLuint createFrameBuffer(int height, int width, GLuint *depghstencil, GLuint *colorBuff);
 
+GLuint createFrameBuffer(int height, int width);
+
 void bindTexture(const char* path, const char* name, GLuint* handler, Material* material, int i);
 
 void OBJLoader(const char* path, GeometricObject* object);
@@ -35,6 +37,8 @@ void OBJLoader(const char* path, GeometricObject* object);
 void OBJLoader_v(const char* path, GeometricObject* object);
 
 void OBJLoaderLegacy(const char* path, GeometricObject* object);
+
+int loadShader(GLenum type, const GLchar* path);
 
 enum GeometryType{
 	CUBE,

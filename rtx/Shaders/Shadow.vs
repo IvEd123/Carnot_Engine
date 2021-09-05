@@ -5,7 +5,7 @@ layout (location = 0) in vec3 in_position;
 uniform mat4 mvpMatrix;
 uniform mat4 model;
 
-uniform float size;
+uniform vec3 size;
 
 void main(void){
 

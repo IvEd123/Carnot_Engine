@@ -7,7 +7,7 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 proj;
 
-uniform float size;
+uniform vec3 size;
 
 out vec2 Texcoord;
 

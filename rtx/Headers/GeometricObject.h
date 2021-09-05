@@ -12,6 +12,7 @@
 #include <SFML/OpenGL.hpp>
 #include <gl/GLU.h>
 
+
 #include "../Headers/PLayer.h"
 #include "../Headers/Render.h"
 #include "../Headers/DLLScriptHandler.h"
@@ -28,7 +29,7 @@ private:
 protected:
     
     int                                     type;
-    float                                   size;
+    sf::Vector3f                            size;
     sf::Vector3f                            pos;
     sf::Vector3f                            rot;
     
@@ -47,12 +48,13 @@ public:
     void                                    SetPos(sf::Vector3f _pos);
     sf::Vector3f                            GetRot();
     void                                    SetRot(sf::Vector3f _rot);
-    void                                    SetSize(float s);
-    float                                   GetSize();
+    void                                    SetSize(sf::Vector3f s);
+    sf::Vector3f                            GetSize();
+
     
     sf::Vector3f *                          GetPosPtr();
     sf::Vector3f *                          GetRotPtr();
-    float        *                          GetSizePtr();
+    sf::Vector3f *                          GetSizePtr();
 
     Material                                material;
     bool                                    cast_shadow = true;
@@ -75,12 +77,13 @@ private:
     std::string                             model_path;
     
 public:
-    Cube(float _size);
-    Cube(sf::Vector3f _pos, sf::Vector3f _rot, float _size, GLuint* _texture);
+    Cube(sf::Vector3f _size);
+    Cube(sf::Vector3f _pos, sf::Vector3f _rot, sf::Vector3f _size, GLuint* _texture);
     Cube();
     ~Cube();
 
     void                                    Draw();
+    void                                    Draw(sf::Vector3f);
     void                                    CreateVertices() {};
     void                                    CreateVerticesLegacy();
     void                                    setModel(char* path);
@@ -163,15 +166,62 @@ private:
 };
 
 
+class Cloudbox : public Cube {
+public:
+    Cloudbox(sf::Vector3f _pos, sf::Vector3f _res, sf::Vector3f size);
+    void                                    RenderCloud(float innerRadius, float outerRadius, sf::Vector3f center);
+    void                                    renderTexture(int SCREEN_WIDTH, int SCREEN_HEIGHT);
+    struct                                  CloudParams {
+        glm::vec4                           phaseParams = glm::vec4(0.72, 0.33, 1, 0.74);
+
+        glm::vec3
+                                            LightColor = glm::vec3(1, 1, 1),
+                                            cloudScale = glm::vec3(1),
+                                            cloudOffset = glm::vec3(0),
+                                            secondLayerScale = glm::vec3(2),
+                                            secondLayerOffset = glm::vec3(0),
+                                            thirdLayerScale = glm::vec3(3),
+                                            thirdLayerOffset = glm::vec3(0);
+
+        float
+                                            DensityThreshold = 0.93,
+                                            DensityMultiplier = 72,
+                                            lightAbsorptionThroughCloud = 0.85,
+                                            lightAbsorptionTowardSun = 2.0,
+                                            darknessThreshold = 0.2;
+
+        int
+                                            num_of_steps = 80,
+                                            num_of_steps_inside = 50;
+    };
+    CloudParams                             cloudParams;
+    void                                    recreateShaders();
+    void                                    uniforms();
+    GLuint                                  GetTexture() { return cloudtex; }
+private:
+    sf::Vector3f                            cloudTexRes;
+    const int                               pointsGrid = 7;
+    GLuint                                  cloudbuffer;
+    GLuint                                  cloudtex;
+
+    void                                    initBuffer();
+    void                                    initTexture();
+    void                                    attachBuffer();
+    
+    
+};
+
 
 //LIGHT
 
 
 class LightSource {
 private:
+                            
     std::string                             name;
     sf::Vector3f                            pos;
     sf::Vector3f                            rot;
+    sf::Vector3f                            dir;
     std::string                             vertexShader_source;
     std::string                             fragmentShader_source;
     int                                     resolution;
@@ -179,6 +229,8 @@ private:
     unsigned int                            depthMap;
     unsigned int                            ShaderProgram;
     float                                   fov = 20;
+    float                                   distance;
+
     sf::Vector3f                            pov;
 
     int                                     loadShader(GLenum type, const GLchar* path);
@@ -186,7 +238,8 @@ private:
     float                                   near_plane, 
                                             far_plane;
     glm::mat4                               lightProjection, lightView, lightSpaceMatrix;
-    
+    void                                    updatePos();
+
     int                                     CreateShaderProgram();
 public:
 
@@ -206,10 +259,79 @@ public:
     sf::Vector3f                            GetPov() { return pov; }
     void                                    SetPov(sf::Vector3f _pov) { pov = _pov; }
     sf::Vector3f                            GetRot() { return rot; }
+    sf::Vector3f  *                         GetRotPtr() { return &rot; }
     void                                    SetRot(sf::Vector3f _rot) { rot = _rot; }
+    void                                    SetDistance(float _distance) { distance = _distance; }
+    float                                   GetDistance() { return distance; }
+    sf::Vector3f                            GetDir() { return dir; }
+    sf::Vector3f   *                        GetDirPtr() { return &dir; }
+    void                                    SetDir();
+    void                                    SetDir(sf::Vector3f);
 
     void                                    Draw(std::vector <GeometricObject*> obj_list);
 };
 
+
+class Sky {
+public:
+    Sky(Cloudbox*);
+    void                                    Render(int i);
+    GLuint                                  GetTex();
+    float                                   angle = 0.5;  
+    sf::Vector3f                            centerPos;
+    float                                   innerRadius;
+    float                                   outerRadius;
+    void                                    initSky(const std::string&, GeometricObject*);
+protected:
+    struct SkySphere {
+        Mesh*                               sphereMesh;
+        GLuint                              texture;
+
+        GLuint                              fragmentShader;
+        GLuint                              vertexShader;
+        GLuint                              shaderProgram;
+
+        void                                attachShader(const std::string&);
+        void                                createShaderProgram();
+        void                                initTexture(int res);
+    };
+    struct Cloud {
+        Cloudbox*                           cloudbox;
+        GLuint                              cloudCubeMap;
+        
+        
+        void                                initTexture(int res);
+    };
+    struct Camera {
+        sf::Vector3f                        cameraPos = sf::Vector3f(0, 0, 0);
+        float                               pitch = 0;
+        float                               yaw = 0;
+        glm::mat4                           proj; 
+        glm::mat4                           view;
+        
+        void                                createMatrices();
+        
+        void                                switchToFace(int faceIndex);
+    };
+
+    LightSource*                            sun;
+    struct Cloud                            cloudsOnSky;
+    struct Camera                           camera;
+    struct SkySphere                        skySphere;
+         
+    GLuint                                  skyBoxTexture;
+    GLuint                                  skyBoxFrameBuffer;
+    GLuint buff;
+    int                                     cubemapRes = 512;
+
+    void                                    attachMeshToSky(GeometricObject*);
+    void                                    RenderCloud();
+    void                                    RenderSky();
+    void                                    updateMatrices();
+    void                                    initFramebuffer();
+    void                                    initTexture();
+    void                                    setRadius();
+    void                                    setCloudBoxPosition();
+};
 
 #endif

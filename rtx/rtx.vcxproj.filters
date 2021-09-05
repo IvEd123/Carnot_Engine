@@ -37,6 +37,9 @@
     <Filter Include="shaders\cloud">
       <UniqueIdentifier>{da5e9211-352a-4aac-b84e-cab416d6a126}</UniqueIdentifier>
     </Filter>
+    <Filter Include="shaders\procedural sky">
+      <UniqueIdentifier>{f058d708-af8c-48f3-8015-75c4dbc2670e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="thirdparty\imgui\imgui_demo.cpp">
@@ -214,6 +217,9 @@
     </None>
     <None Include="Shaders\cloudrenderer.vs">
       <Filter>shaders\cloud</Filter>
+    </None>
+    <None Include="Shaders\proceduralSky.fs">
+      <Filter>shaders\procedural sky</Filter>
     </None>
   </ItemGroup>
 </Project>

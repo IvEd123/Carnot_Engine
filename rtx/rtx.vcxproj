@@ -204,6 +204,7 @@
     <None Include="Shaders\mesh.fs" />
     <None Include="Shaders\mesh.vs" />
     <None Include="Shaders\plane.vs" />
+    <None Include="Shaders\proceduralSky.fs" />
     <None Include="Shaders\screen.fs" />
     <None Include="Shaders\screen.vs" />
     <None Include="Shaders\sea.fs" />

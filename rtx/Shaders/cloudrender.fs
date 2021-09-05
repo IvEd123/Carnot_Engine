@@ -28,6 +28,10 @@ uniform vec3 thirdLayerOffset;
 uniform vec4 phaseParams;
 
 
+uniform float r;
+uniform float R;
+uniform vec3 center;
+
 uniform  int num_of_steps;
 uniform float DensityThreshold;
 uniform float DensityMultiplier;
@@ -72,7 +76,7 @@ float phase(float a) {
 }
 
 
-vec2 intersect (vec3 origin, vec3 dir){
+vec2 intersectBox(vec3 origin, vec3 dir){
 	vec3 t0 = (vert_min - origin) / dir;
 	vec3 t1 = (vert_max - origin) / dir;
 	vec3 tmin = min(t0, t1);
@@ -86,25 +90,53 @@ vec2 intersect (vec3 origin, vec3 dir){
 	return vec2(dstToBox, dstInsideBox);
 }
 
+vec2 intersectSpheres(vec3 origin, vec3 dir){
+	vec3 k = origin - center;
+	float b = dot(k, dir);
+	float c = dot(k, k) - r*r;
+	float C = dot(k, k) - R*R;
+	float d = b*b - c;
+	float D = b*b - C;
+
+	float t1 =-b + sqrt(d);
+	float t2 =-b + sqrt(D);
+
+
+	return vec2(t1, t2);
+
+}
+
 float GetSample(vec3 pos){
 	vec3 uvw1 = mod(pos * cloudScale * scale_coeff + cloudOffset, vec3(1.0));
 	vec3 uvw2 = mod(pos * secondLayerScale * scale_coeff + secondLayerOffset, vec3(1.0));
 	vec3 uvw3 = mod(pos * thirdLayerScale * scale_coeff + thirdLayerOffset, vec3(1.0));
 
+	vec3 col = vec3(texture(tex, uvw1).r,
+					texture(tex, uvw2).g,
+					texture(tex, uvw3).b);
 
-    float col = texture(tex, uvw1).r * 0.625
-			  + texture(tex, uvw2).g * 0.250 
-			  + texture(tex, uvw3).b * 0.125;
+	vec3 detail = vec3( texture(tex, uvw1, 3).r,
+						texture(tex, uvw1, 3).g,
+						texture(tex, uvw1, 3).b);
 
-	float h = vert_max.y - vert_min.y;
-	col *= 1 - (pos.y - vert_min.y) / h ;
-    col = max (0, col - DensityThreshold) * DensityMultiplier ;
-    return col;
+	float detail_res = detail.r * 0.625 + detail.g * 0.250 + detail.b*0.125;
+
+	vec3 erode = 1 - col;
+	erode = vec3( pow(erode.x, 4), pow(erode.y, 4), pow(erode.z, 4));
+	float erode_res = (erode.r * 0.625 + erode.g * 0.250 + erode.b * 0.125);
+	float col_res = col.r * 0.750 + col.g * 0.125 + col.b*0.125;
+
+	float res = col_res - detail_res * erode_res;
+
+	res = (res - DensityThreshold) * DensityMultiplier;
+
+	return res;
+
 }
 
 float lightmarch(vec3 position){
 	vec3 dirToLight = normalize(light - eyepos);
-	float dstInsideBox = intersect(position, dirToLight).y;
+	float dstInsideBox = intersectBox(position, dirToLight).y;
 
 	float stepSize = dstInsideBox / num_of_steps_inside;
 	float totalDensity = 0;
@@ -113,6 +145,8 @@ float lightmarch(vec3 position){
 		position += dirToLight * stepSize;
 		totalDensity += max(0, GetSample(position) * stepSize);
 	}
+
+
 
 	float transmittance = exp(-totalDensity * lightAbsorptionTowardSun);
 	return darknessThreshold + transmittance * (1 - darknessThreshold);
@@ -123,15 +157,15 @@ float lightmarch(vec3 position){
 void main() {
 	vec3 texCoord = TexCoord;
 	//texCoord.z = round(TexCoord.z*tex_res.z)/tex_res.z + 0.5;
-	vec3 dirToLight = normalize(light - eyepos);
+	vec3 dirToLight = normalize(light);
 
 	vec3 origin = eyepos;
 	vec3 dir = normalize(FragPos - eyepos);
 
-	vec2 t = intersect(origin, dir);
+	vec2 t = intersectBox(origin, dir);
+	vec2 ts = intersectSpheres(origin, dir);
 
-
-	float dstInsideBox = t.y;
+	float dstInsideBox = t.y - t.x;
 	float dstToBox = t.x;
 	float dstTravelled = 0;
 	float step = dstInsideBox / num_of_steps;
@@ -140,21 +174,25 @@ void main() {
 	vec3 lightEnergy = vec3(0);
 
 	float phaseVal = phase(dot(dir, dirToLight));
-
+	dstTravelled += step;
 	while(dstTravelled < dstInsideBox){
-
+		
+		
 		vec3 rayPos = origin + dir * (dstToBox +  dstTravelled);
-		float density = GetSample(rayPos);
 
 
+			float density = GetSample(rayPos);
 
-		if(density > 0){
-			float lightTransmittance = lightmarch(rayPos);
-			lightEnergy += density * step * lightTransmittance * transmittance * phaseVal;
-			transmittance *= exp( - density * step * lightAbsorptionThroughCloud);
-			if (transmittance < 0.01)
-				break;
-		}
+			
+
+			if(density > 0){
+				float lightTransmittance = lightmarch(rayPos);
+				lightEnergy += density * step * lightTransmittance * transmittance * phaseVal;
+				transmittance *= exp( - density * step * lightAbsorptionThroughCloud);
+				if (transmittance < 0.01)
+					break;
+			}
+		
 	
 		dstTravelled += step;
 	}
@@ -162,22 +200,8 @@ void main() {
 	vec3 cloudCol = lightEnergy * LightColor;
 	vec3 color = cloudCol + vec3(1) * transmittance;
 
-	outColor = vec4(color, 1 - transmittance);
-	/*if(k < 0)
-		outColor = vec4(vec3(GetSample(FragPos)*0.5), 1);
-	else
-	//outColor = vec4(vec3(dot(dir, normalize(light - FragPos)  )  ), 1);
-	//outColor = vec4(vec3(GetSample(FragPos)), 1);*/
-		//outColor = vec4( posToUVW(FragPos) , 1, 1);
-	//outColor = vec4(vec3(1), 1  - exp(-t.y));  */
-	//outColor = vec4(vec3(t.x + t.y)*0.3, 1);
-	//outColor = texture(tex, vec2(texCoord.x + texCoord.z, texCoord.y));
-	//outColor = vec4( texture(tex, vec2(posToUVW( FragPos))).r, 0, 0  , 1);
-	//outColor = texture(tex, FragPos);
-	//outColor = vec4(1);
+	
+
+	outColor = vec4(color + dstToBox/2, (1 - transmittance) * (1.2 - dstToBox));
+	//outColor = vec4(vec3(lightEnergy), 1);
 }
-
-
-//vec2 a -> vec3 p; vec3 res
-//p = vec3( (a.x - floor(a.x * res.z) / res.z) * res.z, a.y, floor(a.x * res.z) / res.z);
-//a = vec2( p.z + p.x / res.z, p.y);

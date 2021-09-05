@@ -94,6 +94,15 @@ GLuint createFrameBuffer(int width, int height, GLuint* depghstencil, GLuint *co
     return frameBuffer;
 }
 
+GLuint createFrameBuffer(int width, int height){
+    GLuint frameBuffer;
+    glGenFramebuffers(1, &frameBuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+
+
+    return frameBuffer;
+}
+
 void bindTexture(const char* path, const char* name, GLuint* handler, Material* material, int i) {
     *handler = loadTexture(path);
     glBindVertexArray(material->getVAO());
@@ -213,4 +222,43 @@ void OBJLoader_v(const char* path, GeometricObject* object) {
     }
 
     return;
+}
+
+int loadShader(GLenum type, const GLchar* path) {
+
+    std::ifstream file;
+    file.open(path);
+
+    if (!file.is_open()) {
+        std::cout << "error!!" << std::endl;
+        return -1;
+    }
+
+    file.seekg(0, std::ios::end);
+    int file_size = file.tellg();
+    file.seekg(0, std::ios::beg);
+
+    char* shaderSource = (char*)calloc(file_size, 1);
+
+    file.read(shaderSource, file_size);
+    std::vector<GLchar> log;
+
+    unsigned int shader;
+
+    shader = glCreateShader(type);
+    glShaderSource(shader, 1, &shaderSource, NULL);
+    glCompileShader(shader);
+    GLint status;
+
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+    if (status != GL_TRUE) {
+        if (type == GL_VERTEX_SHADER)
+            std::cout << "vert ";
+        else if (type == GL_FRAGMENT_SHADER)
+            std::cout << "frag ";
+        getError(log, shader);
+    }
+
+
+    return shader;
 }

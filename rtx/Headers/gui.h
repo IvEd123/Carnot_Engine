@@ -53,14 +53,22 @@ public:
 	GUI_Object();
 	void Update();
 	void SetObject(GeometricObject*);
-private:
+protected:
 	char default_name[50] = "No object selected";
 	sf::Vector3f default_vec = sf::Vector3f(0, 0, 0);
 	float default_float = 0;
 	char *name;
 	sf::Vector3f *pos;
 	sf::Vector3f *rot;
-	float* size;
+	sf::Vector3f* size;
+};
+
+class GUI_cloud : public GUI_Object  {
+public:
+	void Update();
+	void SetObject(GeometricObject*);
+private:
+	struct Cloudbox::CloudParams* cloudParamsStruct;
 };
 
 #endif // !GUI_H

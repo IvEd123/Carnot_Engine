@@ -111,15 +111,27 @@ float GetSample(vec3 pos){
 	vec3 uvw2 = mod(pos * secondLayerScale * scale_coeff + secondLayerOffset, vec3(1.0));
 	vec3 uvw3 = mod(pos * thirdLayerScale * scale_coeff + thirdLayerOffset, vec3(1.0));
 
+	vec3 col = vec3(texture(tex, uvw1).r,
+					texture(tex, uvw2).g,
+					texture(tex, uvw3).b);
 
-    float col = texture(tex, uvw1).r * 0.625
-			  + texture(tex, uvw2).g * 0.250 
-			  + texture(tex, uvw3).b * 0.125;
+	vec3 detail = vec3( texture(tex, uvw1, 3).r,
+						texture(tex, uvw1, 3).g,
+						texture(tex, uvw1, 3).b);
 
-	float h = abs(R - r);
-	col *= 1 - (pos.y - vert_min.y) / h ;
-    col = max (0, col - DensityThreshold) * DensityMultiplier ;
-    return col;
+	float detail_res = detail.r * 0.625 + detail.g * 0.250 + detail.b*0.125;
+
+	vec3 erode = 1 - col;
+	erode = vec3( pow(erode.x, 4), pow(erode.y, 4), pow(erode.z, 4));
+	float erode_res = (erode.r * 0.625 + erode.g * 0.250 + erode.b * 0.125);
+	float col_res = col.r * 0.750 + col.g * 0.125 + col.b*0.125;
+
+	float res = col_res - detail_res * erode_res;
+
+	res = (res - DensityThreshold) * DensityMultiplier;
+
+	return res;
+
 }
 
 float lightmarch(vec3 position){
@@ -145,7 +157,7 @@ float lightmarch(vec3 position){
 void main() {
 	vec3 texCoord = TexCoord;
 	//texCoord.z = round(TexCoord.z*tex_res.z)/tex_res.z + 0.5;
-	vec3 dirToLight = normalize(vec3(1, 0, 0));
+	vec3 dirToLight = normalize(light);
 
 	vec3 origin = eyepos;
 	vec3 dir = normalize(FragPos - eyepos);
@@ -162,7 +174,7 @@ void main() {
 	vec3 lightEnergy = vec3(0);
 
 	float phaseVal = phase(dot(dir, dirToLight));
-
+	dstTravelled += step;
 	while(dstTravelled < dstInsideBox){
 		
 		
@@ -171,7 +183,7 @@ void main() {
 
 			float density = GetSample(rayPos);
 
-
+			
 
 			if(density > 0){
 				float lightTransmittance = lightmarch(rayPos);
@@ -188,6 +200,8 @@ void main() {
 	vec3 cloudCol = lightEnergy * LightColor;
 	vec3 color = cloudCol + vec3(1) * transmittance;
 
-	outColor = vec4(color, 1 - transmittance);
-	//outColor = vec4(0);
+	
+
+	outColor = vec4(color + dstToBox/2, (1 - transmittance) * (1.2 - dstToBox));
+	//outColor = vec4(vec3(lightEnergy), 1);
 }

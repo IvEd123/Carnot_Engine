@@ -10,7 +10,6 @@ uniform mat4 proj;
 uniform mat4 lightSpaceMatrix;
 uniform vec3 size;
 
-uniform vec3 eye;
 
 
 out VS_OUT {

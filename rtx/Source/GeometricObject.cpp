@@ -1,10 +1,18 @@
 #include "../Headers/GeometricObject.h"
 
-
 Player& _pl = Player::Get();
 
 #define M_PI 3.1415926535897932384626433832795
 #define LOD 4
+
+void printVec(sf::Vector3f v) {
+    std::cout << v.x << '_' << v.y << '_' << v.z;
+}
+
+inline sf::Vector3f Normalize(sf::Vector3f v) {
+    float length =sqrt( v.x * v.x + v.y * v.y + v.z * v.z);
+    return v / length;
+}
 
 void getError(std::vector<GLchar>log, GLuint shader) {
     GLint maxLength = 0;
@@ -40,7 +48,8 @@ void GeometricObject::UpdateModelMatrix() {
 void GeometricObject::addLightSource(LightSource* source) {
     material.lightSpaceMatrixPtr = source->getProjMatrix();
     material.shadowmap = source->getShadowMap();
-    material.sun_pos = (glm::vec3*)source->GetPosPtr();
+    material.sun_rot = (glm::vec3*)source->GetDirPtr();
+    material.sun_dist = source->GetDistance();
     glBindVertexArray(material.getVAO());
     glUseProgram(material.getShaderProgram());
     glUniform1i(glGetUniformLocation(material.getShaderProgram(), "shadowMap"), 1);
@@ -186,7 +195,10 @@ void Cube::Draw(){
     glUniform3f(uniSize,size.x, size.y,  size.z);
 
     GLuint uniLight = glGetUniformLocation(material.getShaderProgram(), "light");
-    glUniform3f(uniLight, material.sun_pos->x, material.sun_pos->y, material.sun_pos->z);
+    glUniform3f(uniLight, material.sun_rot->x, material.sun_rot->y, material.sun_rot->z);
+
+    uniLight = glGetUniformLocation(material.getShaderProgram(), "lightDistance");
+    glUniform1f(uniLight, material.sun_dist);
 
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);
@@ -204,8 +216,8 @@ void Cube::Draw(sf::Vector3f cameraPos){
     //glBindTexture(GL_TEXTURE_3D, material.getTexture()); 
 
 
-    GLuint uniEye = glGetUniformLocation(material.getShaderProgram(), "eyepos");
-    glUniform3f(uniEye, _pl.GetPos().x, _pl.GetPos().y, _pl.GetPos().z);
+    //GLuint uniEye = glGetUniformLocation(material.getShaderProgram(), "eyepos");
+    //glUniform3f(uniEye, _pl.GetPos().x, _pl.GetPos().y, _pl.GetPos().z);
 
     GLuint uniPos = glGetUniformLocation(material.getShaderProgram(), "pos");
     glUniform3f(uniPos, pos.x, pos.y, pos.z);
@@ -214,7 +226,7 @@ void Cube::Draw(sf::Vector3f cameraPos){
     glUniform3f(uniSize,size.x, size.y,  size.z);
 
     GLuint uniLight = glGetUniformLocation(material.getShaderProgram(), "light");
-    glUniform3f(uniLight, material.sun_pos->x, material.sun_pos->y, material.sun_pos->z);
+    glUniform3f(uniLight, material.sun_rot->x, material.sun_rot->y, material.sun_rot->z);
 
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);
@@ -265,7 +277,7 @@ void Screen::Draw() {
     glUseProgram(material.getShaderProgram());
     glBindVertexArray(material.getVAO());
 
-    glm::mat4 mat = glm::translate(glm::mat4(1.0), *material.sun_pos);
+    glm::mat4 mat = glm::translate(glm::mat4(1.0), *material.sun_rot);
         
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, tex);
@@ -433,13 +445,18 @@ void Mesh::Draw() {
     glUniform3f(uniEye, _pl.GetPos().x, _pl.GetPos().y, _pl.GetPos().z);
 
     GLuint uniLight = glGetUniformLocation(material.getShaderProgram(), "light");
-    glUniform3f(uniLight, material.sun_pos->x, material.sun_pos->y, material.sun_pos->z);
-        
+    glUniform3f(uniLight, -material.sun_rot->x, -material.sun_rot->y, -material.sun_rot->z);
+    
+    uniLight = glGetUniformLocation(material.getShaderProgram(), "lightDistance");
+    glUniform1f(uniLight, material.sun_dist);
+    
+    
 
     glActiveTexture(GL_TEXTURE1);
     unsigned int sm = *material.shadowmap;
     glBindTexture(GL_TEXTURE_2D, sm);
-    
+
+    glUniform1i(glGetUniformLocation(material.getShaderProgram(), "skybox"), 2);
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_CUBE_MAP, material.getEnvironmentMap());
 
@@ -489,7 +506,10 @@ void Plane::Draw(){
     glUniform3f(uniEye, _pl.GetPos().x, _pl.GetPos().y, _pl.GetPos().z);
     
     GLuint uniLight = glGetUniformLocation(material.getShaderProgram(), "light");
-    glUniform3f(uniLight, material.sun_pos->x, material.sun_pos->y, material.sun_pos->z);
+    glUniform3f(uniLight, -material.sun_rot->x, -material.sun_rot->y, -material.sun_rot->z);
+
+    uniLight = glGetUniformLocation(material.getShaderProgram(), "lightDistance");
+    glUniform1f(uniLight, material.sun_dist);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, material.getTexture());
@@ -498,6 +518,10 @@ void Plane::Draw(){
     glActiveTexture(GL_TEXTURE1);
     unsigned int sm = *material.shadowmap;
     glBindTexture(GL_TEXTURE_2D, sm);
+
+    glUniform1i(glGetUniformLocation(material.getShaderProgram(), "skybox"), 2);
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, material.getEnvironmentMap());
 
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -570,8 +594,6 @@ LightSource::LightSource() {
     glReadBuffer(GL_NONE);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    pov = sf::Vector3f(0, 0, 0);
-
     near_plane = 1.0f, far_plane = 50.0f;
     lightProjection = glm::ortho(-fov, fov, -fov, fov, near_plane, far_plane);
 
@@ -607,7 +629,10 @@ void LightSource::Draw(std::vector <GeometricObject*> obj_list) {
     glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
     glClear(GL_DEPTH_BUFFER_BIT);
 
-    lightView = glm::lookAt(ConvertSFML2GLM(pos), ConvertSFML2GLM(pov), glm::vec3(0.0f, 1.0f, 0.0f));
+   // SetDir();
+    updatePos();
+
+    lightView = glm::lookAt(ConvertSFML2GLM(pos), ConvertSFML2GLM(sf::Vector3f(0, 0, 0)), glm::vec3(0.0f, 1.0f, 0.0f));
 
     lightSpaceMatrix = lightProjection * lightView;
 
@@ -708,6 +733,32 @@ int LightSource::CreateShaderProgram() {
 }
 
 
+ void LightSource::updatePos() {
+
+     pos = - Normalize(dir) * distance;
+
+
+ }
+
+ void LightSource::SetDir() {
+     
+     glm::vec4 _dir = glm::vec4(1, 0, 0, 1);
+     glm::mat4 rot_mat = glm::mat4(1);
+
+     rot_mat = glm::rotate(rot_mat, glm::radians(rot.x), glm::vec3(1, 0, 0));
+     rot_mat = glm::rotate(rot_mat, glm::radians(rot.y), glm::vec3(0, 1, 0));
+     rot_mat = glm::rotate(rot_mat, glm::radians(rot.z), glm::vec3(0, 0, 1));
+
+     _dir = rot_mat * _dir;
+
+     dir = sf::Vector3f(_dir.x, _dir.y, _dir.z);
+ }
+
+ void LightSource::SetDir(sf::Vector3f vec) {
+     dir = Normalize(vec);
+ }
+
+
  //     _____ _                 _ ____            
 //    / ____| |               | |  _ \           
 //   | |    | | ___  _   _  __| | |_) | _____  __
@@ -716,11 +767,11 @@ int LightSource::CreateShaderProgram() {
 //    \_____|_|\___/ \__,_|\__,_|____/ \___/_/\_\
 //                                               
 
- Cloudbox::Cloudbox(sf::Vector3f _pos, sf::Vector3f _res, sf::Vector3f size) {
+ Cloudbox::Cloudbox(sf::Vector3f _pos, sf::Vector3f _res, sf::Vector3f _size) {
     pos = _pos;
     rot = sf::Vector3f(0, 0, 0);
     cloudTexRes = _res;
-    size_v = size;
+    size = _size;
 
     CreateVerticesLegacy();
     initBuffer();
@@ -740,6 +791,7 @@ int LightSource::CreateShaderProgram() {
      material.attachUniform("r", innerRadius);
      material.attachUniform("R", outerRadius);
      material.attachUniform("center", ConvertSFML2GLM( center));
+        
 
      Draw();
 
@@ -912,7 +964,7 @@ int LightSource::CreateShaderProgram() {
  void Sky::RenderCloud() {
     
     glEnable(GL_CULL_FACE);
-    glCullFace(GL_FRONT);
+    glCullFace(GL_BACK);
     glEnable(GL_TEXTURE_3D);
 
     cloudsOnSky.cloudbox->uniforms();
@@ -953,7 +1005,7 @@ int LightSource::CreateShaderProgram() {
     glUniform3f(uniSize, cloudsOnSky.cloudbox->GetSize().x, cloudsOnSky.cloudbox->GetSize().y, cloudsOnSky.cloudbox->GetSize().z);
 
     GLuint uniLight = glGetUniformLocation(cloudsOnSky.cloudbox->material.getShaderProgram(), "light");
-    glUniform3f(uniLight, cloudsOnSky.cloudbox->material.sun_pos->x, cloudsOnSky.cloudbox->material.sun_pos->y, cloudsOnSky.cloudbox->material.sun_pos->z);
+    glUniform3f(uniLight, -cloudsOnSky.cloudbox->material.sun_rot->x, -cloudsOnSky.cloudbox->material.sun_rot->y, -cloudsOnSky.cloudbox->material.sun_rot->z);
 
 
 
@@ -1002,9 +1054,9 @@ int LightSource::CreateShaderProgram() {
      outerRadius = cloudsOnSky.cloudbox->GetSize().y;
      innerRadius = 0.1*/
 
-     centerPos = sf::Vector3f(0, -6360e3, 0);
-     innerRadius =1.02;
-     outerRadius = 6420e3;
+     centerPos = sf::Vector3f(0, -200, 0);
+     innerRadius =210;
+     outerRadius =250;
 
      /*outerRadius = std::min(cloudsOnSky.cloudbox->GetSize().x, cloudsOnSky.cloudbox->GetSize().z) / (2.f * sin(angle));
 
@@ -1038,7 +1090,11 @@ int LightSource::CreateShaderProgram() {
         updateMatrices();
         //
         RenderSky();
+        camera.cameraPos.y -= 0.1;
+        updateMatrices();
         RenderCloud();
+        glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+        camera.cameraPos.y += 0.1;
     //}
     
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -1122,7 +1178,7 @@ int LightSource::CreateShaderProgram() {
      glUniform3f(uniSize, .04f, .04f, .04f);
 
      GLuint uniLight = glGetUniformLocation(skySphere.shaderProgram, "light");
-     glUniform3f(uniLight, skySphere.sphereMesh->material.sun_pos->x, skySphere.sphereMesh->material.sun_pos->y, skySphere.sphereMesh->material.sun_pos->z);
+     glUniform3f(uniLight, -skySphere.sphereMesh->material.sun_rot->x, -skySphere.sphereMesh->material.sun_rot->y, -skySphere.sphereMesh->material.sun_rot->z);
 
      //GLuint uniViewDir = glGetUniformLocation(skySphere.shaderProgram, "ViewDir");
      //glUniform3f(uniViewDir, )

@@ -17,7 +17,7 @@ vec3 hash33(vec3 p)
 in vec3 TexCoord;
 in vec3 FragPos;
 
-layout(location = 0)  out vec4 outColor;
+layout(location = 0)  out vec3 outColor;
 
 uniform float layer;
 uniform int grid_resolution;
@@ -79,8 +79,8 @@ float perlin(vec3 st){
 
 
 
-float worley(vec3 st, float scale){
-    float freq = 1;
+float worley(vec3 st, float scale, float freq){
+
 
     float _grid = float(grid_resolution) * scale;
     
@@ -97,7 +97,7 @@ float worley(vec3 st, float scale){
                 vec3 offset = vec3(x, y, z);
                 vec3 point_cell = cellID + offset * cell_size;
 
-               point_cell = abs(mod(point_cell, vec3(1.0)));
+                point_cell = abs(mod(point_cell*freq, vec3(1.0)));
 
                 vec3 point = hash33(mod(point_cell, vec3(freq))*100.0 )*0.5 + 0.5;
                 point +=  offset;
@@ -117,14 +117,6 @@ float worley(vec3 st, float scale){
 
 void main(){      
     vec3 pos = vec3(gl_FragCoord.xy, (layer));
-    //pos.x = mod( gl_FragCoord.x, layers);
-    //pos.y = gl_FragCoord.y;
-    //pos.z = floor(gl_FragCoord.x / layers);
-
-    //pos /= float(layers);
-
-    
-
-    //outColor = vec4(TexCoord, 1);
-    outColor = vec4(worley(TexCoord, 1), worley(TexCoord, 2), worley(TexCoord, 4) , 1);
+    outColor = vec3(worley(TexCoord, 1, 1), worley(TexCoord, 2, 1), worley(TexCoord, 4, 1) );
+    //outColor = worley(TexCoord, 1);
 }

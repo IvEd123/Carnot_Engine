@@ -17,8 +17,8 @@
 #s 100 100 100
 #p 0 1 0 
 #r 5 0 0 
-#vs C:\Users\IvEda\Desktop\sfml\rtx\Shaders\plane.vs
-#fs C:\Users\IvEda\Desktop\sfml\rtx\Shaders\dirt.fs
+#vs C:\Users\IvEda\Desktop\sfml\rtx\Shaders\mesh.vs
+#fs C:\Users\IvEda\Desktop\sfml\rtx\Shaders\mesh.fs
 #sh 1
 #tex C:\Users\IvEda\Desktop\sfml\rtx\Textures\grass.jpg
 #end

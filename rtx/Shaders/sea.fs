@@ -124,7 +124,7 @@ void main(){
    vec3 col = vec3(dot(normal, normalize(light))*vec3(.2,.2, 1 ));
 
    vec3 viewDir = normalize(eye - Vertex_pos);
-    vec3 reflectDir = reflect(normalize(light), normal);
+    vec3 reflectDir = reflect(normalize(-light), normal);
 
    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 8)*2;
 

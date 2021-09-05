@@ -280,6 +280,6 @@ void main(){
 	//color /= 1.f;
 
 	color = 1.0 - exp (- color);
-outColor = vec4(color, 1);
+	outColor = vec4(color, 1);
 	
 }

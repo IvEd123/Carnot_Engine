@@ -12,6 +12,7 @@
 #include <SFML/OpenGL.hpp>
 #include <gl/GLU.h>
 
+
 #include "../Headers/PLayer.h"
 #include "../Headers/Render.h"
 #include "../Headers/DLLScriptHandler.h"
@@ -49,6 +50,7 @@ public:
     void                                    SetRot(sf::Vector3f _rot);
     void                                    SetSize(sf::Vector3f s);
     sf::Vector3f                            GetSize();
+
     
     sf::Vector3f *                          GetPosPtr();
     sf::Vector3f *                          GetRotPtr();
@@ -174,23 +176,23 @@ public:
 
         glm::vec3
                                             LightColor = glm::vec3(1, 1, 1),
-                                            cloudScale = glm::vec3(10),
+                                            cloudScale = glm::vec3(1),
                                             cloudOffset = glm::vec3(0),
-                                            secondLayerScale = glm::vec3(10),
+                                            secondLayerScale = glm::vec3(2),
                                             secondLayerOffset = glm::vec3(0),
-                                            thirdLayerScale = glm::vec3(10),
+                                            thirdLayerScale = glm::vec3(3),
                                             thirdLayerOffset = glm::vec3(0);
 
         float
-                                            DensityThreshold = 0.541,
+                                            DensityThreshold = 0.93,
                                             DensityMultiplier = 72,
                                             lightAbsorptionThroughCloud = 0.85,
                                             lightAbsorptionTowardSun = 2.0,
                                             darknessThreshold = 0.2;
 
         int
-                                            num_of_steps = 50,
-                                            num_of_steps_inside = 25;
+                                            num_of_steps = 80,
+                                            num_of_steps_inside = 50;
     };
     CloudParams                             cloudParams;
     void                                    recreateShaders();
@@ -219,6 +221,7 @@ private:
     std::string                             name;
     sf::Vector3f                            pos;
     sf::Vector3f                            rot;
+    sf::Vector3f                            dir;
     std::string                             vertexShader_source;
     std::string                             fragmentShader_source;
     int                                     resolution;
@@ -226,6 +229,8 @@ private:
     unsigned int                            depthMap;
     unsigned int                            ShaderProgram;
     float                                   fov = 20;
+    float                                   distance;
+
     sf::Vector3f                            pov;
 
     int                                     loadShader(GLenum type, const GLchar* path);
@@ -233,7 +238,8 @@ private:
     float                                   near_plane, 
                                             far_plane;
     glm::mat4                               lightProjection, lightView, lightSpaceMatrix;
-    
+    void                                    updatePos();
+
     int                                     CreateShaderProgram();
 public:
 
@@ -253,7 +259,14 @@ public:
     sf::Vector3f                            GetPov() { return pov; }
     void                                    SetPov(sf::Vector3f _pov) { pov = _pov; }
     sf::Vector3f                            GetRot() { return rot; }
+    sf::Vector3f  *                         GetRotPtr() { return &rot; }
     void                                    SetRot(sf::Vector3f _rot) { rot = _rot; }
+    void                                    SetDistance(float _distance) { distance = _distance; }
+    float                                   GetDistance() { return distance; }
+    sf::Vector3f                            GetDir() { return dir; }
+    sf::Vector3f   *                        GetDirPtr() { return &dir; }
+    void                                    SetDir();
+    void                                    SetDir(sf::Vector3f);
 
     void                                    Draw(std::vector <GeometricObject*> obj_list);
 };

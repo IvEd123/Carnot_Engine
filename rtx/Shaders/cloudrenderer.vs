@@ -23,7 +23,7 @@ out mat4 model_out;
 void main(){
 	gl_Position =  proj * view * model  *  vec4(position*size , 1);
 	
-	TexCoord = vec3((position.x )/tex_res.z, position.y + 0.5, position.z);
+	TexCoord = (position+0.5) / size;
 
 	FragPos = (model  *  vec4(position*size , 1)).xyz;
 	translation = FragPos -  position*size;

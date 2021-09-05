@@ -322,7 +322,7 @@ protected:
     GLuint                                  skyBoxTexture;
     GLuint                                  skyBoxFrameBuffer;
     GLuint buff;
-    int                                     cubemapRes = 128;
+    int                                     cubemapRes = 512;
 
     void                                    attachMeshToSky(GeometricObject*);
     void                                    RenderCloud();

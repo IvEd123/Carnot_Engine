@@ -1,21 +1,19 @@
 #version 460 core
 
 in vec2 Texcoord;
-in vec3 v;
 in vec3 Normal;
 
-in vec3 Vertex_pos;
-in vec4 gl_FragCoord;
+
 in VS_OUT {
     vec3 FragPos;
     vec4 FragPosLightSpace;
     mat4 depthMVP;
 } fs_in;
 
+in vec3 ViewDir;
+
+uniform samplerCube skybox;
 uniform sampler2D shadowMap;
-uniform sampler2D tex;
-uniform sampler2D norm;
-uniform sampler2D spec;
 uniform float time;
 
 uniform vec3 eye;
@@ -81,7 +79,7 @@ float ShadowCalculation(vec4 fragPosLightSpace){
     float currentDepth = projCoords.z;
     // calculate bias (based on depth map resolution and slope)
     vec3 normal = normalize(Normal);
-    vec3 lightDir = normalize(light - fs_in.FragPos);
+    vec3 lightDir = normalize(-light);
     float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.001);
     // check whether current frag pos is in shadow
     // float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;
@@ -113,24 +111,28 @@ void main(){
    const float scale1 = 2; 
    const float scale2 = 5; 
 
-   vec2 _xy1 = scale1 * vec2(Vertex_pos.x + time*speed1, Vertex_pos.z + time*speed1);
-   vec2 _xy2 = scale2 * vec2(Vertex_pos.x + time*speed2, Vertex_pos.z + time*speed2);
+   vec2 _xy1 = scale1 * vec2(fs_in.FragPos.x + time*speed1, fs_in.FragPos.z + time*speed1);
+   vec2 _xy2 = scale2 * vec2(fs_in.FragPos.x + time*speed2, fs_in.FragPos.z + time*speed2);
 
-   float noise1 = fbm(vec2(fbm(_xy1)) + _xy1 + time*speed1);
-   float noise2 = fbm(vec2(fbm(_xy2)) + _xy2 + time*speed2);
+   float _noise1 = ( fbm(vec2(fbm(_xy1)) + _xy1 + time*speed1));
+   float _noise2 =( fbm(vec2(fbm(_xy2)) + _xy2 + time*speed2));
 
-    vec3 normal = vec3(noise2 + noise1) * 0.5;
+   float noiseComb = (_noise1 + _noise2 - 1) * 0.1; 
 
-   vec3 col = vec3(dot(normal, normalize(light))*vec3(.2,.2, 1 ));
+    vec3 normal = normalize( vec3(noiseComb, 1, noiseComb));
+    vec3 viewDir = normalize(eye - fs_in.FragPos);
+   
+   
+  //  vec3 reflectDir = reflect(normalize(viewDir), normal);
 
-   vec3 viewDir = normalize(eye - Vertex_pos);
-    vec3 reflectDir = reflect(normalize(-light), normal);
-
-   float spec = pow(max(dot(viewDir, reflectDir), 0.0), 8)*2;
+  // float spec = pow(max(dot(viewDir, reflectDir), 0.0), 8)*2;
 
    float transparency = sqrt(1-abs(dot( viewDir, vec3(0, 1, 0))))*1.5;
 
    float shadow =1- ShadowCalculation(fs_in.FragPosLightSpace);
 
-    outColor =  vec4(max(col + spec*shadow, vec3(8, 64, 176)/255) + 0.2*shadow,  max(0.5, transparency + spec));
+   // outColor =  vec4(max(col + spec*shadow, vec3(8, 64, 176)/255) + 0.2*shadow,  max(0.5, transparency + spec));
+   vec3 reflection  = texture(skybox, reflect(-viewDir, normal)).rgb;
+   outColor.rgb = max(vec3(0.2, 0.2, 0.4), reflection * shadow);
+   outColor.a = transparency;
 }

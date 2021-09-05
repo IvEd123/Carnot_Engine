@@ -25,10 +25,10 @@
 
 #t 3
 #n sea
-#s 300 300 300
-#p 100 0 100 
-#r 0 180 0 
-#vs C:\Users\IvEda\Desktop\sfml\rtx\Shaders\plane.vs
+#s 1000 1000 1000
+#p -250 0 -250
+#r 0 0 0 
+#vs C:\Users\IvEda\Desktop\sfml\rtx\Shaders\mesh.vs
 #fs C:\Users\IvEda\Desktop\sfml\rtx\Shaders\sea.fs
 #sh 1
 #end

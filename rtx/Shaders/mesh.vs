@@ -30,7 +30,8 @@ void main(){
 
     Texcoord = texcoord;
 
-    Normal = normal;
+    Normal = normalize((model * vec4(normal, 0)).xyz);
+    //Normal = normal;
     
     gl_Position = proj * view * model * vec4( position * 0.5 * size, 1.0);
 

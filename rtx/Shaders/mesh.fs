@@ -49,13 +49,16 @@ float ShadowCalculation(vec4 fragPosLightSpace){
 
 
 void main(){
-    	
+    vec3 _normal = Normal;
+    _normal.y = max(Normal.y, 0);
+    
     float shadow = 1- ShadowCalculation(  fs_in.depthMVP *  vec4(fs_in.FragPos, 1.0) );
     vec3 texColor = texture(tex, Texcoord).rgb;
-    vec3 ambient = texture(skybox, Normal, 4).rgb ;
-    float diffuse = dot(Normal, normalize(light));
+    vec3 ambient = texture(skybox, _normal, 3).rgb;
+    float diffuse = dot(Normal, normalize(light))*0.5 + 0.5;
 
     //outColor.rgb = mix(texture(tex, Texcoord).rgb * shadow * max( dot(Normal, vec3(transpose(model) * vec4(normalize(lightPos), 1.0) )), 0.05), texture(tex, Texcoord).rgb, 0.2) + vec3(0.1, 0.1, 0.11);
-    outColor.rgb = (ambient + shadow /* diffuse*/) * texColor;
+    outColor.rgb =  (ambient + shadow * diffuse) * texColor;
+    //outColor.rgb = ambient;
     outColor.a = 1.0;
 }

@@ -91,7 +91,7 @@ int main(int argc, char* argv[]) {
     
     float size = 20.f;
     
-   
+    
         
 
     //light
@@ -207,7 +207,8 @@ int main(int argc, char* argv[]) {
             //ShowCursor(false);
         }
 
-
+        //pl.SetAng(sf::Vector2f(-100, 2));
+        //std::cout << pl.GetAng().x << " ." << pl.GetAng().y << std::endl;
 
         ImGui::SFML::Update(window, clock.restart());
         ImGui::ShowDemoWindow();

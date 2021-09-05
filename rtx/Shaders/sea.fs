@@ -133,6 +133,6 @@ void main(){
 
    // outColor =  vec4(max(col + spec*shadow, vec3(8, 64, 176)/255) + 0.2*shadow,  max(0.5, transparency + spec));
    vec3 reflection  = texture(skybox, reflect(-viewDir, normal)).rgb;
-   outColor.rgb = max(vec3(0.2, 0.2, 0.4), reflection * shadow);
+   outColor.rgb = max(vec3(0.2, 0.2, 0.4    ), reflection * shadow);
    outColor.a = transparency;
 }

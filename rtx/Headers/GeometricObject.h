@@ -33,9 +33,14 @@ protected:
     sf::Vector3f                            pos;
     sf::Vector3f                            rot;
     
+
+    void                                    deleteArrays();
 public:
-    GeometricObject(){}
-    ~GeometricObject();
+    GeometricObject()   {}
+    ~GeometricObject() {}   ;
+    virtual void                            Delete() = 0;
+    void                                    decrementIndex();
+    
 
     void                                    SetType(int t);
     int                                     GetType();
@@ -84,6 +89,7 @@ public:
 
     void                                    Draw();
     void                                    Draw(sf::Vector3f);
+    void                                    Delete();
     void                                    CreateVertices() {};
     void                                    CreateVerticesLegacy();
     void                                    setModel(char* path);
@@ -107,6 +113,7 @@ public:
     void                                    CreateVertices();
     void                                    Draw();
     void                                    setModel(char* path) {}
+    void                                    Delete();
     Screen();
     ~Screen();
 };
@@ -116,6 +123,8 @@ public:
     Terrain(float _size, float _res, float _height);
     ~Terrain();
     Terrain();
+
+    void                                    Delete() {};
 
     void                                    Draw();
     void                                    CreateVertices();
@@ -140,6 +149,7 @@ class  Mesh : public GeometricObject {
 public:
     std::string                             model_path;
     Mesh(char* path);
+    void                                    Delete();
     void                                    setModel( char* path);
     Mesh();
     ~Mesh();
@@ -153,6 +163,7 @@ public:
     
     Plane();
     ~Plane();
+    void                                    Delete();
     void                                    Draw();
     void                                    CreateVertices();
     void                                    setModel(char* path) {}
@@ -169,6 +180,7 @@ private:
 class Cloudbox : public Cube {
 public:
     Cloudbox(sf::Vector3f _pos, sf::Vector3f _res, sf::Vector3f size);
+    void                                    Delete();
     void                                    RenderCloud(float innerRadius, float outerRadius, sf::Vector3f center);
     void                                    renderTexture(int SCREEN_WIDTH, int SCREEN_HEIGHT);
     struct                                  CloudParams {
@@ -244,6 +256,7 @@ private:
 public:
 
     LightSource();
+    void                                    Delete();
     void                                    setShader(GLenum type, const GLchar* path);
     int                                     CreateShaders();
     void                                    SetName(std::string);
@@ -275,6 +288,7 @@ public:
 class Sky {
 public:
     Sky(Cloudbox*);
+    void                                    Delete();
     void                                    Render(int i);
     GLuint                                  GetTex();
     float                                   angle = 0.5;  
@@ -321,7 +335,6 @@ protected:
          
     GLuint                                  skyBoxTexture;
     GLuint                                  skyBoxFrameBuffer;
-    GLuint buff;
     int                                     cubemapRes = 512;
 
     void                                    attachMeshToSky(GeometricObject*);

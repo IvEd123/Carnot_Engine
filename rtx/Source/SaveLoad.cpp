@@ -35,15 +35,17 @@ int SaveLoad::Load(){
 	}
 	std::string buffer;
 
-	int obj_nun;
+	int obj_num;
 
 	file >> buffer;
 	if (buffer.compare("#objects") == 0)
-		file >> obj_nun;
+		file >> obj_num;
 	else {
 		std::cout << "unknown command" << std::endl;
 		return 1;
 	}
+
+	obj_list.reserve(sizeof(GeometricObject*) * obj_num);
 
 	int type;
 	file >> buffer;

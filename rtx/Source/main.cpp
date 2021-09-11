@@ -179,7 +179,9 @@ int main(int argc, char* argv[]) {
         while (window.pollEvent(event)) {
             ImGui::SFML::ProcessEvent(event);
             //ShowCursor(true);
-            if (event.type == Event::Closed || Keyboard::isKeyPressed(Keyboard::LAlt)) {
+            if (event.type == Event::Closed || Keyboard::isKeyPressed(Keyboard::RAlt)) {
+                for(int i = 0; i < obj_list.size(); i++)
+                    DeleteObject(i);
                 pause = 1;
                 window.close();
             }
@@ -269,7 +271,8 @@ int main(int argc, char* argv[]) {
             }
         }
         cloudRender = false;
-        obj_list[0]->SetPos(pl.GetPos());
+
+        //obj_list[0]->SetPos(pl.GetPos());
 
         for (int i = 0; i < obj_list.size(); i++) {
             obj_list[i]->material.setEnvironmentMap(sky.GetTex());
@@ -302,10 +305,21 @@ int main(int argc, char* argv[]) {
             if (t == 0)
                 std::cout << "saved" << std::endl;
         }
+
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::P)) {
+            int size = obj_list.size();
+            if (size > 1)
+                for (int i = 1; i < size; i++)
+                    DeleteObject(1);
+
+
+        }
         
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)){
-            screen.setColorBuffer(*sun.getShadowMap());
-
+           screen.setColorBuffer(*sun.getShadowMap());
+            
+                
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
             screen.setColorBuffer(t);

@@ -1,0 +1,15 @@
+#objects 1
+
+#t 2
+#n skybox
+#m C:\Users\IvEda\Desktop\sfml\rtx\Meshes\skysphere.obj
+#s 10 10 10
+#p 0 0 0 
+#r 0 0 0 
+#vs C:\Users\IvEda\Desktop\sfml\rtx\Shaders\mesh.vs
+#fs C:\Users\IvEda\Desktop\sfml\rtx\Shaders\sky.fs
+#sh 0
+#tex C:\Users\IvEda\Desktop\sfml\rtx\Textures\sky.png
+#end
+
+#scripts 0

@@ -167,9 +167,6 @@
     <None Include="Shaders\mesh.fs">
       <Filter>shaders\mesh</Filter>
     </None>
-    <None Include="Shaders\mesh.vs">
-      <Filter>shaders\mesh</Filter>
-    </None>
     <None Include="Shaders\screen.fs">
       <Filter>shaders\screen</Filter>
     </None>
@@ -220,6 +217,9 @@
     </None>
     <None Include="Shaders\proceduralSky.fs">
       <Filter>shaders\procedural sky</Filter>
+    </None>
+    <None Include="Shaders\mesh.vs">
+      <Filter>shaders\mesh</Filter>
     </None>
   </ItemGroup>
 </Project>

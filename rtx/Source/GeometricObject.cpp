@@ -57,11 +57,23 @@ void GeometricObject::addLightSource(LightSource* source) {
     glBindVertexArray(0);
 }
 
-GeometricObject::~GeometricObject() {
-    //vertices.clear();
-    //vert_vec3->clear();
-    //uv_vec2->clear();
-    //norm_vec3->clear();
+
+
+void GeometricObject::decrementIndex(){
+    array_index--;
+}
+
+void GeometricObject::deleteArrays() {
+    vertices.clear();
+    
+    std::vector<std::vector<glm::vec3>>::iterator _vert_iter = vert_vec3->begin() + array_index;
+    std::vector<std::vector<glm::vec3>>::iterator _norm_iter = norm_vec3->begin() + array_index;
+    std::vector<std::vector<glm::vec2>>::iterator _uv_iter = uv_vec2->begin() + array_index;
+
+    vert_vec3->erase(_vert_iter);
+    norm_vec3->erase(_norm_iter);
+    uv_vec2->erase(_uv_iter);
+    
 }
 
 void GeometricObject::SetName(std::string _name) {
@@ -232,11 +244,26 @@ void Cube::Draw(sf::Vector3f cameraPos){
     glBindVertexArray(0);
 }
 
+void Cube::Delete(){
+    deleteArrays();
+    
+
+    material.Delete();
+}
+
 //  .d88b. .d88b 888b. 8888 8888 8888 8b  8 
 //  YPwww. 8P    8  .8 8www 8www 8www 8Ybm8 
 //      d8 8b    8wwK' 8    8    8    8  "8 
 //  `Y88P' `Y88P 8  Yb 8888 8888 8888 8   8 
 //   
+
+void Screen::Delete(){
+    deleteArrays();
+    material.Delete();
+    glDeleteBuffers(1, &frameBuffer);
+    glDeleteBuffers(1, &depth_stencil_buff);
+    glDeleteTextures(1, &tex);
+}
 
 Screen::Screen(){
     material = Material();
@@ -408,6 +435,12 @@ Mesh::Mesh( char* path){
     material = Material();
 }
 
+void Mesh::Delete(){
+    deleteArrays();
+    material.Delete();
+    model_path.erase();
+}
+
 void Mesh::CreateVertices() {
     material.createVAO_VBO_mesh((*vert_vec3)[array_index], (*uv_vec2)[array_index],(* norm_vec3)[array_index]);
 }
@@ -487,6 +520,11 @@ Plane::Plane(){
 Plane::~Plane(){
     vertices.clear();
     material.~Material();
+}
+
+void Plane::Delete(){
+    deleteArrays();
+    material.Delete();
 }
 
 void Plane::Draw(){
@@ -759,6 +797,15 @@ int LightSource::CreateShaderProgram() {
  }
 
 
+ void LightSource::Delete() {
+     name.clear();
+     vertexShader_source.clear();
+     fragmentShader_source.clear();
+     glDeleteBuffers(1, &depthMapFBO);
+     glDeleteTextures(1, &depthMap);
+     glDeleteProgram(ShaderProgram);
+ }
+
  //     _____ _                 _ ____            
 //    / ____| |               | |  _ \           
 //   | |    | | ___  _   _  __| | |_) | _____  __
@@ -777,6 +824,13 @@ int LightSource::CreateShaderProgram() {
     initBuffer();
     initTexture();
     attachBuffer();
+ }
+
+ void Cloudbox::Delete() {
+     deleteArrays();
+     material.Delete();
+     glDeleteTextures(1, &cloudtex);
+     glDeleteBuffers(1, &cloudbuffer);
  }
 
  void Cloudbox::RenderCloud(float innerRadius, float outerRadius, sf::Vector3f center) {
@@ -1186,4 +1240,16 @@ int LightSource::CreateShaderProgram() {
      glDrawArrays(GL_TRIANGLES, 0, (*skySphere.sphereMesh).vert_vec3[0][skySphere.sphereMesh->array_index].size());
      glBindVertexArray(0);
      glUseProgram(0);
+ }
+
+ void Sky::Delete() {
+     glDeleteTextures(1, &skySphere.texture);
+     glDeleteShader(skySphere.vertexShader);
+     glDeleteShader(skySphere.fragmentShader);
+     glDeleteProgram(skySphere.shaderProgram);
+
+     glDeleteTextures(1, &cloudsOnSky.cloudCubeMap);
+     
+     glDeleteTextures(1, &skyBoxTexture);
+     glDeleteBuffers(1, &skyBoxFrameBuffer);
  }

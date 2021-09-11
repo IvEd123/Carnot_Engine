@@ -18,5 +18,6 @@ void set_pointers_to_arrays(GeometricObject* g);
 void AddObject(GeometryType type, std::string name);
 GeometricObject* getByName(std::string name);
 
+void DeleteObject(int index);
 
 #endif

@@ -189,61 +189,6 @@ vec3 calculate_scattering(
 
 }
 
-/*void main(){
-	vec3 lightDir =  normalize(vec3(1, -1.25, 0));
-    vec3 viewDir = normalize(fs_in.FragPos);
-	
-	vec3 rayPos = vec3(0);
-	float atmosphereHeight = planetRadius;
-
-	float distToEndOfAtmosphere = intersectSphere(rayPos, viewDir, atmosphereHeight);
-	float stepSize = distToEndOfAtmosphere / float(NUM_OF_SAMPLES);
-	vec3 res = vec3(0);
-	vec3 sumR = vec3(0), sumM = vec3(0);
-	float opticalDepthR = 0, opticalDepthM = 0;
-	float mu = dot(viewDir, lightDir);
-	float phaseR = 0.05968 * (1.f + mu * mu);
-	float g = 0.76;
-	float phaseM = 0.119366 * ((1.f - g * g) * ( 1.f + mu * mu)) / ((2.f + g * g) * pow(1.f + g * g - 2.f * g * mu, 1.5f)); 
-
-	
-	for(int i = 0; i < NUM_OF_SAMPLES - 1; i++){
-		rayPos += viewDir * stepSize;
-		float height = length(rayPos - planetCenter);
-
-		float hr = exp( - height / Hr) * stepSize;
-		float hm = exp( - height / Hm) * stepSize;
-		opticalDepthR += hr;
-		opticalDepthM += hm;
-
-		float tLight = intersectSphere(rayPos, lightDir, atmosphereHeight);
-
-		float stepLight = tLight / float(NUM_OF_SAMPLES_SECOND_PASS), tCurrentLight = 0;
-		float opticalDepthLightR = 0, opticalDepthLightM = 0;
-
-		for(int j = 0; j < NUM_OF_SAMPLES_SECOND_PASS; j++){
-			vec3 rayPosLight = rayPos + (tCurrentLight + stepLight * 0.5) * lightDir;
-			float heightLight = length(rayPosLight - planetCenter);
-			opticalDepthLightR += exp(-heightLight / Hr) * stepLight;
-			opticalDepthLightM += exp(-heightLight / Hm) * stepLight;
-			tCurrentLight += stepLight;
-		}
-
-		vec3 tau = absorptionRay * (opticalDepthLightR + opticalDepthLightR) + absorptionMie * 1.1f * (opticalDepthLightM + opticalDepthLightM);
-		vec3 attenuation = vec3(exp(-tau));
-		sumR += attenuation * hr;
-		sumM += attenuation * hm;
-		
-	}
-
-	float sun = pow(max(dot(viewDir, -lightDir), 0), 64.0);
-
-	
-	res = (sumR * absorptionRay * phaseR + sumM * absorptionMie * phaseM) * 200.f;
-	outColor = vec4(vec3(res), 1);
-	//outColor = vec4(vec3(intersectSphere(rayPos, lightDir, atmosphereHeight)/7f), 1);
-	//outColor = vec4( normalize(vec3(ViewDir)), 1);
-}*/
 
 
 void main(){

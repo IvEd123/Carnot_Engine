@@ -22,6 +22,7 @@ public:
                                             //
     Material();
     ~Material();
+    void                                    Delete();
 
     std::vector<GLchar>                     log_vs;
     std::vector<GLchar>                     log_gs;

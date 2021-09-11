@@ -313,3 +313,31 @@ void Material::updateUniforms() {
 
     glUseProgram(0);
 }
+
+void Material::Delete() {
+    glDeleteProgram(shaderProgram);
+    glDeleteShader(fragmentShader);
+    glDeleteShader(vertexShader);
+    glDeleteShader(geometryShader);
+
+    glDeleteTextures(1, &texture);
+    glDeleteVertexArrays(1, &vao);
+    glDeleteBuffers(1, &vbo);
+
+    free(vertexShader_source);
+    free(geometryShader_source);
+    free(fragmentShader_source);
+
+    vertexShader_path.erase();
+    geometryShader_path.erase();
+    fragmentShader_path.erase();
+
+
+    glDeleteBuffers(1, &vert_buff);
+    glDeleteBuffers(1, &norm_buff);
+    glDeleteBuffers(1, &uv_buff);
+
+    log_vs.clear();
+    log_gs.clear();
+    log_fs.clear();
+}

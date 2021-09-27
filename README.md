@@ -4,12 +4,12 @@ Game engine prototype. Written in C++ with SFML and OpenGL.
 Works very bad yet.
 
 ## How to run it?
--build source in visual studio
--move Carnot Engine.exe from DEBUG folder to RTX folder
--run Carnot Engine.exe
--paste path to save file 
--paste save file name
--exit with alt+f4
+1) build source in visual studio
+2) move Carnot Engine.exe from DEBUG folder to RTX folder
+3) run Carnot Engine.exe
+4) paste path to save file 
+5) paste save file name
+6) exit with alt+f4
 
 ##Why main folder is called rtx?
 i wanted to write opengl ray tracing project, but then something went wrong

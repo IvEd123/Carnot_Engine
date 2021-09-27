@@ -195,7 +195,7 @@ glm::vec2 toglmv2(objl::Vector2 vec) {
 }
 
 
-void OBJLoader(const char* path, GeometricObject* object) {
+void OBJLoader(std::string& path, GeometricObject* object) {
     objl::Loader loader;
     loader.LoadFile(path);
     
@@ -208,7 +208,7 @@ void OBJLoader(const char* path, GeometricObject* object) {
     return;
 }
 
-void OBJLoader_v(const char* path, GeometricObject* object) {
+void OBJLoader_v(std::string& path, GeometricObject* object) {
     objl::Loader loader;
     loader.LoadFile(path);
 

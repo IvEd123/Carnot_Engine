@@ -66,7 +66,7 @@ public:
     void                                    UpdateModelMatrix();
     void                                    addLightSource(LightSource* source);
     virtual void                            Draw() = 0;
-    virtual void                            setModel(char* path) = 0;
+    virtual void                            setModel(std::string& path) = 0;
 
     std::vector<GLfloat>                    vertices;
     std::vector<std::vector<glm::vec3>>*    vert_vec3;
@@ -92,7 +92,7 @@ public:
     void                                    Delete();
     void                                    CreateVertices() {};
     void                                    CreateVerticesLegacy();
-    void                                    setModel(char* path);
+    void                                    setModel(std::string& path);
 
     sf::Vector3f size_v;
 
@@ -112,7 +112,7 @@ public:
     glm::mat4 *                             proj;
     void                                    CreateVertices();
     void                                    Draw();
-    void                                    setModel(char* path) {}
+    void                                    setModel(std::string& path) {}
     void                                    Delete();
     Screen();
     ~Screen();
@@ -132,7 +132,7 @@ public:
     GLuint *                                getHeightmap() { return &heightmap; }
     GLuint *                                getAOMap() { return &ao; }
     GLuint *                                getNormalMap() { return &norm; }
-    void                                    setModel(char* path) {}
+    void                                    setModel(std::string& path) {}
     float                                   height;
 private:
     float                                   size;
@@ -148,9 +148,9 @@ private:
 class  Mesh : public GeometricObject {
 public:
     std::string                             model_path;
-    Mesh(char* path);
+    Mesh(std::string& path);
     void                                    Delete();
-    void                                    setModel( char* path);
+    void                                    setModel(std::string& path);
     Mesh();
     ~Mesh();
     void                                    Draw();
@@ -166,7 +166,7 @@ public:
     void                                    Delete();
     void                                    Draw();
     void                                    CreateVertices();
-    void                                    setModel(char* path) {}
+    void                                    setModel(std::string& path) {}
     int                                     texture_repeat = 1;
 
     GLuint *                                getNormalMap() { return &norm; }

@@ -172,7 +172,8 @@ Cube::Cube() {
 
 
 void Cube::CreateVerticesLegacy() {
-    setModel((char*)"C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Meshes\\cube.obj");
+    std::string path = ".\\Meshes\\cube.obj";
+    setModel(path);
 
     //material.createVAO_VBO_mesh((*vert_vec3)[array_index], (*uv_vec2)[array_index], (*norm_vec3)[array_index]);
     material.createVAO_VBO(vertices);
@@ -180,7 +181,7 @@ void Cube::CreateVerticesLegacy() {
 
 
 
-void Cube::setModel(char* path) {
+void Cube::setModel(std::string & path) {
     model_path = path;
     OBJLoader_v(path, this);
 }
@@ -425,7 +426,7 @@ void Terrain::CreateVertices(){
 //                                
 //    
 
-Mesh::Mesh( char* path){
+Mesh::Mesh(std::string& path){
     pos = sf::Vector3f(0, 0, 0);
     rot = sf::Vector3f(0, 0, 0);
     OBJLoader(path, this);
@@ -445,7 +446,7 @@ void Mesh::CreateVertices() {
     material.createVAO_VBO_mesh((*vert_vec3)[array_index], (*uv_vec2)[array_index],(* norm_vec3)[array_index]);
 }
 
-void Mesh::setModel( char* path) {
+void Mesh::setModel(std::string& path) {
     model_path = path;
     OBJLoader(path, this);
     CreateVertices();

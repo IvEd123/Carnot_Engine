@@ -20,13 +20,13 @@ private:
 	std::string								name;
 	std::string								extension = "sus";
 public:
-	void									SetPath(std::string _path);
+	void									SetPath(std::string& _path);
 	std::string								GetPath();
 	
-	void									SetName(std::string _name);
+	void									SetName(std::string& _name);
 	std::string								GetName();
 	
-	void									SetExtension(std::string _ex);
+	void									SetExtension(std::string& _ex);
 	std::string								GetExtension();
 
 	int										Load();

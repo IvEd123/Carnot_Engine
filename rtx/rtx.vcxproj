@@ -91,9 +91,9 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>SFML_STATIC;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SFML_STATIC;WIN32;_DEBUG;_CONSOLE;PROJECT_DIR="($(ProjectDir))";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\IvEda\Desktop\sfml\rtx\thirdparty\SFML-2.5.1\include;C:\Users\IvEda\Desktop\sfml\rtx\thirdparty\soil-master\include\SOIL2;C:\Users\IvEda\Desktop\sfml\rtx\thirdparty\imgui\imgui-sfml-master;C:\Users\IvEda\Desktop\sfml\rtx\thirdparty\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\thirdparty\SFML-2.5.1\include;$(ProjectDir)\thirdparty\soil-master\include\SOIL2;$(ProjectDir)\thirdparty\imgui\imgui-sfml-master;$(ProjectDir)\thirdparty\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

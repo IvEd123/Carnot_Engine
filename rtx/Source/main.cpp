@@ -96,8 +96,8 @@ int main(int argc, char* argv[]) {
 
     //light
     LightSource sun = LightSource();
-    sun.setShader(GL_VERTEX_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\Shadow.vs");
-    sun.setShader(GL_FRAGMENT_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\Shadow.fs");
+    sun.setShader(GL_VERTEX_SHADER, ".\\Shaders\\Shadow.vs");
+    sun.setShader(GL_FRAGMENT_SHADER, ".\\Shaders\\Shadow.fs");
     error = sun.CreateShaders();
     if (error != 0)
         std::cout << error << std::endl;
@@ -108,8 +108,8 @@ int main(int argc, char* argv[]) {
     //cloud map
     glEnable(GL_TEXTURE_3D);
     Cloudbox cloudbox = Cloudbox(sf::Vector3f(0, 0, 0), sf::Vector3f(256, 256, 256), sf::Vector3f(10, 1, 10));
-    cloudbox.material.loadShader(GL_VERTEX_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\cloud.vs");
-    cloudbox.material.loadShader(GL_FRAGMENT_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\cloud.fs");
+    cloudbox.material.loadShader(GL_VERTEX_SHADER, ".\\Shaders\\cloud.vs");
+    cloudbox.material.loadShader(GL_FRAGMENT_SHADER, ".\\Shaders\\cloud.fs");
     cloudbox.material.CreateShaders();
     cloudbox.material.specifyVertexAttributes3D(cloudbox.material.getShaderProgram());
     cloudbox.renderTexture(WIDTH, HEIGHT);
@@ -126,8 +126,8 @@ int main(int argc, char* argv[]) {
     //framebuffer
     Screen screen = Screen();
     screen.frameBuffer = createFrameBuffer(WIDTH, HEIGHT, screen.getDepthSteencilBuffer(), screen.getColorBuffer());
-    screen.material.loadShader(GL_VERTEX_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\screen.vs");
-    screen.material.loadShader(GL_FRAGMENT_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\screen.fs");
+    screen.material.loadShader(GL_VERTEX_SHADER, ".\\Shaders\\screen.vs");
+    screen.material.loadShader(GL_FRAGMENT_SHADER, ".\\Shaders\\screen.fs");
     error = screen.material.CreateShaders();
     screen.material.specifyVertexAttributes_screen(screen.material.getShaderProgram());
     if (error != 0)
@@ -146,8 +146,14 @@ int main(int argc, char* argv[]) {
     bool pause_prev = 0;
 
     SaveLoad sf = SaveLoad();
-    sf.SetPath("C:\\Users\\IvEda\\Desktop\\sfml");
-    sf.SetName("test");
+    std::cout << "Enter path to save file:\n";
+    std::string path_to_safe_file;
+    std::cin >> path_to_safe_file;
+    sf.SetPath(path_to_safe_file);
+    std::string name;
+    std::cout << "Enter name of save file (without extension):\n";
+    std::cin >> name;
+    sf.SetName(name);
 
     sf.Load();
 
@@ -158,7 +164,7 @@ int main(int argc, char* argv[]) {
     for (int i = 0; i < scripts.size(); i++)
         scripts[i].Start();
 
-    sky.initSky("C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\proceduralSky.fs", obj_list[0]);
+    sky.initSky(".\\Shaders\\proceduralSky.fs", obj_list[0]);
     GUI_Object obj_win = GUI_Object();
     GUI_cloud gui_cloud = GUI_cloud();
     gui_cloud.SetObject(&cloudbox);

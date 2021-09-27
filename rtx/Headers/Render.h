@@ -32,9 +32,9 @@ GLuint createFrameBuffer(int height, int width);
 
 void bindTexture(const char* path, const char* name, GLuint* handler, Material* material, int i);
 
-void OBJLoader(const char* path, GeometricObject* object);
+void OBJLoader(std::string&, GeometricObject* object);
 
-void OBJLoader_v(const char* path, GeometricObject* object);
+void OBJLoader_v(std::string& path, GeometricObject* object);
 
 void OBJLoaderLegacy(const char* path, GeometricObject* object);
 

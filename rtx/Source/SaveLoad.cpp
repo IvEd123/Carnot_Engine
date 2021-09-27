@@ -1,6 +1,6 @@
 #include "../Headers/SaveLoad.h"
 
-void SaveLoad::SetPath(std::string _path){
+void SaveLoad::SetPath(std::string& _path){
 	path = _path;
 }
 
@@ -8,7 +8,7 @@ std::string SaveLoad::GetPath(){
 	return path;
 }
 
-void SaveLoad::SetName(std::string _name){
+void SaveLoad::SetName(std::string& _name){
 	name = _name;
 }
 
@@ -16,7 +16,7 @@ std::string SaveLoad::GetName(){
 	return name;
 }
 
-void SaveLoad::SetExtension(std::string _ex){
+void SaveLoad::SetExtension(std::string& _ex){
 	extension = _ex;
 }
 
@@ -61,7 +61,8 @@ int SaveLoad::Load(){
 				AddObject((GeometryType)type, name);
 				file >> buffer;
 				if (buffer.compare("#m") == 0 && type == MESH) {
-					char mesh_path[100];
+					std::string mesh_path;
+					//char mesh_path[100];
 					file >> mesh_path;
 					LAST_OBJ_PTR->setModel(mesh_path);
 					file >> buffer;

@@ -93,7 +93,7 @@ void Material::loadShader(GLenum type, const GLchar* path) {
     file.open(path);
 
     if (!file.is_open()) {
-        std::cout << "error!!" << std::endl;
+        std::cout << "error!! + " << path << std::endl;
     }
 
     file.seekg(0, std::ios::end);

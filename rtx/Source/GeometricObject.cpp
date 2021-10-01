@@ -916,8 +916,8 @@ int LightSource::CreateShaderProgram() {
 
  void Cloudbox::recreateShaders() {
      glDeleteProgram(material.getShaderProgram());
-     material.loadShader(GL_VERTEX_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\cloudrenderer.vs");
-     material.loadShader(GL_FRAGMENT_SHADER, "C:\\Users\\IvEda\\Desktop\\sfml\\rtx\\Shaders\\cloudrender.fs");
+     material.loadShader(GL_VERTEX_SHADER, ".\\Shaders\\cloudrenderer.vs");
+     material.loadShader(GL_FRAGMENT_SHADER, ".\\Shaders\\cloudrender.fs");
      material.CreateShaders();
  }
 

@@ -14,6 +14,8 @@
 #include <gl/GLU.h>
 #include "../thirdparty/OBJ-loader/OBJ_Loader.h"
 
+#include <assimp\Importer.hpp>
+
 #include "../Headers/PLayer.h"
 #include "../Headers/Material.h"
 #include "../Headers/GeometricObject.h"

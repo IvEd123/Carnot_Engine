@@ -93,13 +93,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>SFML_STATIC;WIN32;_DEBUG;_CONSOLE;PROJECT_DIR="($(ProjectDir))";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\thirdparty\SFML-2.5.1\include;$(ProjectDir)\thirdparty\soil-master\include\SOIL2;$(ProjectDir)\thirdparty\imgui\imgui-sfml-master;$(ProjectDir)\thirdparty\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\thirdparty\SFML-2.5.1\include;$(ProjectDir)\thirdparty\soil-master\include\SOIL2;$(ProjectDir)\thirdparty\imgui\imgui-sfml-master;$(ProjectDir)\thirdparty\assimp\include;$(ProjectDir)\thirdparty\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)thirdparty\SFML-2.5.1\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);$(ProjectDir)thirdparty\glew-2.1.0\lib\Release\Win32\glew32s.lib;sfml-graphics-s-d.lib;sfml-window-s-d.lib;sfml-system-s-d.lib;opengl32.lib;freetype.lib;winmm.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)\thirdparty\SFML-2.5.1\lib;$(ProjectDir)\thirdparty\assimp\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);$(ProjectDir)thirdparty\glew-2.1.0\lib\Release\Win32\glew32s.lib;sfml-graphics-s-d.lib;sfml-window-s-d.lib;sfml-system-s-d.lib;opengl32.lib;freetype.lib;winmm.lib;assimp-vc140-mt.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -156,6 +156,7 @@
     <ClCompile Include="Source\gui.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\Material.cpp" />
+    <ClCompile Include="Source\Node.cpp" />
     <ClCompile Include="Source\PLayer.cpp" />
     <ClCompile Include="Source\Render.cpp" />
     <ClCompile Include="Source\SaveLoad.cpp" />
@@ -176,6 +177,7 @@
     <ClInclude Include="Headers\GeometricObject.h" />
     <ClInclude Include="Headers\gui.h" />
     <ClInclude Include="Headers\Material.h" />
+    <ClInclude Include="Headers\Node.h" />
     <ClInclude Include="Headers\PLayer.h" />
     <ClInclude Include="Headers\Render.h" />
     <ClInclude Include="Headers\resource.h" />

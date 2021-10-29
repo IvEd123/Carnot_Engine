@@ -12,12 +12,13 @@
 #include <iostream>
 
 
-
+//simplified gameobject struct that contains pointers to values that can be modified in scripts
 typedef struct gameobject {
 	sf::Vector3f* pos;
 	sf::Vector3f* rot;
 	sf::Vector3f* size;
 };
+
 
 typedef int (*UPDFUNCPTR) (gameobject*);
 typedef int (*STARTFUNCPTR) (gameobject*);

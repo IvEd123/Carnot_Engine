@@ -1,16 +1,16 @@
 #include "../Headers/GeometricObject.h"
 
-Player& _pl = Player::Get();
+Player& player_entity = Player::Get();
 
 #define M_PI 3.1415926535897932384626433832795
 #define LOD 4
 
-void printVec(sf::Vector3f v) {
+inline void printVec(sf::Vector3f v) {
     std::cout << v.x << '_' << v.y << '_' << v.z;
 }
 
 inline sf::Vector3f Normalize(sf::Vector3f v) {
-    float length =sqrt( v.x * v.x + v.y * v.y + v.z * v.z);
+    float length = sqrt( v.x * v.x + v.y * v.y + v.z * v.z);
     return v / length;
 }
 
@@ -50,11 +50,16 @@ void GeometricObject::addLightSource(LightSource* source) {
     material.shadowmap = source->getShadowMap();
     material.sun_rot = (glm::vec3*)source->GetDirPtr();
     material.sun_dist = source->GetDistance();
+
+    GLint previous_vao, previous_program;
+    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previous_vao);
+    glGetIntegerv(GL_CURRENT_PROGRAM, &previous_program);
+
     glBindVertexArray(material.getVAO());
     glUseProgram(material.getShaderProgram());
     glUniform1i(glGetUniformLocation(material.getShaderProgram(), "shadowMap"), 1);
-    glUseProgram(0);
-    glBindVertexArray(0);
+    glUseProgram(previous_program);
+    glBindVertexArray(previous_vao);
 }
 
 
@@ -80,11 +85,11 @@ void GeometricObject::SetName(std::string _name) {
     name = _name;
 }
 
-std::string GeometricObject::GetName(void) {
+std::string GeometricObject::GetName() {
     return name;
 }
 
-std::string * GeometricObject::GetNamePtr(void) {
+std::string * GeometricObject::GetNamePtr() {
     return &name;
 }
 
@@ -142,22 +147,20 @@ Cube::Cube(sf::Vector3f _size){
     size = _size;
     pos = sf::Vector3f(0, 0, 0);
     rot = sf::Vector3f(0, 0, 0);
-
-
     material = Material();
-    
 }
 
-Cube::Cube(sf::Vector3f _pos, sf::Vector3f _rot, sf::Vector3f _size, GLuint* _texture){
+Cube::Cube(sf::Vector3f _pos, sf::Vector3f _rot, sf::Vector3f _size, GLuint _texture){
     pos = _pos;
     rot = _rot;
     size = _size;
-    material.bindTexture(*_texture);
+    material.bindTexture(_texture);
 }
 
 Cube::~Cube() {
     vertices.clear();
     material.~Material();
+    deleteArrays();
 }
 
 Cube::Cube() {
@@ -165,21 +168,14 @@ Cube::Cube() {
     pos = sf::Vector3f(0, 0, 0);
     rot = sf::Vector3f(0, 0, 0);
 
-
-    material = *(new Material());
+    material = Material();
 }
-
-
 
 void Cube::CreateVerticesLegacy() {
     std::string path = ".\\Meshes\\cube.obj";
     setModel(path);
-
-    //material.createVAO_VBO_mesh((*vert_vec3)[array_index], (*uv_vec2)[array_index], (*norm_vec3)[array_index]);
     material.createVAO_VBO(vertices);
 }
-
-
 
 void Cube::setModel(std::string & path) {
     model_path = path;
@@ -187,6 +183,10 @@ void Cube::setModel(std::string & path) {
 }
 
 void Cube::Draw(){
+    GLint previous_vao, previous_program;
+    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previous_vao);
+    glGetIntegerv(GL_CURRENT_PROGRAM, &previous_program);
+
     UpdateModelMatrix();
     material.updateUniforms();
     glBindVertexArray(material.getVAO());
@@ -194,12 +194,8 @@ void Cube::Draw(){
     
     material.setModel(glm::mat4(1.0f));
 
-      // glActiveTexture(GL_TEXTURE0);
-    //glBindTexture(GL_TEXTURE_3D, material.getTexture()); 
-
-
     GLuint uniEye = glGetUniformLocation(material.getShaderProgram(), "eyepos");
-    glUniform3f(uniEye, _pl.GetPos().x, _pl.GetPos().y, _pl.GetPos().z);
+    glUniform3f(uniEye, player_entity.GetPos().x, player_entity.GetPos().y, player_entity.GetPos().z);
 
     GLuint uniPos = glGetUniformLocation(material.getShaderProgram(), "pos");
     glUniform3f(uniPos, pos.x, pos.y, pos.z);
@@ -214,23 +210,23 @@ void Cube::Draw(){
     glUniform1f(uniLight, material.sun_dist);
 
     glDrawArrays(GL_TRIANGLES, 0, 36);
-    glBindVertexArray(0);
+    glBindVertexArray(previous_vao);
+    glUseProgram(previous_program);
 }
 
 void Cube::Draw(sf::Vector3f cameraPos){
+    //used for drawing with specific camera position
+
+    GLint previous_vao, previous_program;
+    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previous_vao);
+    glGetIntegerv(GL_CURRENT_PROGRAM, &previous_program);
+
     UpdateModelMatrix();
     material.updateUniforms();
     glBindVertexArray(material.getVAO());
     glUseProgram(material.getShaderProgram());
     
     material.setModel(glm::mat4(1.0f));
-
-      // glActiveTexture(GL_TEXTURE0);
-    //glBindTexture(GL_TEXTURE_3D, material.getTexture()); 
-
-
-    //GLuint uniEye = glGetUniformLocation(material.getShaderProgram(), "eyepos");
-    //glUniform3f(uniEye, _pl.GetPos().x, _pl.GetPos().y, _pl.GetPos().z);
 
     GLuint uniPos = glGetUniformLocation(material.getShaderProgram(), "pos");
     glUniform3f(uniPos, pos.x, pos.y, pos.z);
@@ -242,29 +238,16 @@ void Cube::Draw(sf::Vector3f cameraPos){
     glUniform3f(uniLight, material.sun_rot->x, material.sun_rot->y, material.sun_rot->z);
 
     glDrawArrays(GL_TRIANGLES, 0, 36);
-    glBindVertexArray(0);
+    glBindVertexArray(previous_vao);
+    glUseProgram(previous_program);
 }
 
-void Cube::Delete(){
-    deleteArrays();
-    
-
-    material.Delete();
-}
 
 //  .d88b. .d88b 888b. 8888 8888 8888 8b  8 
 //  YPwww. 8P    8  .8 8www 8www 8www 8Ybm8 
 //      d8 8b    8wwK' 8    8    8    8  "8 
 //  `Y88P' `Y88P 8  Yb 8888 8888 8888 8   8 
 //   
-
-void Screen::Delete(){
-    deleteArrays();
-    material.Delete();
-    glDeleteBuffers(1, &frameBuffer);
-    glDeleteBuffers(1, &depth_stencil_buff);
-    glDeleteTextures(1, &tex);
-}
 
 Screen::Screen(){
     material = Material();
@@ -275,6 +258,10 @@ Screen::Screen(){
 Screen::~Screen() {
     vertices.clear();
     material.~Material();
+    deleteArrays();
+    glDeleteBuffers(1, &frameBuffer);
+    glDeleteBuffers(1, &depth_stencil_buff);
+    glDeleteTextures(1, &tex);
 }
 
 GLuint* Screen::getDepthSteencilBuffer(){
@@ -295,10 +282,14 @@ void Screen::CreateVertices(){
         -1.0f, -1.0f,  0.0f, 0.0f,
         -1.0f,  1.0f,  0.0f, 1.0f
     };
-
 }
 
 void Screen::Draw() {
+    GLint previous_vao, previous_program;
+    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previous_vao);
+    glGetIntegerv(GL_CURRENT_PROGRAM, &previous_program);
+    GLboolean previous_depth_test;
+    glGetBooleanv(GL_DEPTH_TEST, &previous_depth_test);
 
     glDisable(GL_DEPTH_TEST);
 
@@ -312,7 +303,10 @@ void Screen::Draw() {
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
     
-    glBindVertexArray(0);
+    glBindVertexArray(previous_vao);
+    glUseProgram(previous_program);
+    if (previous_depth_test)
+        glEnable(GL_DEPTH_TEST);
 }
 
 
@@ -335,7 +329,12 @@ Terrain::Terrain(float _size, float _res, float _height){
 }
 
 Terrain::Terrain() {
-
+    ao = 0;
+    height = 0;
+    heightmap = 0;
+    norm = 0;
+    resolution = 0;
+    size = 0;
 }
 
 Terrain::~Terrain(){
@@ -349,6 +348,9 @@ Terrain::~Terrain(){
 }
 
 void Terrain::Draw(){
+    GLint previous_vao, previous_program;
+    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previous_vao);
+    glGetIntegerv(GL_CURRENT_PROGRAM, &previous_program);
     UpdateModelMatrix();
     material.updateUniforms();
     glUseProgram(material.getShaderProgram());
@@ -365,7 +367,7 @@ void Terrain::Draw(){
     glUniform1f(uniRes, (float)resolution+1);
 
     GLuint uniEye = glGetUniformLocation(material.getShaderProgram(), "eye");
-    glUniform3f(uniEye, _pl.GetPos().x, _pl.GetPos().y, _pl.GetPos().z);
+    glUniform3f(uniEye, player_entity.GetPos().x, player_entity.GetPos().y, player_entity.GetPos().z);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, material.getTexture());
@@ -382,7 +384,8 @@ void Terrain::Draw(){
     glTranslatef(pos.x, pos.y, pos.y);
     glDrawArrays(GL_TRIANGLES, 0, vertices.size()/4);
     glTranslatef(-pos.x, -pos.y, -pos.y);
-    glBindVertexArray(0);
+    glBindVertexArray(previous_vao);
+    glUseProgram(previous_program);
 }
 
 void Terrain::CreateVertices(){
@@ -436,12 +439,6 @@ Mesh::Mesh(std::string& path){
     material = Material();
 }
 
-void Mesh::Delete(){
-    deleteArrays();
-    material.Delete();
-    model_path.erase();
-}
-
 void Mesh::CreateVertices() {
     material.createVAO_VBO_mesh((*vert_vec3)[array_index], (*uv_vec2)[array_index],(* norm_vec3)[array_index]);
 }
@@ -453,6 +450,9 @@ void Mesh::setModel(std::string& path) {
 }
 
 Mesh::~Mesh(){
+    deleteArrays();
+    material.~Material();
+    model_path.erase();
 }
 
 Mesh::Mesh(){
@@ -462,6 +462,10 @@ Mesh::Mesh(){
 }
 
 void Mesh::Draw() {
+    GLint previous_vao, previous_program;
+    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previous_vao);
+    glGetIntegerv(GL_CURRENT_PROGRAM, &previous_program);
+
     UpdateModelMatrix();
     material.updateUniforms();
     glBindVertexArray(material.getVAO());
@@ -476,7 +480,7 @@ void Mesh::Draw() {
     glUniform3f(uniSize, size.x, size.y, size.z);
 
     GLuint uniEye = glGetUniformLocation(material.getShaderProgram(), "eye");
-    glUniform3f(uniEye, _pl.GetPos().x, _pl.GetPos().y, _pl.GetPos().z);
+    glUniform3f(uniEye, player_entity.GetPos().x, player_entity.GetPos().y, player_entity.GetPos().z);
 
     GLuint uniLight = glGetUniformLocation(material.getShaderProgram(), "light");
     glUniform3f(uniLight, -material.sun_rot->x, -material.sun_rot->y, -material.sun_rot->z);
@@ -484,8 +488,6 @@ void Mesh::Draw() {
     uniLight = glGetUniformLocation(material.getShaderProgram(), "lightDistance");
     glUniform1f(uniLight, material.sun_dist);
     
-    
-
     glActiveTexture(GL_TEXTURE1);
     unsigned int sm = *material.shadowmap;
     glBindTexture(GL_TEXTURE_2D, sm);
@@ -496,10 +498,8 @@ void Mesh::Draw() {
 
     glDrawArrays(GL_TRIANGLES, 0,  (*vert_vec3)[array_index].size());
 
-    
-
-    glUseProgram(0);
-    glBindVertexArray(0);
+    glUseProgram(previous_program);
+    glBindVertexArray(previous_vao);
 }
 
 //    _____  _               _   _ ______ 
@@ -519,16 +519,15 @@ Plane::Plane(){
 }
 
 Plane::~Plane(){
-    vertices.clear();
     material.~Material();
-}
-
-void Plane::Delete(){
     deleteArrays();
-    material.Delete();
 }
 
 void Plane::Draw(){
+    GLint previous_vao, previous_program;
+    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previous_vao);
+    glGetIntegerv(GL_CURRENT_PROGRAM, &previous_program);
+
     UpdateModelMatrix();
     material.updateUniforms();
     glUseProgram(material.getShaderProgram());
@@ -542,7 +541,7 @@ void Plane::Draw(){
     glUniform1f(uniRepeat, texture_repeat);
 
     GLuint uniEye = glGetUniformLocation(material.getShaderProgram(), "eye");
-    glUniform3f(uniEye, _pl.GetPos().x, _pl.GetPos().y, _pl.GetPos().z);
+    glUniform3f(uniEye, player_entity.GetPos().x, player_entity.GetPos().y, player_entity.GetPos().z);
     
     GLuint uniLight = glGetUniformLocation(material.getShaderProgram(), "light");
     glUniform3f(uniLight, -material.sun_rot->x, -material.sun_rot->y, -material.sun_rot->z);
@@ -564,7 +563,8 @@ void Plane::Draw(){
 
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
-    glBindVertexArray(0);
+    glBindVertexArray(previous_vao);
+    glUseProgram(previous_program);
 }
 
 void Plane::CreateVertices(){
@@ -615,7 +615,13 @@ void Plane::CreateVertices(){
 
 
 LightSource::LightSource() {
-    resolution = 2048;
+    
+    resolution = 2048;//default resolution
+
+    GLint previous_buffer;
+    glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &previous_buffer);
+
+    //creating framebuffer
     glGenFramebuffers(1, &depthMapFBO);
     glGenTextures(1, &depthMap);
     glBindTexture(GL_TEXTURE_2D, depthMap);
@@ -631,14 +637,11 @@ LightSource::LightSource() {
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
     glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, previous_buffer);
 
     near_plane = 1.0f, far_plane = 50.0f;
     lightProjection = glm::ortho(-fov, fov, -fov, fov, near_plane, far_plane);
 
-   
-
-    
 }
 
 void LightSource::setShader(GLenum type, const GLchar* path){
@@ -650,6 +653,7 @@ void LightSource::setShader(GLenum type, const GLchar* path){
         fragmentShader_source = std::string(path);
         break;
     default:
+        throw std::exception("Unknown shader type");
         break;
     }
 }
@@ -659,6 +663,13 @@ int LightSource::CreateShaders(){
 }
 
 void LightSource::Draw(std::vector <GeometricObject*> obj_list) {
+    GLint previous_vao, previous_program;
+    GLint previous_buffer;
+    GLboolean previous_depth_test;
+    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previous_vao);
+    glGetIntegerv(GL_CURRENT_PROGRAM, &previous_program);
+    glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &previous_buffer);
+    glGetBooleanv(GL_DEPTH_TEST, &previous_depth_test);
 
     glEnable(GL_DEPTH_TEST);
     glUseProgram(ShaderProgram);
@@ -668,7 +679,6 @@ void LightSource::Draw(std::vector <GeometricObject*> obj_list) {
     glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
     glClear(GL_DEPTH_BUFFER_BIT);
 
-   // SetDir();
     updatePos();
 
     lightView = glm::lookAt(ConvertSFML2GLM(pos), ConvertSFML2GLM(sf::Vector3f(0, 0, 0)), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -705,10 +715,15 @@ void LightSource::Draw(std::vector <GeometricObject*> obj_list) {
             glBindVertexArray(0);
         }
     }
+    glBindVertexArray(previous_vao);
+    glUseProgram(previous_program);
+    glBindBuffer(GL_FRAMEBUFFER, previous_buffer);
+    if (previous_depth_test)
+        glEnable(GL_DEPTH_TEST);
 
 }
 
-unsigned int *LightSource::getShadowMap() {
+inline unsigned int *LightSource::getShadowMap() {
     return &depthMap;
 }
 
@@ -719,11 +734,11 @@ int LightSource::CreateShaderProgram() {
 
     int vertexShader = loadShader(GL_VERTEX_SHADER, vs_str);
     if (vertexShader == -1)
-        return -1;
+        throw std::exception("Vertex shader loading error");
     
     int fragmentShader = loadShader(GL_FRAGMENT_SHADER, fs_str);
     if (fragmentShader == -1)
-        return -1;
+        throw std::exception("Fragment shader loading error");
 
     ShaderProgram = glCreateProgram();
     glAttachShader(ShaderProgram, vertexShader);
@@ -737,10 +752,9 @@ int LightSource::CreateShaderProgram() {
     std::ifstream file;
     file.open(path);
 
-    if (!file.is_open()) {
-        std::cout << "error!!" << std::endl;
-        return -1;
-    }
+    if (!file.is_open()) 
+        throw std::exception("Light source shader file loading error");
+    
 
     file.seekg(0, std::ios::end);
     int file_size = file.tellg();
@@ -765,18 +779,16 @@ int LightSource::CreateShaderProgram() {
         else if(type == GL_FRAGMENT_SHADER)
             std::cout << "frag ";
         getError(log, shader);
+        throw std::exception("Shader compilation error");
     }
-
-
+    free(shaderSource);
+    file.close();
     return shader;
 }
 
 
  void LightSource::updatePos() {
-
      pos = - Normalize(dir) * distance;
-
-
  }
 
  void LightSource::SetDir() {
@@ -798,7 +810,7 @@ int LightSource::CreateShaderProgram() {
  }
 
 
- void LightSource::Delete() {
+ LightSource::~LightSource() {
      name.clear();
      vertexShader_source.clear();
      fragmentShader_source.clear();
@@ -827,9 +839,9 @@ int LightSource::CreateShaderProgram() {
     attachBuffer();
  }
 
- void Cloudbox::Delete() {
+ Cloudbox::~Cloudbox() {
      deleteArrays();
-     material.Delete();
+     material.~Material();
      glDeleteTextures(1, &cloudtex);
      glDeleteBuffers(1, &cloudbuffer);
  }
@@ -855,31 +867,37 @@ int LightSource::CreateShaderProgram() {
  }
 
  void Cloudbox::renderTexture(int SCREEN_WIDTH, int SCREEN_HEIGHT) {
-    glViewport(0, 0, cloudTexRes.x, cloudTexRes.y);
-    glUseProgram(material.getShaderProgram());
-    glBindVertexArray(material.getVAO());
-
-    int grid_res_loc = glGetUniformLocation(material.getShaderProgram(), "grid_resolution");
-    glUniform1i(grid_res_loc, pointsGrid);
-
-    int layer_loc = glGetUniformLocation(material.getShaderProgram(), "layers");
-    glUniform1i(layer_loc, cloudTexRes.z);
-
-    for (int i = 0; i < cloudTexRes.z; ++i) {
-        int layer_loc = glGetUniformLocation(material.getShaderProgram(), "layer");
-        glUniform1f(layer_loc, (float)i / (float)cloudTexRes.z);
-        glFramebufferTexture3D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_3D, cloudtex, 0, i);
-        glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-    }
-
-
-    glGenerateMipmap(GL_TEXTURE_3D);
-
-    glBindVertexArray(0);
-    glUseProgram(0);
-    glBindBuffer(GL_FRAMEBUFFER, 0);
-
-    glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+     GLint previous_vao, previous_program;
+     GLint previous_buffer;
+     glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previous_vao);
+     glGetIntegerv(GL_CURRENT_PROGRAM, &previous_program);
+     glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &previous_buffer);
+     
+     glViewport(0, 0, cloudTexRes.x, cloudTexRes.y);
+     glUseProgram(material.getShaderProgram());
+     glBindVertexArray(material.getVAO());
+     
+     int grid_res_loc = glGetUniformLocation(material.getShaderProgram(), "grid_resolution");
+     glUniform1i(grid_res_loc, pointsGrid);
+     
+     int layer_loc = glGetUniformLocation(material.getShaderProgram(), "layers");
+     glUniform1i(layer_loc, cloudTexRes.z);
+     
+     for (int i = 0; i < cloudTexRes.z; ++i) {
+         int layer_loc = glGetUniformLocation(material.getShaderProgram(), "layer");
+         glUniform1f(layer_loc, (float)i / (float)cloudTexRes.z);
+         glFramebufferTexture3D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_3D, cloudtex, 0, i);
+         glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+     }
+     
+     
+     glGenerateMipmap(GL_TEXTURE_3D);
+     
+     glBindVertexArray(previous_vao);
+     glUseProgram(previous_program);
+     glBindBuffer(GL_FRAMEBUFFER, previous_buffer);
+     
+     glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     
  }
 
@@ -907,8 +925,9 @@ int LightSource::CreateShaderProgram() {
      glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, cloudtex, 0);
 
 
-     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-         std::cout << "ERRROR WITH CLOUD BUFFER " << glCheckFramebufferStatus(GL_FRAMEBUFFER) << std::endl;
+     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+         throw std::exception("Error in cloud buffer ");
+     }
 
      glBindFramebuffer(GL_FRAMEBUFFER, cloudbuffer);
      glDrawBuffer(GL_COLOR_ATTACHMENT0);
@@ -998,17 +1017,16 @@ int LightSource::CreateShaderProgram() {
      camera.view = glm::rotate(camera.view, glm::radians(camera.pitch ), glm::vec3(1.0, 0.0, 0.0));
      camera.view = glm::rotate(camera.view, glm::radians(camera.yaw ),   glm::vec3(0.0, 1.0, 0.0));
      camera.view = glm::translate(camera.view, ConvertSFML2GLM(-camera.cameraPos));
-    //add from tutorial if doesn't work
+
  }
 
  void Sky::Cloud::initTexture(int res){
      glGenTextures(1, &cloudCubeMap);
      glBindTexture(GL_TEXTURE_CUBE_MAP, cloudCubeMap);
 
-     for (int i = 0; i < 6; i++) {
+     for (int i = 0; i < 6; i++) 
          glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, res, res, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-
-     }
+     
      glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
      glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
      glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -1017,7 +1035,11 @@ int LightSource::CreateShaderProgram() {
  }
 
  void Sky::RenderCloud() {
-    
+     GLint previous_vao, previous_program;
+     glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previous_vao);
+     glGetIntegerv(GL_CURRENT_PROGRAM, &previous_program);
+
+
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     glEnable(GL_TEXTURE_3D);
@@ -1065,8 +1087,8 @@ int LightSource::CreateShaderProgram() {
 
 
     glDrawArrays(GL_TRIANGLES, 0, 36);
-    glBindVertexArray(0);
-    glUseProgram(0);
+    glBindVertexArray(previous_vao);
+    glUseProgram(previous_program);
 
     glDisable(GL_CULL_FACE);
     glDisable(GL_TEXTURE_3D);
@@ -1075,11 +1097,13 @@ int LightSource::CreateShaderProgram() {
  void Sky::initTexture(){
      glGenTextures(1, &skyBoxTexture);
      glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTexture);
-     std::cout << "glerror " << glGetError() << std::endl;
-     for (int i = 0; i < 6; i++) {
+
+     if (int error = glGetError())
+         throw std::exception("GlError ", error);
+
+     for (int i = 0; i < 6; i++) 
          glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, cubemapRes, cubemapRes, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 
-     }
      glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
      glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
      glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -1088,13 +1112,15 @@ int LightSource::CreateShaderProgram() {
  }
 
  Sky::Sky(Cloudbox* _cloudbox) {
-     std::cout << "glerror " << glGetError() << std::endl;
+     
+     if (int error = glGetError())
+         throw std::exception("GlError ", error);
+
      cloudsOnSky.cloudbox = _cloudbox;
      camera.cameraPos.x = cloudsOnSky.cloudbox->GetPos().x;
      camera.cameraPos.y = cloudsOnSky.cloudbox->GetPos().y - cloudsOnSky.cloudbox->GetSize().y / 2.f;
      camera.cameraPos.z = cloudsOnSky.cloudbox->GetPos().z;
 
-     
      cloudsOnSky.initTexture(cubemapRes);
      skySphere.initTexture(cubemapRes);
      initTexture();
@@ -1114,27 +1140,19 @@ int LightSource::CreateShaderProgram() {
      outerRadius =250;
 
      /*outerRadius = std::min(cloudsOnSky.cloudbox->GetSize().x, cloudsOnSky.cloudbox->GetSize().z) / (2.f * sin(angle));
-
      centerPos = cloudsOnSky.cloudbox->GetPos();
      centerPos.y = cloudsOnSky.cloudbox->GetPos().y + cloudsOnSky.cloudbox->GetSize().y / 2 - outerRadius;
-
      innerRadius = cloudsOnSky.cloudbox->GetPos().y - cloudsOnSky.cloudbox->GetSize().y - centerPos.y + 0.2f;*/
-
-
  }
 
- void Sky::setCloudBoxPosition() {
-
- }
 
  void Sky::initFramebuffer() {
      glGenBuffers(1, &skyBoxFrameBuffer);
-     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-     
  }
 
  void Sky::Render(int i) {
-    // setRadius();
+     GLint previous_buffer;
+     glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &previous_buffer);
 
     glViewport(0, 0, cubemapRes, cubemapRes);
     glBindFramebuffer(GL_FRAMEBUFFER, skyBoxFrameBuffer);
@@ -1143,7 +1161,7 @@ int LightSource::CreateShaderProgram() {
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, skyBoxTexture, 0);
         camera.switchToFace(i);
         updateMatrices();
-        //
+        
         RenderSky();
         camera.cameraPos.y -= 0.1;
         updateMatrices();
@@ -1152,7 +1170,7 @@ int LightSource::CreateShaderProgram() {
         camera.cameraPos.y += 0.1;
     //}
     
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, previous_buffer);
  }
 
  GLuint Sky::GetTex() {
@@ -1163,10 +1181,10 @@ int LightSource::CreateShaderProgram() {
      glGenTextures(1, &texture);
      glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
 
-     for (int i = 0; i < 6; i++) {
+     for (int i = 0; i < 6; i++) 
          glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, res, res, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 
-     }
+     
      glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
      glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
      glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -1181,7 +1199,6 @@ int LightSource::CreateShaderProgram() {
  void Sky::SkySphere::attachShader(const std::string& fragment_shader_path) {
      vertexShader = loadShader(GL_VERTEX_SHADER, sphereMesh->material.GetVSPath().c_str());
      fragmentShader = loadShader(GL_FRAGMENT_SHADER, fragment_shader_path.c_str());
-
  }
 
  void Sky::SkySphere::createShaderProgram() {
@@ -1205,14 +1222,6 @@ int LightSource::CreateShaderProgram() {
      glBindVertexArray(skySphere.sphereMesh->material.getVAO());
 
      skySphere.sphereMesh->material.setModel(glm::mat4(1.0));
-/*
-     GLuint unirad = glGetUniformLocation(skySphere.shaderProgram, "r");
-     glUniform1f(unirad, innerRadius);
-     unirad = glGetUniformLocation(skySphere.shaderProgram, "R");
-     glUniform1f(unirad, outerRadius);
-
-     GLuint uniCent = glGetUniformLocation(skySphere.shaderProgram, "center");
-     glUniform3f(uniCent, ConvertSFML2GLM(centerPos).x, ConvertSFML2GLM(centerPos).y, ConvertSFML2GLM(centerPos).z);*/
 
      GLuint uniView = glGetUniformLocation(skySphere.shaderProgram, "view");
      glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(camera.view));
@@ -1235,15 +1244,13 @@ int LightSource::CreateShaderProgram() {
      GLuint uniLight = glGetUniformLocation(skySphere.shaderProgram, "light");
      glUniform3f(uniLight, -skySphere.sphereMesh->material.sun_rot->x, -skySphere.sphereMesh->material.sun_rot->y, -skySphere.sphereMesh->material.sun_rot->z);
 
-     //GLuint uniViewDir = glGetUniformLocation(skySphere.shaderProgram, "ViewDir");
-     //glUniform3f(uniViewDir, )
 
      glDrawArrays(GL_TRIANGLES, 0, (*skySphere.sphereMesh).vert_vec3[0][skySphere.sphereMesh->array_index].size());
      glBindVertexArray(0);
      glUseProgram(0);
  }
 
- void Sky::Delete() {
+ Sky::~Sky() {
      glDeleteTextures(1, &skySphere.texture);
      glDeleteShader(skySphere.vertexShader);
      glDeleteShader(skySphere.fragmentShader);

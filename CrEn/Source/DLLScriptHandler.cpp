@@ -1,5 +1,6 @@
 #include "../Headers/DLLScriptHandler.h"
 
+
 void DLLScriptHandler::setObj(GeometricObject* ref, int id){
 	obj_id = id;
 	obj = gameobject();
@@ -9,18 +10,15 @@ void DLLScriptHandler::setObj(GeometricObject* ref, int id){
 }
 
 void DLLScriptHandler::Update(){
-	
-	if (!error)
-		update(&obj);
-	else
-		return;
+	if (error)
+		throw std::exception("Using script with error");
+	update(&obj);
 }
 
 void DLLScriptHandler::Start(){
-	if (!error)
-		start(&obj);
-	else
-		return;
+	if(error)
+		throw std::exception("Using script with error");
+	start(&obj);
 }
 
 int DLLScriptHandler::SetDLL(const char* path) {
@@ -28,11 +26,9 @@ int DLLScriptHandler::SetDLL(const char* path) {
 	
 	this->path = path;
 
-	if (hInst == 0) {
-		std::cout << "DLL loading error";
-		error = true;
-		return -1;
-	}
+	if (error = hInst == 0) 
+		throw std::exception("DLL loading error");
+	
 
 	start = (STARTFUNCPTR)GetProcAddress(hInst, "start");
 	update = (STARTFUNCPTR)GetProcAddress(hInst, "update");

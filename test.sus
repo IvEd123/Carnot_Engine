@@ -35,14 +35,14 @@
 
 #t 2
 #n house
-#m .\Meshes\house.obj
-#s 0.03 0.03 0.03
+#m .\Meshes\cottage.obj
+#s 1 1 1
 #p 15 0.7 2 
 #r 5 0 0 
 #vs .\Shaders\mesh.vs
 #fs .\Shaders\mesh.fs
 #sh 1
-#tex .\Textures\wood\albedo.png
+#tex .\Textures\cottage.png
 #end
 
 #t 2

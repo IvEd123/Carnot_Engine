@@ -36,12 +36,10 @@ protected:
 
     void                                    deleteArrays();
 public:
-    GeometricObject()   {}
-    ~GeometricObject() {}   ;
-    virtual void                            Delete() = 0;
-    void                                    decrementIndex();
-    
+     GeometricObject() {}
+    ~GeometricObject() {}
 
+    void                                    decrementIndex();
     void                                    SetType(int t);
     int                                     GetType();
     void                                    SetName(std::string);
@@ -83,13 +81,12 @@ private:
     
 public:
     Cube(sf::Vector3f _size);
-    Cube(sf::Vector3f _pos, sf::Vector3f _rot, sf::Vector3f _size, GLuint* _texture);
+    Cube(sf::Vector3f _pos, sf::Vector3f _rot, sf::Vector3f _size, GLuint _texture);
     Cube();
     ~Cube();
 
     void                                    Draw();
     void                                    Draw(sf::Vector3f);
-    void                                    Delete();
     void                                    CreateVertices() {};
     void                                    CreateVerticesLegacy();
     void                                    setModel(std::string& path);
@@ -113,7 +110,6 @@ public:
     void                                    CreateVertices();
     void                                    Draw();
     void                                    setModel(std::string& path) {}
-    void                                    Delete();
     Screen();
     ~Screen();
 };
@@ -124,7 +120,6 @@ public:
     ~Terrain();
     Terrain();
 
-    void                                    Delete() {};
 
     void                                    Draw();
     void                                    CreateVertices();
@@ -149,7 +144,6 @@ class  Mesh : public GeometricObject {
 public:
     std::string                             model_path;
     Mesh(std::string& path);
-    void                                    Delete();
     void                                    setModel(std::string& path);
     Mesh();
     ~Mesh();
@@ -163,7 +157,6 @@ public:
     
     Plane();
     ~Plane();
-    void                                    Delete();
     void                                    Draw();
     void                                    CreateVertices();
     void                                    setModel(std::string& path) {}
@@ -180,7 +173,7 @@ private:
 class Cloudbox : public Cube {
 public:
     Cloudbox(sf::Vector3f _pos, sf::Vector3f _res, sf::Vector3f size);
-    void                                    Delete();
+    ~Cloudbox();
     void                                    RenderCloud(float innerRadius, float outerRadius, sf::Vector3f center);
     void                                    renderTexture(int SCREEN_WIDTH, int SCREEN_HEIGHT);
     struct                                  CloudParams {
@@ -255,8 +248,8 @@ private:
     int                                     CreateShaderProgram();
 public:
 
-    LightSource();
-    void                                    Delete();
+     LightSource();
+    ~LightSource();
     void                                    setShader(GLenum type, const GLchar* path);
     int                                     CreateShaders();
     void                                    SetName(std::string);
@@ -267,7 +260,7 @@ public:
     unsigned int *                          getShadowMap();
 
     sf::Vector3f                            GetPos() { return pos; }
-    sf::Vector3f  *                          GetPosPtr() { return &pos; }
+    sf::Vector3f  *                         GetPosPtr() { return &pos; }
     void                                    SetPos(sf::Vector3f _pos) { pos = _pos; }
     sf::Vector3f                            GetPov() { return pov; }
     void                                    SetPov(sf::Vector3f _pov) { pov = _pov; }
@@ -287,8 +280,8 @@ public:
 
 class Sky {
 public:
-    Sky(Cloudbox*);
-    void                                    Delete();
+     Sky(Cloudbox*);
+    ~Sky();
     void                                    Render(int i);
     GLuint                                  GetTex();
     float                                   angle = 0.5;  
@@ -344,7 +337,6 @@ protected:
     void                                    initFramebuffer();
     void                                    initTexture();
     void                                    setRadius();
-    void                                    setCloudBoxPosition();
 };
 
 #endif

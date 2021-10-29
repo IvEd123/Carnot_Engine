@@ -34,7 +34,8 @@ Item::~Item() {
 
 void Item::AddChild(GeometricObject* _obj){
 	int child_id = children.size();
-	children.emplace_back(this, _obj, child_id);
+	Item *child = new Item(this, obj, child_id);
+	children.push_back(child);
 }
 
 void Item::Draw(){

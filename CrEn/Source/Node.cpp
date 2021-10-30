@@ -33,6 +33,9 @@ Item::~Item() {
 }
 
 void Item::AddChild(GeometricObject* _obj){
+	if (_obj == nullptr)
+		throw std::exception("pointer to object is nullptr");
+
 	int child_id = children.size();
 	Item *child = new Item(this, obj, child_id);
 	children.push_back(child);
@@ -40,12 +43,22 @@ void Item::AddChild(GeometricObject* _obj){
 
 void Item::Draw(){
 	if (obj != nullptr)
-		obj->Draw();
+		throw std::exception("Unable to draw non-existent geometric object");
+
+	obj->Draw();
+	for (int i = 0; i < children.size(); i++) 
+		children[i]->Draw();
+	
 }
 
 bool Item::DrawIf(bool(*func)(Item* _this_ptr)){
+	if (obj != nullptr)
+		throw std::exception("Unable to draw non-existent geometric object");
+
 	if (func(this)) {
 		obj->Draw();
+		for (int i = 0; i < children.size(); i++)
+			children[i]->DrawIf(func);
 		return true;
 	}
 	return false;

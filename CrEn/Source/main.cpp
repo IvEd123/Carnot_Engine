@@ -72,7 +72,7 @@ int main(int argc, char* argv[]) {
 
     err().rdbuf(NULL);
     RenderWindow window(VideoMode(WIDTH, HEIGHT), "win", 7u, settings);
-    window.setFramerateLimit(60);
+    //window.setFramerateLimit(60);
     ImGui::SFML::Init(window);
     assert(window.getSettings().depthBits == 24);
     glewExperimental = GL_TRUE;

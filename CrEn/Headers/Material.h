@@ -19,7 +19,6 @@
 
 class  Material {
 public:
-                                            //
     Material();
     ~Material();
     void                                    Delete();

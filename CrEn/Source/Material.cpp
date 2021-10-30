@@ -4,8 +4,6 @@
 #include "../Headers/GeometricObject.h"
 
 
-
-
 Player& _Pl = Player::Get();
 
 Material::Material() {
@@ -14,19 +12,6 @@ Material::Material() {
     geometryShader_source = nullptr;
 }
 
-Material::~Material() {
-    glDeleteTextures(1, &texture);
-    glDeleteProgram(shaderProgram);
-    glDeleteShader(vertexShader);
-    glDeleteShader(geometryShader);
-    glDeleteShader(fragmentShader);
-    glDeleteVertexArrays(1, &vao);
-    glDeleteBuffers(1, &vbo);
-
-    //free(vertexShader_source);
-    //free(geometryShader_source);
-    //free(fragmentShader_source);
-}
 
 int Material::createShaderProgram(const GLchar* vertSrc, const GLchar* geomSrc, const GLchar* fragSrc, GLuint& vertexShader, GLuint& geometryShader, GLuint& fragmentShader, GLuint& shaderProgram) {
     //vertex shader
@@ -80,10 +65,14 @@ int Material::createShaderProgram(const GLchar* vertSrc, const GLchar* geomSrc, 
 }
 
 int Material::CreateShaders() {
+    GLint previous_vao, previous_program;
+    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previous_vao);
+    glGetIntegerv(GL_CURRENT_PROGRAM, &previous_program);
+
     glBindVertexArray(vao);
     int t = createShaderProgram(vertexShader_source, geometryShader_source, fragmentShader_source, vertexShader, geometryShader, fragmentShader, shaderProgram);
 
-    glBindVertexArray(0);
+    glBindVertexArray(previous_vao);
     return 0;
 }
 
@@ -124,13 +113,17 @@ void Material::loadShader(GLenum type, const GLchar* path) {
 }
 
 void Material::bindTexture(const GLchar* path) {
+    GLint previous_vao, previous_program;
+    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previous_vao);
+    glGetIntegerv(GL_CURRENT_PROGRAM, &previous_program);
+
     tex_path = path;
     texture = loadTexture(path);
     glBindVertexArray(vao);
     glUseProgram(shaderProgram);
     glUniform1i(glGetUniformLocation(shaderProgram, "tex"), 0);
-    glUseProgram(0);
-    glBindVertexArray(0);
+    glUseProgram(previous_program);
+    glBindVertexArray(previous_vao);
 }
 
 void Material::bindTexture(GLuint texure) {
@@ -139,15 +132,22 @@ void Material::bindTexture(GLuint texure) {
 }
 
 void Material::bindTexture(GLuint texure, const GLchar* name) {
+    GLint previous_vao, previous_program;
+    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previous_vao);
+    glGetIntegerv(GL_CURRENT_PROGRAM, &previous_program);
     glBindVertexArray(vao);
     glUseProgram(shaderProgram);
     glUniform1i(glGetUniformLocation(shaderProgram, name), 1);
-    glUseProgram(0);
-    glBindVertexArray(0);
+    glUseProgram(previous_program);
+    glBindVertexArray(previous_vao);
 }
 
 
 void Material::specifyVertexAttributes(GLuint shaderProgram) {
+    GLint previous_vao, previous_program;
+    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previous_vao);
+    glGetIntegerv(GL_CURRENT_PROGRAM, &previous_program);
+
     glBindVertexArray(vao);
     std::cout << "SCENE" << std::endl;
     GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
@@ -157,7 +157,7 @@ void Material::specifyVertexAttributes(GLuint shaderProgram) {
     GLint texAttrib = glGetAttribLocation(shaderProgram, "texcoord");
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
-    glBindVertexArray(0);
+    glBindVertexArray(previous_vao);
     std::cout << "posattrib " << posAttrib << " texattrib " << texAttrib << std::endl;
 }
 
@@ -173,6 +173,9 @@ void Material::specifyVertexAttributes3D(GLuint shaderProgram) {
 }
 
 void Material::specifyVertexAttributes_screen(GLuint shaderProgram) {
+    GLint previous_vao, previous_program;
+    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previous_vao);
+    glGetIntegerv(GL_CURRENT_PROGRAM, &previous_program);
     glBindVertexArray(vao);
     std::cout << "SCREEN" << std::endl;
     GLint posAttrib = glGetAttribLocation(shaderProgram, "position_screen");
@@ -183,10 +186,13 @@ void Material::specifyVertexAttributes_screen(GLuint shaderProgram) {
     glEnableVertexAttribArray(texAttrib);
     glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
     std::cout << "posattrib " << posAttrib << " texattrib " << texAttrib << std::endl;
-    glBindVertexArray(0);
+    glBindVertexArray(previous_vao);
 }
 
 void Material::specifyVertexAttributes_terrain(GLuint shaderProgram) {
+    GLint previous_vao, previous_program;
+    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previous_vao);
+    glGetIntegerv(GL_CURRENT_PROGRAM, &previous_program);
     glBindVertexArray(vao);
     std::cout << "Terrain" << std::endl;
     GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
@@ -197,7 +203,7 @@ void Material::specifyVertexAttributes_terrain(GLuint shaderProgram) {
     glEnableVertexAttribArray(texAttrib);
     glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), (void*)(2 * sizeof(GLfloat)));
     std::cout << "posattrib " << posAttrib << " texattrib " << texAttrib << std::endl;
-    glBindVertexArray(0);
+    glBindVertexArray(previous_vao);
 }
 
 void Material::specifyVertexAttributes_mesh() {
@@ -226,6 +232,10 @@ void Material::specifyVertexAttributes_mesh() {
 
 
 void Material::createVAO_VBO(std::vector<GLfloat>vertices) {
+    GLint previous_vao, previous_program;
+    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previous_vao);
+    glGetIntegerv(GL_CURRENT_PROGRAM, &previous_program);
+
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
 
@@ -234,10 +244,13 @@ void Material::createVAO_VBO(std::vector<GLfloat>vertices) {
 
     glBindVertexArray(vao);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBindVertexArray(0);
+    glBindVertexArray(previous_vao);
 }
 
 void Material::createVAO_VBO_mesh(std::vector<glm::vec3>&vert_vec3, std::vector<glm::vec2>&uv_vec2, std::vector<glm::vec3>&norm_vec3) {
+    GLint previous_vao, previous_program;
+    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previous_vao);
+    glGetIntegerv(GL_CURRENT_PROGRAM, &previous_program);
     glGenVertexArrays(1, &vao);
 
     glGenBuffers(1, &vert_buff);
@@ -254,45 +267,63 @@ void Material::createVAO_VBO_mesh(std::vector<glm::vec3>&vert_vec3, std::vector<
     glBindBuffer(GL_ARRAY_BUFFER, uv_buff);
     glBufferData(GL_ARRAY_BUFFER, uv_vec2.size() * sizeof(glm::vec2), &uv_vec2[0], GL_STATIC_DRAW);
 
-    glBindVertexArray(0);
+    glBindVertexArray(previous_vao);
 }
 
 void Material::attachUniform(const char* name, float value) {
+    GLint previous_vao, previous_program;
+    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previous_vao);
+    glGetIntegerv(GL_CURRENT_PROGRAM, &previous_program);
     glUseProgram(shaderProgram);
     GLuint Uni = glGetUniformLocation(shaderProgram, name);
     glUniform1f(Uni, value);
-    glUseProgram(0);
+    glUseProgram(previous_program);
 }
 
 void Material::attachUniform(const char* name, int value) {
+    GLint previous_vao, previous_program;
+    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previous_vao);
+    glGetIntegerv(GL_CURRENT_PROGRAM, &previous_program);
     glUseProgram(shaderProgram);
     GLuint Uni = glGetUniformLocation(shaderProgram, name);
     glUniform1i(Uni, value);
-    glUseProgram(0);
+    glUseProgram(previous_program);
 }
 
 void Material::attachUniform(const char* name, glm::vec3 value) {
+    GLint previous_vao, previous_program;
+    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previous_vao);
+    glGetIntegerv(GL_CURRENT_PROGRAM, &previous_program);
     glUseProgram(shaderProgram);
     GLuint Uni = glGetUniformLocation(shaderProgram, name);
     glUniform3f(Uni, value.x, value.y, value.z);
-    glUseProgram(0);
+    glUseProgram(previous_program);
 }
 
 void Material::attachUniform(const char* name, glm::vec4 value) {
+    GLint previous_vao, previous_program;
+    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previous_vao);
+    glGetIntegerv(GL_CURRENT_PROGRAM, &previous_program);
     glUseProgram(shaderProgram);
     GLuint Uni = glGetUniformLocation(shaderProgram, name);
     glUniform4f(Uni, value.x, value.y, value.z, value.w);
-    glUseProgram(0);
+    glUseProgram(previous_program);
 }
 
 void Material::attachUniform(const char* name, GLuint tex) {
+    GLint previous_vao, previous_program;
+    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previous_vao);
+    glGetIntegerv(GL_CURRENT_PROGRAM, &previous_program);
     glUseProgram(shaderProgram);
     GLuint Uni = glGetUniformLocation(shaderProgram, name);
     glUniform1i(Uni, tex);
-    glUseProgram(0);
+    glUseProgram(previous_program);
 }
 
 void Material::updateUniforms() {
+    GLint previous_vao, previous_program;
+    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previous_vao);
+    glGetIntegerv(GL_CURRENT_PROGRAM, &previous_program);
     glUseProgram(shaderProgram);
 
     GLuint uniView = glGetUniformLocation(shaderProgram, "view");
@@ -311,10 +342,10 @@ void Material::updateUniforms() {
 
     glUniformMatrix4fv(getUniModel(), 1, GL_FALSE, glm::value_ptr(getModel()));
 
-    glUseProgram(0);
+    glUseProgram(previous_program);
 }
 
-void Material::Delete() {
+Material::~Material() {
     glDeleteProgram(shaderProgram);
     glDeleteShader(fragmentShader);
     glDeleteShader(vertexShader);

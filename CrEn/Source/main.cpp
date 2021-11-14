@@ -306,7 +306,7 @@ int main(int argc, char* argv[]) {
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         screen.material.attachUniform("time", Dtime);
-        screen.setColorBuffer(*screen.GetPosTex());
+        //screen.setColorBuffer(*screen.GetPosTex());
         
         if (event.type == Event::KeyReleased && event.key.code == Keyboard::F5){
             int t = sf.Save(&obj_list, &light_list);

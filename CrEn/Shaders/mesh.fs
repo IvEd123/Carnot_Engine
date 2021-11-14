@@ -18,8 +18,10 @@ uniform vec3 light;
 uniform mat4 model;
 uniform float lightDistance;
 
-layout (location = 0) out vec4 outColor;
-layout (location = 1) out vec4 outPos;
+layout (location = 0) out vec4 outAlbedo;
+layout (location = 1) out vec4 outNormal;
+layout (location = 2) out vec4 outPos;
+layout (location = 3) out vec4 outColor;
 
 vec3 lightPos = - light * lightDistance;
 
@@ -66,4 +68,6 @@ void main(){
 
     outColor.a = 1.0;
     outPos = vec4(fs_in.FragPos, 1);
+    outNormal = vec4(Normal, 1);
+    outAlbedo = vec4(texColor, 1);
 }

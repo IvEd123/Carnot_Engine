@@ -19,8 +19,10 @@ uniform float time;
 uniform vec3 eye;
 uniform vec3 light;
 
-layout (location = 0) out vec4 outColor;
-layout (location = 1) out vec3 outPos;
+layout (location = 0) out vec4 outAlbedo;
+layout (location = 1) out vec4 outNormal;
+layout (location = 2) out vec4 outPos;
+layout (location = 3) out vec4 outColor;
 
 
 float random (in vec2 _st) {
@@ -134,8 +136,11 @@ void main(){
 
    // outColor =  vec4(max(col + spec*shadow, vec3(8, 64, 176)/255) + 0.2*shadow,  max(0.5, transparency + spec));
    vec3 reflection  = texture(skybox, reflect(-viewDir, normal)).rgb;
-   outColor.rgb = max(vec3(0.2, 0.2, 0.4    ), reflection * shadow);
+   outColor.rgb = max(vec3(0.2, 0.2, 0.4), reflection * shadow);
    outColor.a = transparency;
 
-   outPos = fs_in.FragPos;
+   outPos = vec4(fs_in.FragPos, 1);
+   outAlbedo = vec4(0.2, 0.2, 0.4, 1);
+   outNormal = vec4(normal, 1);
+
 }

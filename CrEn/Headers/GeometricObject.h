@@ -99,7 +99,9 @@ class Screen : public GeometricObject {
 private:
     GLuint                                  depth_stencil_buff;
     GLuint                                  color_texture;
+    GLuint                                  albedo_texture;
     GLuint                                  pos_texture;
+    GLuint                                  norm_texture;
     unsigned int                            depthTex;
 public:
     GLuint                                  frameBuffer;

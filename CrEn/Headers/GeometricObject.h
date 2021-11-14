@@ -98,18 +98,22 @@ public:
 class Screen : public GeometricObject {
 private:
     GLuint                                  depth_stencil_buff;
-    GLuint                                  tex;
+    GLuint                                  color_texture;
+    GLuint                                  pos_texture;
+    unsigned int                            depthTex;
 public:
     GLuint                                  frameBuffer;
     GLuint *                                getDepthSteencilBuffer();
     GLuint *                                getColorBuffer();
-    void                                    setColorBuffer(GLuint t) { tex = t; }
-
+    void                                    setColorBuffer(GLuint t) { color_texture = t; }
+    GLuint*                                 GetDepthTex() { return &depthTex; }
+    GLuint*                                 GetPosTex() { return &pos_texture; }
     glm::mat4 *                             view; 
     glm::mat4 *                             proj;
     void                                    CreateVertices();
     void                                    Draw();
     void                                    setModel(std::string& path) {}
+    void                                    CreateFrameBuffer(int height, int width);
     Screen();
     ~Screen();
 };
@@ -273,6 +277,7 @@ public:
     sf::Vector3f   *                        GetDirPtr() { return &dir; }
     void                                    SetDir();
     void                                    SetDir(sf::Vector3f);
+    
 
     void                                    Draw(std::vector <GeometricObject*> obj_list);
 };

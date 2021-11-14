@@ -125,14 +125,15 @@ int main(int argc, char* argv[]) {
 
     //framebuffer
     Screen screen = Screen();
-    screen.frameBuffer = createFrameBuffer(WIDTH, HEIGHT, screen.getDepthSteencilBuffer(), screen.getColorBuffer());
+    //screen.frameBuffer = createFrameBuffer(WIDTH, HEIGHT, screen.getDepthSteencilBuffer(), screen.getColorBuffer(), screen.GetDepthTex());
+    screen.CreateFrameBuffer(WIDTH, HEIGHT);
     screen.material.loadShader(GL_VERTEX_SHADER, ".\\Shaders\\screen.vs");
     screen.material.loadShader(GL_FRAGMENT_SHADER, ".\\Shaders\\screen.fs");
     error = screen.material.CreateShaders();
     screen.material.specifyVertexAttributes_screen(screen.material.getShaderProgram());
     if (error != 0)
         std::cout << error << std::endl;
-    screen.addLightSource(&sun);
+    //screen.addLightSource(&sun);
 
 
 
@@ -146,13 +147,13 @@ int main(int argc, char* argv[]) {
     bool pause_prev = 0;
 
     SaveLoad sf = SaveLoad();
-    std::cout << "Enter path to save file:\n";
-    std::string path_to_safe_file;
-    std::cin >> path_to_safe_file;
+    //std::cout << "Enter path to save file:\n";
+    std::string path_to_safe_file = "C:\\Users\\IvEda\\Desktop\\sfml";
+    //std::cin >> path_to_safe_file;
     sf.SetPath(path_to_safe_file);
-    std::string name;
-    std::cout << "Enter name of save file (without extension):\n";
-    std::cin >> name;
+    std::string name = "test";
+    //std::cout << "Enter name of save file (without extension):\n";
+    //std::cin >> name;
     sf.SetName(name);
 
     sf.Load();
@@ -219,11 +220,11 @@ int main(int argc, char* argv[]) {
         //std::cout << pl.GetAng().x << " ." << pl.GetAng().y << std::endl;
 
         ImGui::SFML::Update(window, clock.restart());
-        ImGui::ShowDemoWindow();
+       // ImGui::ShowDemoWindow();
 
         int selected = -1;
 
-        ImGui::Begin("object");
+     /*   ImGui::Begin("object");
         if (ImGui::BeginMenu("objects")) {
             for (int i = 0; i < obj_list.size(); i++) {
                 char name[100];
@@ -266,7 +267,7 @@ int main(int argc, char* argv[]) {
         glDepthMask(GL_TRUE);
 
         
-        gui_cloud.Update();
+       // gui_cloud.Update();
         //std::cout << "clear glerror " << glGetError() << std::endl;
         if (cloudRender) {
             for (int i = 0; i < 6; i++) {
@@ -285,7 +286,7 @@ int main(int argc, char* argv[]) {
             obj_list[i]->Draw();
         }
 
-        sf::Vector3f p = cloudbox.GetPos();
+   /*     sf::Vector3f p = cloudbox.GetPos();
         p.y = 0;
         //cloudbox.RenderCloud(0.5, 1, p);
         
@@ -297,7 +298,7 @@ int main(int argc, char* argv[]) {
         if (selected != -1)
             obj_win.SetObject(obj_list[selected]);
         obj_win.Update();
-
+*/
 
         for (int i = 0; i < scripts.size(); i++)
             scripts[i].Update();
@@ -305,6 +306,7 @@ int main(int argc, char* argv[]) {
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         screen.material.attachUniform("time", Dtime);
+        screen.setColorBuffer(*screen.GetPosTex());
         
         if (event.type == Event::KeyReleased && event.key.code == Keyboard::F5){
             int t = sf.Save(&obj_list, &light_list);
@@ -337,7 +339,7 @@ int main(int argc, char* argv[]) {
 
         screen.view = &pl.view;
         screen.proj = &pl.proj;
-        screen.addLightSource(&sun);
+        //screen.addLightSource(&sun);
         screen.Draw();
 
 

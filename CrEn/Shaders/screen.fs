@@ -4,6 +4,7 @@
 
     out vec4 outColor;
 
+    uniform sampler2D depthTex;
     uniform sampler2D texFramebuffer;
     uniform float time;
 
@@ -49,6 +50,9 @@
 
     void main(){      
         vec4 color= texture(texFramebuffer, Texcoord);
+        //color.rgb = pow(color.rgb, vec3(3));
+
+
 
         outColor = max( color , vec4(0.1, 0.1, 0.11, 1.0));
     }

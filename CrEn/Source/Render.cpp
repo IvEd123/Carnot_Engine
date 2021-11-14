@@ -1,6 +1,7 @@
 #include "../Headers/Render.h"
 
 
+
 #pragma warning(disable : 4996)
 
 #define ever (;;)
@@ -66,7 +67,7 @@ GLuint loadTexture(const GLchar* path) {
     return texture;
 }
 
-GLuint createFrameBuffer(int width, int height, GLuint* depghstencil, GLuint *colorBuff){
+GLuint createFrameBuffer(int width, int height, GLuint* depghstencil, GLuint *colorBuff, GLuint *depthTex){
     GLuint frameBuffer;
     glGenFramebuffers(1, &frameBuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
@@ -82,14 +83,24 @@ GLuint createFrameBuffer(int width, int height, GLuint* depghstencil, GLuint *co
 
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texColorBuffer, 0);
 
-    GLuint rboDepthStencil;
-    glGenRenderbuffers(1, &rboDepthStencil);
-    glBindRenderbuffer(GL_RENDERBUFFER, rboDepthStencil);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rboDepthStencil);
+    GLuint depthBuff, _depthTex;
+    glGenTextures(1, &_depthTex);
+    glBindTexture(GL_TEXTURE_2D, _depthTex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    *depghstencil = rboDepthStencil;
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _depthTex, 0);
+
+
+    const GLenum buffers[]{ GL_COLOR_ATTACHMENT0 };
+    glDrawBuffers(1, buffers);
+
+    //*depghstencil = depthBuff;
     *colorBuff = texColorBuffer;
+    *depthTex = _depthTex;
+
 
     return frameBuffer;
 }
@@ -261,4 +272,20 @@ int loadShader(GLenum type, const GLchar* path) {
 
 
     return shader;
+}
+
+bool loadModel(const std::string& path, GeometricObject* object, Item* parent){
+    /*Assimp::Importer importer;
+    const aiScene* scene = importer.ReadFile(path, 
+        aiProcess_CalcTangentSpace |
+        aiProcess_Triangulate      |
+        aiProcess_GenNormals
+        );
+
+    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) 
+        throw std::exception(std::string("ERROR::ASSIMP::", importer.GetErrorString()).c_str());
+    
+    int meshes = scene->mRootNode->mNumMeshes;*/
+
+    return true;
 }

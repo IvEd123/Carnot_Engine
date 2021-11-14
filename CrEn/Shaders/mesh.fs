@@ -18,7 +18,8 @@ uniform vec3 light;
 uniform mat4 model;
 uniform float lightDistance;
 
-out vec4 outColor;
+layout (location = 0) out vec4 outColor;
+layout (location = 1) out vec4 outPos;
 
 vec3 lightPos = - light * lightDistance;
 
@@ -59,6 +60,10 @@ void main(){
 
     //outColor.rgb = mix(texture(tex, Texcoord).rgb * shadow * max( dot(Normal, vec3(transpose(model) * vec4(normalize(lightPos), 1.0) )), 0.05), texture(tex, Texcoord).rgb, 0.2) + vec3(0.1, 0.1, 0.11);
     outColor.rgb =  (ambient + shadow * diffuse) * texColor;
-    //outColor.rgb = ambient;
+
+    //outColor.rgb =  vec3(gl_FragCoord.z);
+
+
     outColor.a = 1.0;
+    outPos = vec4(fs_in.FragPos, 1);
 }

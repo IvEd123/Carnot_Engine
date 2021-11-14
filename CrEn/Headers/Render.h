@@ -21,6 +21,7 @@
 #include "../Headers/PLayer.h"
 #include "../Headers/Material.h"
 #include "../Headers/GeometricObject.h"
+#include "../Headers/Node.h"
 
 #define M_PI 3.1415926535897932384626433832795
 
@@ -30,7 +31,7 @@ glm::vec3 ConvertSFML2GLM(sf::Vector3f vec);
 
 GLuint loadTexture(const GLchar* path);
 
-GLuint createFrameBuffer(int height, int width, GLuint *depghstencil, GLuint *colorBuff);
+GLuint createFrameBuffer(int height, int width, GLuint *depghstencil, GLuint *colorBuff, GLuint *depthTex);
 
 GLuint createFrameBuffer(int height, int width);
 
@@ -43,6 +44,8 @@ void OBJLoader_v(std::string& path, GeometricObject* object);
 void OBJLoaderLegacy(const char* path, GeometricObject* object);
 
 int loadShader(GLenum type, const GLchar* path);
+
+bool loadModel(const std::string& path, GeometricObject* object);
 
 enum GeometryType{
 	CUBE,

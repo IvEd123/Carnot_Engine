@@ -1,6 +1,7 @@
 #version 460 core
 
-out vec4 outColor;
+layout (location = 0) out vec4 outColor;
+layout (location = 1) out vec3 outPos;
 
 in vec2 Texcoord;
 
@@ -226,5 +227,5 @@ void main(){
 
 	color = 1.0 - exp (- color);
 	outColor = vec4(color, 1);
-	
+	outPos = fs_in.FragPos;
 }

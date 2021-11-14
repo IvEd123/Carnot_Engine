@@ -249,6 +249,47 @@ void Cube::Draw(sf::Vector3f cameraPos){
 //  `Y88P' `Y88P 8  Yb 8888 8888 8888 8   8 
 //   
 
+void Screen::CreateFrameBuffer(int width, int height){
+    glGenFramebuffers(1, &frameBuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+
+    glGenTextures(1, &color_texture);
+    glBindTexture(GL_TEXTURE_2D, color_texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color_texture, 0);
+
+    glGenTextures(1, &depthTex);
+    glBindTexture(GL_TEXTURE_2D, depthTex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTex, 0);
+
+
+
+    glGenTextures(1, &pos_texture);
+    glBindTexture(GL_TEXTURE_2D, pos_texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, pos_texture, 0);
+
+
+
+    const GLenum buffers[]{ GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
+    glDrawBuffers(2, buffers);
+    
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        std::cout << "framebuffer isn't complete!!!!!!!!\n";
+
+}
+
 Screen::Screen(){
     material = Material();
     CreateVertices();
@@ -261,7 +302,7 @@ Screen::~Screen() {
     deleteArrays();
     glDeleteBuffers(1, &frameBuffer);
     glDeleteBuffers(1, &depth_stencil_buff);
-    glDeleteTextures(1, &tex);
+    glDeleteTextures(1, &color_texture);
 }
 
 GLuint* Screen::getDepthSteencilBuffer(){
@@ -269,7 +310,7 @@ GLuint* Screen::getDepthSteencilBuffer(){
 }
 
 GLuint* Screen::getColorBuffer(){
-    return &tex;
+    return &color_texture;
 }
 
 void Screen::CreateVertices(){
@@ -296,10 +337,10 @@ void Screen::Draw() {
     glUseProgram(material.getShaderProgram());
     glBindVertexArray(material.getVAO());
 
-    glm::mat4 mat = glm::translate(glm::mat4(1.0), *material.sun_rot);
+   // glm::mat4 mat = glm::translate(glm::mat4(1.0), *material.sun_rot);
         
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, tex);
+    glBindTexture(GL_TEXTURE_2D, color_texture);
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
     
@@ -471,6 +512,9 @@ void Mesh::Draw() {
     glBindVertexArray(material.getVAO());
     glUseProgram(material.getShaderProgram());
 
+    //const GLenum buffers[]{ GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+    //glDrawBuffers(2, buffers);
+
     material.setModel(glm::mat4(1.0));
 
     glActiveTexture(GL_TEXTURE0);
@@ -495,6 +539,11 @@ void Mesh::Draw() {
     glUniform1i(glGetUniformLocation(material.getShaderProgram(), "skybox"), 2);
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_CUBE_MAP, material.getEnvironmentMap());
+
+    //const GLenum buffers[]{ GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+    //glDrawBuffers(2, buffers);
+
+    
 
     glDrawArrays(GL_TRIANGLES, 0,  (*vert_vec3)[array_index].size());
 

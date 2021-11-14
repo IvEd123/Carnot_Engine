@@ -7,7 +7,8 @@ uniform vec3 eye;
 
 uniform samplerCube skybox;
 
-out vec4 outColor;
+layout (location = 0) out vec4 outColor;
+layout (location = 1) out vec3 outPos;
 
 in VS_OUT {
     vec3 FragPos;
@@ -56,4 +57,5 @@ float fbm (in vec2 st) {
 
 void main(){
      outColor = texture(skybox, normalize(ViewDir));
+     outPos = fs_in.FragPos;
 }

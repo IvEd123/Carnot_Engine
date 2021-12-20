@@ -9,7 +9,7 @@
 #vs .\Shaders\mesh.vs
 #fs .\Shaders\sky.fs
 #sh 0
-#tex .\Textures\sky.png
+#tex .\Textures\sky.png 1
 #end
 
 #t 3
@@ -20,7 +20,7 @@
 #vs .\Shaders\mesh.vs
 #fs .\Shaders\mesh.fs
 #sh 1
-#tex .\Textures\grass.jpg
+#tex .\Textures\grass.jpg 5
 #end
 
 #t 3
@@ -42,7 +42,7 @@
 #vs .\Shaders\mesh.vs
 #fs .\Shaders\mesh.fs
 #sh 1
-#tex .\Textures\cottage.png
+#tex .\Textures\cottage.png 1
 #end
 
 #t 2
@@ -54,7 +54,7 @@
 #vs .\Shaders\mesh.vs
 #fs .\Shaders\mesh.fs
 #sh 1
-#tex .\Textures\Crowbar_albedo.jpg
+#tex .\Textures\Crowbar_albedo.jpg 1
 #end
 
 #scripts 1

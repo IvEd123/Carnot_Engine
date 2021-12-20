@@ -64,7 +64,7 @@ int SaveLoad::Load(){
 					std::string mesh_path;
 					//char mesh_path[100];
 					file >> mesh_path;
-					LAST_OBJ_PTR->setModel(mesh_path);
+					LAST_OBJ_PTR->SetModel(mesh_path);
 					file >> buffer;
 				}
 				sf::Vector3f size;
@@ -117,6 +117,9 @@ int SaveLoad::Load(){
 											char tex_path[100];
 											file >> tex_path;
 											LAST_OBJ_PTR->material.bindTexture(tex_path);
+											int tex_repeat;
+											file >> tex_repeat;
+											LAST_OBJ_PTR->m_texture_repeat = tex_repeat;
 											file >> buffer;
 										}
 

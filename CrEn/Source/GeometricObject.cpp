@@ -39,15 +39,15 @@ typedef struct {
 
 
 void GeometricObject::UpdateModelMatrix() {
-    material.setModel(glm::translate(material.getModel(), ConvertSFML2GLM(pos)));
-    material.setModel(glm::rotate(material.getModel(), glm::radians(rot.x), glm::vec3(1.0, 0.0, 0.0)));
-    material.setModel(glm::rotate(material.getModel(), glm::radians(rot.y), glm::vec3(0.0, 1.0, 0.0)));
-    material.setModel(glm::rotate(material.getModel(), glm::radians(rot.z), glm::vec3(0.0, 0.0, 1.0)));
+    material.setModel(glm::translate(material.getModel(), ConvertSFML2GLM(m_position)));
+    material.setModel(glm::rotate(material.getModel(), glm::radians(m_rotation.x), glm::vec3(1.0, 0.0, 0.0)));
+    material.setModel(glm::rotate(material.getModel(), glm::radians(m_rotation.y), glm::vec3(0.0, 1.0, 0.0)));
+    material.setModel(glm::rotate(material.getModel(), glm::radians(m_rotation.z), glm::vec3(0.0, 0.0, 1.0)));
 }
 
-void GeometricObject::addLightSource(LightSource* source) {
-    material.lightSpaceMatrixPtr = source->getProjMatrix();
-    material.shadowmap = source->getShadowMap();
+void GeometricObject::AddLightSource(LightSource* source) {
+    material.lightSpaceMatrixPtr = source->GetProjMatrix();
+    material.shadowmap = source->GetShadowMap();
     material.sun_rot = (glm::vec3*)source->GetDirPtr();
     material.sun_dist = source->GetDistance();
 
@@ -57,14 +57,14 @@ void GeometricObject::addLightSource(LightSource* source) {
 
     glBindVertexArray(material.getVAO());
     glUseProgram(material.getShaderProgram());
-    glUniform1i(glGetUniformLocation(material.getShaderProgram(), "shadowMap"), 1);
+    glUniform1i(glGetUniformLocation(material.getShaderProgram(), "shadowMap"), 3);
     glUseProgram(previous_program);
     glBindVertexArray(previous_vao);
 }
 
 
 
-void GeometricObject::decrementIndex(){
+void GeometricObject::DecrementIndex(){
     array_index--;
 }
 
@@ -82,58 +82,58 @@ void GeometricObject::deleteArrays() {
 }
 
 void GeometricObject::SetName(std::string _name) {
-    name = _name;
+    m_name = _name;
 }
 
 std::string GeometricObject::GetName() {
-    return name;
+    return m_name;
 }
 
 std::string * GeometricObject::GetNamePtr() {
-    return &name;
+    return &m_name;
 }
 
 sf::Vector3f GeometricObject::GetPos(){
-   return pos;
+   return m_position;
 }
 
 sf::Vector3f* GeometricObject::GetPosPtr(){
-   return &pos;
+   return &m_position;
 }
 
 void GeometricObject::SetPos(sf::Vector3f _pos){
-    pos = _pos;
+    m_position = _pos;
 }
 
 sf::Vector3f GeometricObject::GetRot(){
-    return rot;
+    return m_rotation;
 }
 
 sf::Vector3f* GeometricObject::GetRotPtr(){
-    return &rot;
+    return &m_rotation;
 }
 
 void GeometricObject::SetRot(sf::Vector3f _rot){
-    rot = _rot;
+    m_rotation = _rot;
 }
 
 void GeometricObject::SetSize(sf::Vector3f s) {
-    size = s;
+    m_size = s;
 }
 
 sf::Vector3f GeometricObject::GetSize() {
-    return size;
+    return m_size;
 }
 
 sf::Vector3f* GeometricObject::GetSizePtr() {
-    return &size;
+    return &m_size;
 }
 
 void GeometricObject::SetType(int t) {
-    type = t;
+    m_type = t;
 }
 int GeometricObject::GetType() {
-    return type;
+    return m_type;
 }
 
 
@@ -144,16 +144,16 @@ int GeometricObject::GetType() {
 //                          
 
 Cube::Cube(sf::Vector3f _size){
-    size = _size;
-    pos = sf::Vector3f(0, 0, 0);
-    rot = sf::Vector3f(0, 0, 0);
+    m_size = _size;
+    m_position = sf::Vector3f(0, 0, 0);
+    m_rotation = sf::Vector3f(0, 0, 0);
     material = Material();
 }
 
 Cube::Cube(sf::Vector3f _pos, sf::Vector3f _rot, sf::Vector3f _size, GLuint _texture){
-    pos = _pos;
-    rot = _rot;
-    size = _size;
+    m_position = _pos;
+    m_rotation = _rot;
+    m_size = _size;
     material.bindTexture(_texture);
 }
 
@@ -164,21 +164,21 @@ Cube::~Cube() {
 }
 
 Cube::Cube() {
-    size = sf::Vector3f(1, 1, 1);
-    pos = sf::Vector3f(0, 0, 0);
-    rot = sf::Vector3f(0, 0, 0);
+    m_size = sf::Vector3f(1, 1, 1);
+    m_position = sf::Vector3f(0, 0, 0);
+    m_rotation = sf::Vector3f(0, 0, 0);
 
     material = Material();
 }
 
 void Cube::CreateVerticesLegacy() {
     std::string path = ".\\Meshes\\cube.obj";
-    setModel(path);
+    SetModel(path);
     material.createVAO_VBO(vertices);
 }
 
-void Cube::setModel(std::string & path) {
-    model_path = path;
+void Cube::SetModel(std::string & path) {
+    m_model_path = path;
     OBJLoader_v(path, this);
 }
 
@@ -198,10 +198,10 @@ void Cube::Draw(){
     glUniform3f(uniEye, player_entity.GetPos().x, player_entity.GetPos().y, player_entity.GetPos().z);
 
     GLuint uniPos = glGetUniformLocation(material.getShaderProgram(), "pos");
-    glUniform3f(uniPos, pos.x, pos.y, pos.z);
+    glUniform3f(uniPos, m_position.x, m_position.y, m_position.z);
 
     GLuint uniSize = glGetUniformLocation(material.getShaderProgram(), "size");
-    glUniform3f(uniSize,size.x, size.y,  size.z);
+    glUniform3f(uniSize,m_size.x, m_size.y,  m_size.z);
 
     GLuint uniLight = glGetUniformLocation(material.getShaderProgram(), "light");
     glUniform3f(uniLight, material.sun_rot->x, material.sun_rot->y, material.sun_rot->z);
@@ -229,10 +229,10 @@ void Cube::Draw(sf::Vector3f cameraPos){
     material.setModel(glm::mat4(1.0f));
 
     GLuint uniPos = glGetUniformLocation(material.getShaderProgram(), "pos");
-    glUniform3f(uniPos, pos.x, pos.y, pos.z);
+    glUniform3f(uniPos, m_position.x, m_position.y, m_position.z);
 
     GLuint uniSize = glGetUniformLocation(material.getShaderProgram(), "size");
-    glUniform3f(uniSize,size.x, size.y,  size.z);
+    glUniform3f(uniSize,m_size.x, m_size.y,  m_size.z);
 
     GLuint uniLight = glGetUniformLocation(material.getShaderProgram(), "light");
     glUniform3f(uniLight, material.sun_rot->x, material.sun_rot->y, material.sun_rot->z);
@@ -253,45 +253,45 @@ void Screen::CreateFrameBuffer(int width, int height){
     glGenFramebuffers(1, &frameBuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 
-    glGenTextures(1, &color_texture);
-    glBindTexture(GL_TEXTURE_2D, color_texture);
+    glGenTextures(1, &m_color_texture);
+    glBindTexture(GL_TEXTURE_2D, m_color_texture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, color_texture, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, m_color_texture, 0);
     
     
-    glGenTextures(1, &albedo_texture);
-    glBindTexture(GL_TEXTURE_2D, albedo_texture);
+    glGenTextures(1, &m_albedo_texture);
+    glBindTexture(GL_TEXTURE_2D, m_albedo_texture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, albedo_texture, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_albedo_texture, 0);
     
-    glGenTextures(1, &norm_texture);
-    glBindTexture(GL_TEXTURE_2D, norm_texture);
+    glGenTextures(1, &m_norm_texture);
+    glBindTexture(GL_TEXTURE_2D, m_norm_texture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, norm_texture, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, m_norm_texture, 0);
 
-    glGenTextures(1, &depthTex);
-    glBindTexture(GL_TEXTURE_2D, depthTex);
+    glGenTextures(1, &m_depth_texture);
+    glBindTexture(GL_TEXTURE_2D, m_depth_texture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
     //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTex, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depth_texture, 0);
 
 
 
-    glGenTextures(1, &pos_texture);
-    glBindTexture(GL_TEXTURE_2D, pos_texture);
+    glGenTextures(1, &m_pos_texture);
+    glBindTexture(GL_TEXTURE_2D, m_pos_texture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, pos_texture, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, m_pos_texture, 0);
 
 
 
@@ -319,16 +319,11 @@ Screen::~Screen() {
     material.~Material();
     deleteArrays();
     glDeleteBuffers(1, &frameBuffer);
-    glDeleteBuffers(1, &depth_stencil_buff);
-    glDeleteTextures(1, &color_texture);
+    glDeleteTextures(1, &m_color_texture);
 }
 
-GLuint* Screen::getDepthSteencilBuffer(){
-    return &depth_stencil_buff;
-}
-
-GLuint* Screen::getColorBuffer(){
-    return &color_texture;
+GLuint* Screen::GetColorBuffer(){
+    return &m_color_texture;
 }
 
 void Screen::CreateVertices(){
@@ -350,15 +345,41 @@ void Screen::Draw() {
     GLboolean previous_depth_test;
     glGetBooleanv(GL_DEPTH_TEST, &previous_depth_test);
 
+
+    
+    //material.attachUniform("albedo", albedo_texture);
+    //material.attachUniform("position", pos_texture);
+    //material.attachUniform("normal", norm_texture);
+
     glDisable(GL_DEPTH_TEST);
 
     glUseProgram(material.getShaderProgram());
     glBindVertexArray(material.getVAO());
 
+    if (material.lightSpaceMatrixPtr != nullptr) {
+        //GLuint lightSpaceMatrix = glGetUniformLocation(material.getShaderProgram(), "lightSpaceMatrix");
+        //glUniformMatrix4fv(lightSpaceMatrix, 1, GL_FALSE, glm::value_ptr(*material.lightSpaceMatrixPtr));
+    }
+    
+    glUniform1i(glGetUniformLocation(material.getShaderProgram(), "albedo"), 0);
+    glUniform1i(glGetUniformLocation(material.getShaderProgram(), "normal"), 2);
+    glUniform1i(glGetUniformLocation(material.getShaderProgram(), "position"), 1);
+    glUniform1i(glGetUniformLocation(material.getShaderProgram(), "depthTex"), 4);
+
    // glm::mat4 mat = glm::translate(glm::mat4(1.0), *material.sun_rot);
         
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, color_texture);
+    glBindTexture(GL_TEXTURE_2D, m_albedo_texture);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, m_pos_texture);
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, m_norm_texture);
+    
+    glActiveTexture(GL_TEXTURE3);
+    glBindTexture(GL_TEXTURE_2D, *material.shadowmap);
+    
+    glActiveTexture(GL_TEXTURE4);
+    glBindTexture(GL_TEXTURE_2D, m_depth_texture);
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
     
@@ -379,28 +400,28 @@ void Screen::Draw() {
 Terrain::Terrain(float _size, float _res, float _height){
     material = Material();
 
-    size = _size;
-    resolution = _res;
+    m_size = _size;
+    m_resolution = _res;
     height = _height;
-    pos = sf::Vector3f(0, 0, 0);
-    rot = sf::Vector3f(0, 0, 0);
+    m_position = sf::Vector3f(0, 0, 0);
+    m_rotation = sf::Vector3f(0, 0, 0);
 
 }
 
 Terrain::Terrain() {
-    ao = 0;
+    m_ambient_occlusion_texture = 0;
     height = 0;
-    heightmap = 0;
-    norm = 0;
-    resolution = 0;
-    size = 0;
+    m_height_texture = 0;
+    m_normal_texture = 0;
+    m_resolution = 0;
+    m_size = 0;
 }
 
 Terrain::~Terrain(){
     material = Material();
-    pos = sf::Vector3f(0, 0, 0);
-    rot = sf::Vector3f(0, 0, 0);
-    size = 1;
+    m_position = sf::Vector3f(0, 0, 0);
+    m_rotation = sf::Vector3f(0, 0, 0);
+    m_size = 1;
 
     CreateVertices();
     material.createVAO_VBO(vertices);
@@ -417,13 +438,13 @@ void Terrain::Draw(){
     material.setModel(glm::mat4(1.0f));
 
     GLuint uniSize = glGetUniformLocation(material.getShaderProgram(), "size");
-    glUniform1f(uniSize, size);
+    glUniform1f(uniSize, m_size);
     
     GLuint uniHeight = glGetUniformLocation(material.getShaderProgram(), "height");
     glUniform1f(uniHeight, height);
     
     GLuint uniRes = glGetUniformLocation(material.getShaderProgram(), "res");
-    glUniform1f(uniRes, (float)resolution+1);
+    glUniform1f(uniRes, (float)m_resolution+1);
 
     GLuint uniEye = glGetUniformLocation(material.getShaderProgram(), "eye");
     glUniform3f(uniEye, player_entity.GetPos().x, player_entity.GetPos().y, player_entity.GetPos().z);
@@ -432,25 +453,25 @@ void Terrain::Draw(){
     glBindTexture(GL_TEXTURE_2D, material.getTexture());
 
     glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, heightmap);
+    glBindTexture(GL_TEXTURE_2D, m_height_texture);
 
     glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D, ao);
+    glBindTexture(GL_TEXTURE_2D, m_ambient_occlusion_texture);
 
     glActiveTexture(GL_TEXTURE3);
-    glBindTexture(GL_TEXTURE_2D, norm);
+    glBindTexture(GL_TEXTURE_2D, m_normal_texture);
 
-    glTranslatef(pos.x, pos.y, pos.y);
+    glTranslatef(m_position.x, m_position.y, m_position.y);
     glDrawArrays(GL_TRIANGLES, 0, vertices.size()/4);
-    glTranslatef(-pos.x, -pos.y, -pos.y);
+    glTranslatef(-m_position.x, -m_position.y, -m_position.y);
     glBindVertexArray(previous_vao);
     glUseProgram(previous_program);
 }
 
 void Terrain::CreateVertices(){
-    float step = size / (float)resolution;
-    for (int j = 0; j < resolution; j++) {
-        for (int i = 0; i < resolution; i++) {
+    float step = m_size / (float)m_resolution;
+    for (int j = 0; j < m_resolution; j++) {
+        for (int i = 0; i < m_resolution; i++) {
             std::vector<sf::Vector2f> vert(6);
             std::vector<sf::Vector2f> uv(6);
             vert[0] = sf::Vector2f( i,   j   );
@@ -489,11 +510,11 @@ void Terrain::CreateVertices(){
 //    
 
 Mesh::Mesh(std::string& path){
-    pos = sf::Vector3f(0, 0, 0);
-    rot = sf::Vector3f(0, 0, 0);
+    m_position = sf::Vector3f(0, 0, 0);
+    m_rotation = sf::Vector3f(0, 0, 0);
     OBJLoader(path, this);
 
-    size = sf::Vector3f( 1, 1, 1);
+    m_size = sf::Vector3f( 1, 1, 1);
 
     material = Material();
 }
@@ -502,7 +523,7 @@ void Mesh::CreateVertices() {
     material.createVAO_VBO_mesh((*vert_vec3)[array_index], (*uv_vec2)[array_index],(* norm_vec3)[array_index]);
 }
 
-void Mesh::setModel(std::string& path) {
+void Mesh::SetModel(std::string& path) {
     model_path = path;
     OBJLoader(path, this);
     CreateVertices();
@@ -515,8 +536,8 @@ Mesh::~Mesh(){
 }
 
 Mesh::Mesh(){
-    pos = sf::Vector3f(0, 0, 0);
-    rot = sf::Vector3f(0, 0, 0);
+    m_position = sf::Vector3f(0, 0, 0);
+    m_rotation = sf::Vector3f(0, 0, 0);
     material = *(new Material());
 }
 
@@ -539,7 +560,10 @@ void Mesh::Draw() {
     glBindTexture(GL_TEXTURE_2D, material.getTexture());
 
     GLuint uniSize = glGetUniformLocation(material.getShaderProgram(), "size");
-    glUniform3f(uniSize, size.x, size.y, size.z);
+    glUniform3f(uniSize, m_size.x, m_size.y, m_size.z);
+
+    GLuint uniRepeat = glGetUniformLocation(material.getShaderProgram(), "texture_repeat");
+    glUniform1f(uniRepeat, m_texture_repeat);
 
     GLuint uniEye = glGetUniformLocation(material.getShaderProgram(), "eye");
     glUniform3f(uniEye, player_entity.GetPos().x, player_entity.GetPos().y, player_entity.GetPos().z);
@@ -579,8 +603,8 @@ void Mesh::Draw() {
 //                                        
 
 Plane::Plane(){
-    pos = sf::Vector3f(0, 0, 0);
-    rot = sf::Vector3f(0, 0, 0);
+    m_position = sf::Vector3f(0, 0, 0);
+    m_rotation = sf::Vector3f(0, 0, 0);
 
     material = Material();
 }
@@ -602,10 +626,10 @@ void Plane::Draw(){
     material.setModel(glm::mat4(1.0f));
 
     GLuint uniSize = glGetUniformLocation(material.getShaderProgram(), "size");
-    glUniform3f(uniSize, size.x, size.y, size.z);
+    glUniform3f(uniSize, m_size.x, m_size.y, m_size.z);
     
-    GLuint uniRepeat = glGetUniformLocation(material.getShaderProgram(), "repeat");
-    glUniform1f(uniRepeat, texture_repeat);
+    GLuint uniRepeat = glGetUniformLocation(material.getShaderProgram(), "texture_repeat");
+    glUniform1f(uniRepeat, m_texture_repeat);
 
     GLuint uniEye = glGetUniformLocation(material.getShaderProgram(), "eye");
     glUniform3f(uniEye, player_entity.GetPos().x, player_entity.GetPos().y, player_entity.GetPos().z);
@@ -683,16 +707,16 @@ void Plane::CreateVertices(){
 
 LightSource::LightSource() {
     
-    resolution = 2048;//default resolution
+    m_shadowmap_resolution = 2048;//default resolution
 
     GLint previous_buffer;
     glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &previous_buffer);
 
     //creating framebuffer
-    glGenFramebuffers(1, &depthMapFBO);
-    glGenTextures(1, &depthMap);
-    glBindTexture(GL_TEXTURE_2D, depthMap);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, resolution, resolution, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+    glGenFramebuffers(1, &m_depthmap_buffer);
+    glGenTextures(1, &m_depthmap);
+    glBindTexture(GL_TEXTURE_2D, m_depthmap);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, m_shadowmap_resolution, m_shadowmap_resolution, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -700,24 +724,24 @@ LightSource::LightSource() {
     float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
     glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_depthmap_buffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_depthmap, 0);
     glDrawBuffer(GL_NONE);
     glReadBuffer(GL_NONE);
     glBindFramebuffer(GL_FRAMEBUFFER, previous_buffer);
 
-    near_plane = 1.0f, far_plane = 50.0f;
-    lightProjection = glm::ortho(-fov, fov, -fov, fov, near_plane, far_plane);
+    m_near_plane = 1.0f, m_far_plane = 50.0f;
+    m_light_projection_matrix = glm::ortho(-m_field_of_view, m_field_of_view, -m_field_of_view, m_field_of_view, m_near_plane, m_far_plane);
 
 }
 
-void LightSource::setShader(GLenum type, const GLchar* path){
+void LightSource::SetShader(GLenum type, const GLchar* path){
     switch (type){
     case GL_VERTEX_SHADER:
-        vertexShader_source = std::string(path);
+        m_vertex_shader_source = std::string(path);
         break;
     case GL_FRAGMENT_SHADER:
-        fragmentShader_source = std::string(path);
+        m_fragment_shader_source = std::string(path);
         break;
     default:
         throw std::exception("Unknown shader type");
@@ -739,18 +763,18 @@ void LightSource::Draw(std::vector <GeometricObject*> obj_list) {
     glGetBooleanv(GL_DEPTH_TEST, &previous_depth_test);
 
     glEnable(GL_DEPTH_TEST);
-    glUseProgram(ShaderProgram);
+    glUseProgram(m_shader_program);
     
  
-    glViewport(0, 0, resolution, resolution);
-    glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+    glViewport(0, 0, m_shadowmap_resolution, m_shadowmap_resolution);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_depthmap_buffer);
     glClear(GL_DEPTH_BUFFER_BIT);
 
     updatePos();
 
-    lightView = glm::lookAt(ConvertSFML2GLM(pos), ConvertSFML2GLM(sf::Vector3f(0, 0, 0)), glm::vec3(0.0f, 1.0f, 0.0f));
+    m_light_view_matrix = glm::lookAt(ConvertSFML2GLM(m_position), ConvertSFML2GLM(sf::Vector3f(0, 0, 0)), glm::vec3(0.0f, 1.0f, 0.0f));
 
-    lightSpaceMatrix = lightProjection * lightView;
+    m_light_space_matrix = m_light_projection_matrix * m_light_view_matrix;
 
     for (int i = 0; i < obj_list.size(); i++) {
        
@@ -766,13 +790,13 @@ void LightSource::Draw(std::vector <GeometricObject*> obj_list) {
             model = glm::rotate(model, glm::radians(rot.y), glm::vec3(0.0, 1.0, 0.0));
             model = glm::rotate(model, glm::radians(rot.z), glm::vec3(0.0, 0.0, 1.0));
 
-            GLuint lightSpaceMatrixLocation = glGetUniformLocation(ShaderProgram, "mvpMatrix");
-            glUniformMatrix4fv(lightSpaceMatrixLocation, 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
+            GLuint lightSpaceMatrixLocation = glGetUniformLocation(m_shader_program, "mvpMatrix");
+            glUniformMatrix4fv(lightSpaceMatrixLocation, 1, GL_FALSE, glm::value_ptr(m_light_space_matrix));
 
-            GLuint model_loc = glGetUniformLocation(ShaderProgram, "model");
+            GLuint model_loc = glGetUniformLocation(m_shader_program, "model");
             glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model));
 
-            GLuint size_loc = glGetUniformLocation(ShaderProgram, "size");
+            GLuint size_loc = glGetUniformLocation(m_shader_program, "size");
             glUniform3f(size_loc, obj_list[i]->GetSize().x, obj_list[i]->GetSize().y, obj_list[i]->GetSize().z);
 
             glBindVertexArray(obj_list[i]->material.getVAO());
@@ -790,14 +814,14 @@ void LightSource::Draw(std::vector <GeometricObject*> obj_list) {
 
 }
 
-inline unsigned int *LightSource::getShadowMap() {
-    return &depthMap;
+inline unsigned int *LightSource::GetShadowMap() {
+    return &m_depthmap;
 }
 
 int LightSource::CreateShaderProgram() {
 
-    const char* vs_str = vertexShader_source.c_str();
-    const char* fs_str = fragmentShader_source.c_str();
+    const char* vs_str = m_vertex_shader_source.c_str();
+    const char* fs_str = m_fragment_shader_source.c_str();
 
     int vertexShader = loadShader(GL_VERTEX_SHADER, vs_str);
     if (vertexShader == -1)
@@ -807,11 +831,11 @@ int LightSource::CreateShaderProgram() {
     if (fragmentShader == -1)
         throw std::exception("Fragment shader loading error");
 
-    ShaderProgram = glCreateProgram();
-    glAttachShader(ShaderProgram, vertexShader);
-    glAttachShader(ShaderProgram, fragmentShader);
+    m_shader_program = glCreateProgram();
+    glAttachShader(m_shader_program, vertexShader);
+    glAttachShader(m_shader_program, fragmentShader);
 
-    glLinkProgram(ShaderProgram);
+    glLinkProgram(m_shader_program);
 }
 
  int LightSource::loadShader(GLenum type, const GLchar* path) {
@@ -855,7 +879,7 @@ int LightSource::CreateShaderProgram() {
 
 
  void LightSource::updatePos() {
-     pos = - Normalize(dir) * distance;
+     m_position = - Normalize(m_direction) * m_draw_distance;
  }
 
  void LightSource::SetDir() {
@@ -863,27 +887,27 @@ int LightSource::CreateShaderProgram() {
      glm::vec4 _dir = glm::vec4(1, 0, 0, 1);
      glm::mat4 rot_mat = glm::mat4(1);
 
-     rot_mat = glm::rotate(rot_mat, glm::radians(rot.x), glm::vec3(1, 0, 0));
-     rot_mat = glm::rotate(rot_mat, glm::radians(rot.y), glm::vec3(0, 1, 0));
-     rot_mat = glm::rotate(rot_mat, glm::radians(rot.z), glm::vec3(0, 0, 1));
+     rot_mat = glm::rotate(rot_mat, glm::radians(m_rotation.x), glm::vec3(1, 0, 0));
+     rot_mat = glm::rotate(rot_mat, glm::radians(m_rotation.y), glm::vec3(0, 1, 0));
+     rot_mat = glm::rotate(rot_mat, glm::radians(m_rotation.z), glm::vec3(0, 0, 1));
 
      _dir = rot_mat * _dir;
 
-     dir = sf::Vector3f(_dir.x, _dir.y, _dir.z);
+     m_direction = sf::Vector3f(_dir.x, _dir.y, _dir.z);
  }
 
  void LightSource::SetDir(sf::Vector3f vec) {
-     dir = Normalize(vec);
+     m_direction = Normalize(vec);
  }
 
 
  LightSource::~LightSource() {
-     name.clear();
-     vertexShader_source.clear();
-     fragmentShader_source.clear();
-     glDeleteBuffers(1, &depthMapFBO);
-     glDeleteTextures(1, &depthMap);
-     glDeleteProgram(ShaderProgram);
+     m_name.clear();
+     m_vertex_shader_source.clear();
+     m_fragment_shader_source.clear();
+     glDeleteBuffers(1, &m_depthmap_buffer);
+     glDeleteTextures(1, &m_depthmap);
+     glDeleteProgram(m_shader_program);
  }
 
  //     _____ _                 _ ____            
@@ -895,10 +919,10 @@ int LightSource::CreateShaderProgram() {
 //                                               
 
  Cloudbox::Cloudbox(sf::Vector3f _pos, sf::Vector3f _res, sf::Vector3f _size) {
-    pos = _pos;
-    rot = sf::Vector3f(0, 0, 0);
-    cloudTexRes = _res;
-    size = _size;
+    m_position = _pos;
+    m_rotation = sf::Vector3f(0, 0, 0);
+    m_cloud_texure_resolution = _res;
+    m_size = _size;
 
     CreateVerticesLegacy();
     initBuffer();
@@ -909,18 +933,18 @@ int LightSource::CreateShaderProgram() {
  Cloudbox::~Cloudbox() {
      deleteArrays();
      material.~Material();
-     glDeleteTextures(1, &cloudtex);
-     glDeleteBuffers(1, &cloudbuffer);
+     glDeleteTextures(1, &m_cloud_texture);
+     glDeleteBuffers(1, &m_cloudbuffer);
  }
 
  void Cloudbox::RenderCloud(float innerRadius, float outerRadius, sf::Vector3f center) {
-     uniforms();
+     AttachUniforms();
      glEnable(GL_CULL_FACE);
      glCullFace(GL_BACK);
      glEnable(GL_TEXTURE_3D);
 
      glActiveTexture(GL_TEXTURE0);
-     glBindTexture(GL_TEXTURE_3D, cloudtex);
+     glBindTexture(GL_TEXTURE_3D, m_cloud_texture);
 
      material.attachUniform("r", innerRadius);
      material.attachUniform("R", outerRadius);
@@ -933,27 +957,27 @@ int LightSource::CreateShaderProgram() {
      glDisable(GL_TEXTURE_3D);
  }
 
- void Cloudbox::renderTexture(int SCREEN_WIDTH, int SCREEN_HEIGHT) {
+ void Cloudbox::RenderTexture(int SCREEN_WIDTH, int SCREEN_HEIGHT) {
      GLint previous_vao, previous_program;
      GLint previous_buffer;
      glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previous_vao);
      glGetIntegerv(GL_CURRENT_PROGRAM, &previous_program);
      glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &previous_buffer);
      
-     glViewport(0, 0, cloudTexRes.x, cloudTexRes.y);
+     glViewport(0, 0, m_cloud_texure_resolution.x, m_cloud_texure_resolution.y);
      glUseProgram(material.getShaderProgram());
      glBindVertexArray(material.getVAO());
      
      int grid_res_loc = glGetUniformLocation(material.getShaderProgram(), "grid_resolution");
-     glUniform1i(grid_res_loc, pointsGrid);
+     glUniform1i(grid_res_loc, m_points_in_grid);
      
      int layer_loc = glGetUniformLocation(material.getShaderProgram(), "layers");
-     glUniform1i(layer_loc, cloudTexRes.z);
+     glUniform1i(layer_loc, m_cloud_texure_resolution.z);
      
-     for (int i = 0; i < cloudTexRes.z; ++i) {
+     for (int i = 0; i < m_cloud_texure_resolution.z; ++i) {
          int layer_loc = glGetUniformLocation(material.getShaderProgram(), "layer");
-         glUniform1f(layer_loc, (float)i / (float)cloudTexRes.z);
-         glFramebufferTexture3D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_3D, cloudtex, 0, i);
+         glUniform1f(layer_loc, (float)i / (float)m_cloud_texure_resolution.z);
+         glFramebufferTexture3D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_3D, m_cloud_texture, 0, i);
          glDrawArrays(GL_TRIANGLES, 0, vertices.size());
      }
      
@@ -969,15 +993,15 @@ int LightSource::CreateShaderProgram() {
  }
 
  void Cloudbox::initBuffer() {
-     glGenFramebuffers(1, &cloudbuffer);
-     glBindFramebuffer(GL_FRAMEBUFFER, cloudbuffer);
+     glGenFramebuffers(1, &m_cloudbuffer);
+     glBindFramebuffer(GL_FRAMEBUFFER, m_cloudbuffer);
  }
 
  void Cloudbox::initTexture() {
-     glGenTextures(1, &cloudtex);
-     glBindTexture(GL_TEXTURE_3D, cloudtex);
+     glGenTextures(1, &m_cloud_texture);
+     glBindTexture(GL_TEXTURE_3D, m_cloud_texture);
 
-     glTexImage3D(GL_TEXTURE_3D, 0, GL_RGB, cloudTexRes.x, cloudTexRes.y, cloudTexRes.z, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+     glTexImage3D(GL_TEXTURE_3D, 0, GL_RGB, m_cloud_texure_resolution.x, m_cloud_texure_resolution.y, m_cloud_texure_resolution.z, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
      glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
      glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
      glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -985,46 +1009,46 @@ int LightSource::CreateShaderProgram() {
      glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
      
 
-     material.bindTexture(cloudtex);
+     material.bindTexture(m_cloud_texture);
  }
 
  void Cloudbox::attachBuffer() {
-     glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, cloudtex, 0);
+     glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_cloud_texture, 0);
 
 
      if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
          throw std::exception("Error in cloud buffer ");
      }
 
-     glBindFramebuffer(GL_FRAMEBUFFER, cloudbuffer);
+     glBindFramebuffer(GL_FRAMEBUFFER, m_cloudbuffer);
      glDrawBuffer(GL_COLOR_ATTACHMENT0);
  }
 
- void Cloudbox::recreateShaders() {
+ void Cloudbox::ChangeShaders() {
      glDeleteProgram(material.getShaderProgram());
      material.loadShader(GL_VERTEX_SHADER, ".\\Shaders\\cloudrenderer.vs");
      material.loadShader(GL_FRAGMENT_SHADER, ".\\Shaders\\cloudrender.fs");
      material.CreateShaders();
  }
 
- void Cloudbox::uniforms() {
-     material.attachUniform("DensityThreshold", cloudParams.DensityThreshold);
-     material.attachUniform("lightAbsorptionTowardSun", cloudParams.lightAbsorptionTowardSun);
-     material.attachUniform("darknessThreshold", cloudParams.darknessThreshold);
-     material.attachUniform("DensityMultiplier", cloudParams.DensityMultiplier);
-     material.attachUniform("num_of_steps", cloudParams.num_of_steps);
-     material.attachUniform("num_of_steps_inside", cloudParams.num_of_steps_inside);
-     material.attachUniform("lightAbsorptionThroughCloud", cloudParams.lightAbsorptionThroughCloud);
-     material.attachUniform("LightColor", cloudParams.LightColor);
-     material.attachUniform("cloudScale", cloudParams.cloudScale);
-     material.attachUniform("cloudOffset", cloudParams.cloudOffset);
-     material.attachUniform("secondLayerScale", cloudParams.secondLayerScale);
-     material.attachUniform("secondLayerOffset", cloudParams.secondLayerOffset);
-     material.attachUniform("thirdLayerScale", cloudParams.thirdLayerScale);
-     material.attachUniform("thirdLayerOffset", cloudParams.thirdLayerOffset);
-     material.attachUniform("phaseParams", cloudParams.phaseParams);
+ void Cloudbox::AttachUniforms() {
+     material.attachUniform("DensityThreshold", cloudParams.m_density_threshold);
+     material.attachUniform("lightAbsorptionTowardSun", cloudParams.m_light_absorption_toward_light);
+     material.attachUniform("darknessThreshold", cloudParams.m_darkness_threshold);
+     material.attachUniform("DensityMultiplier", cloudParams.m_density_multiplier);
+     material.attachUniform("num_of_steps", cloudParams.m_num_of_steps_shape);
+     material.attachUniform("num_of_steps_inside", cloudParams.m_num_of_steps_light);
+     material.attachUniform("lightAbsorptionThroughCloud", cloudParams.m_light_absorption_through_cloud);
+     material.attachUniform("LightColor", cloudParams.m_light_color);
+     material.attachUniform("cloudScale", cloudParams.m_cloud_scale);
+     material.attachUniform("cloudOffset", cloudParams.m_cloud_offset);
+     material.attachUniform("secondLayerScale", cloudParams.m_second_layer_scale);
+     material.attachUniform("secondLayerOffset", cloudParams.m_second_layer_offset);
+     material.attachUniform("thirdLayerScale", cloudParams.m_third_layer_scale);
+     material.attachUniform("thirdLayerOffset", cloudParams.m_third_layer_offset);
+     material.attachUniform("phaseParams", cloudParams.m_phase_params);
 
-     material.attachUniform("tex_res", glm::vec3(cloudTexRes.x, cloudTexRes.y, cloudTexRes.z));
+     material.attachUniform("tex_res", glm::vec3(m_cloud_texure_resolution.x, m_cloud_texure_resolution.y, m_cloud_texure_resolution.z));
  }
  
 
@@ -1111,12 +1135,12 @@ int LightSource::CreateShaderProgram() {
     glCullFace(GL_BACK);
     glEnable(GL_TEXTURE_3D);
 
-    cloudsOnSky.cloudbox->uniforms();
+    cloudsOnSky.cloudbox->AttachUniforms();
 
     //cloudsOnSky.cloudbox->material.updateUniforms();
-    cloudsOnSky.cloudbox->material.attachUniform("r", innerRadius);
-    cloudsOnSky.cloudbox->material.attachUniform("R", outerRadius);
-    cloudsOnSky.cloudbox->material.attachUniform("center", ConvertSFML2GLM(centerPos));
+    cloudsOnSky.cloudbox->material.attachUniform("r", c_inner_radius);
+    cloudsOnSky.cloudbox->material.attachUniform("R", c_outer_radius);
+    cloudsOnSky.cloudbox->material.attachUniform("center", ConvertSFML2GLM(c_center_position));
 
     glUseProgram(cloudsOnSky.cloudbox->material.getShaderProgram());
     glBindVertexArray(cloudsOnSky.cloudbox->material.getVAO());
@@ -1193,24 +1217,8 @@ int LightSource::CreateShaderProgram() {
      initTexture();
      skyBoxFrameBuffer = createFrameBuffer(cubemapRes, cubemapRes);
      camera.createMatrices();
-     setRadius();
  }
 
- void Sky::setRadius() {
-     /*centerPos = cloudsOnSky.cloudbox->GetPos();
-     centerPos.y -= cloudsOnSky.cloudbox->GetSize().y / 2.f;
-     outerRadius = cloudsOnSky.cloudbox->GetSize().y;
-     innerRadius = 0.1*/
-
-     centerPos = sf::Vector3f(0, -200, 0);
-     innerRadius =210;
-     outerRadius =250;
-
-     /*outerRadius = std::min(cloudsOnSky.cloudbox->GetSize().x, cloudsOnSky.cloudbox->GetSize().z) / (2.f * sin(angle));
-     centerPos = cloudsOnSky.cloudbox->GetPos();
-     centerPos.y = cloudsOnSky.cloudbox->GetPos().y + cloudsOnSky.cloudbox->GetSize().y / 2 - outerRadius;
-     innerRadius = cloudsOnSky.cloudbox->GetPos().y - cloudsOnSky.cloudbox->GetSize().y - centerPos.y + 0.2f;*/
- }
 
 
  void Sky::initFramebuffer() {
@@ -1245,8 +1253,8 @@ int LightSource::CreateShaderProgram() {
  }
 
  void Sky::SkySphere::initTexture(int res) {
-     glGenTextures(1, &texture);
-     glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
+     glGenTextures(1, &m_texture);
+     glBindTexture(GL_TEXTURE_CUBE_MAP, m_texture);
 
      for (int i = 0; i < 6; i++) 
          glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, res, res, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
@@ -1260,11 +1268,11 @@ int LightSource::CreateShaderProgram() {
  }
 
  void Sky::attachMeshToSky(GeometricObject* sky_obj) {
-     skySphere.sphereMesh = (Mesh*)sky_obj;
+     skySphere.m_sphere_mesh = (Mesh*)sky_obj;
  }
 
  void Sky::SkySphere::attachShader(const std::string& fragment_shader_path) {
-     vertexShader = loadShader(GL_VERTEX_SHADER, sphereMesh->material.GetVSPath().c_str());
+     vertexShader = loadShader(GL_VERTEX_SHADER, m_sphere_mesh->material.GetVSPath().c_str());
      fragmentShader = loadShader(GL_FRAGMENT_SHADER, fragment_shader_path.c_str());
  }
 
@@ -1286,9 +1294,9 @@ int LightSource::CreateShaderProgram() {
 
 
      glUseProgram(skySphere.shaderProgram);
-     glBindVertexArray(skySphere.sphereMesh->material.getVAO());
+     glBindVertexArray(skySphere.m_sphere_mesh->material.getVAO());
 
-     skySphere.sphereMesh->material.setModel(glm::mat4(1.0));
+     skySphere.m_sphere_mesh->material.setModel(glm::mat4(1.0));
 
      GLuint uniView = glGetUniformLocation(skySphere.shaderProgram, "view");
      glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(camera.view));
@@ -1297,7 +1305,7 @@ int LightSource::CreateShaderProgram() {
      glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(camera.proj));
 
      GLuint uniModel = glGetUniformLocation(skySphere.shaderProgram, "model");
-     glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(skySphere.sphereMesh->material.getModel()));
+     glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(skySphere.m_sphere_mesh->material.getModel()));
 
      GLuint uniEye = glGetUniformLocation(skySphere.shaderProgram, "eyepos");
      glUniform3f(uniEye, 0, 0, 0);
@@ -1309,16 +1317,16 @@ int LightSource::CreateShaderProgram() {
      glUniform3f(uniSize, .04f, .04f, .04f);
 
      GLuint uniLight = glGetUniformLocation(skySphere.shaderProgram, "light");
-     glUniform3f(uniLight, -skySphere.sphereMesh->material.sun_rot->x, -skySphere.sphereMesh->material.sun_rot->y, -skySphere.sphereMesh->material.sun_rot->z);
+     glUniform3f(uniLight, -skySphere.m_sphere_mesh->material.sun_rot->x, -skySphere.m_sphere_mesh->material.sun_rot->y, -skySphere.m_sphere_mesh->material.sun_rot->z);
 
 
-     glDrawArrays(GL_TRIANGLES, 0, (*skySphere.sphereMesh).vert_vec3[0][skySphere.sphereMesh->array_index].size());
+     glDrawArrays(GL_TRIANGLES, 0, (*skySphere.m_sphere_mesh).vert_vec3[0][skySphere.m_sphere_mesh->array_index].size());
      glBindVertexArray(0);
      glUseProgram(0);
  }
 
  Sky::~Sky() {
-     glDeleteTextures(1, &skySphere.texture);
+     glDeleteTextures(1, &skySphere.m_texture);
      glDeleteShader(skySphere.vertexShader);
      glDeleteShader(skySphere.fragmentShader);
      glDeleteProgram(skySphere.shaderProgram);

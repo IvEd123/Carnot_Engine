@@ -140,7 +140,7 @@ void main(){
    outColor.a = transparency;
 
    outPos = vec4(fs_in.FragPos, 1);
-   outAlbedo = vec4(0.2, 0.2, 0.4, 1);
+   outAlbedo = outColor;//vec4(0.2, 0.2, 0.4, 1);
    outNormal = vec4(normal, 1);
 
 }

@@ -69,5 +69,5 @@ void DeleteObject(int index) {
     std::vector<GeometricObject*>::iterator _iter = obj_list.begin() + index;
     obj_list.erase(_iter);
     for (int i = index; i < obj_list.size(); i++)
-        obj_list[i]->decrementIndex();
+        obj_list[i]->DecrementIndex();
 }

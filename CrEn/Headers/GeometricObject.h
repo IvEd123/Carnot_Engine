@@ -25,13 +25,14 @@ class DLLScriptHandler;
 class GeometricObject{
 private:
                                             
-    std::string                             name;
+    std::string                             m_name;
 protected:
     
-    int                                     type;
-    sf::Vector3f                            size;
-    sf::Vector3f                            pos;
-    sf::Vector3f                            rot;
+    int                                     m_type;
+    sf::Vector3f                            m_size;
+    sf::Vector3f                            m_position;
+    sf::Vector3f                            m_rotation;
+    
     
 
     void                                    deleteArrays();
@@ -39,7 +40,7 @@ public:
      GeometricObject() {}
     ~GeometricObject() {}
 
-    void                                    decrementIndex();
+    void                                    DecrementIndex();
     void                                    SetType(int t);
     int                                     GetType();
     void                                    SetName(std::string);
@@ -53,6 +54,7 @@ public:
     void                                    SetRot(sf::Vector3f _rot);
     void                                    SetSize(sf::Vector3f s);
     sf::Vector3f                            GetSize();
+    
 
     
     sf::Vector3f *                          GetPosPtr();
@@ -62,10 +64,11 @@ public:
     Material                                material;
     bool                                    cast_shadow = true;
     void                                    UpdateModelMatrix();
-    void                                    addLightSource(LightSource* source);
+    void                                    AddLightSource(LightSource* source);
     virtual void                            Draw() = 0;
-    virtual void                            setModel(std::string& path) = 0;
+    virtual void                            SetModel(std::string& path) = 0;
 
+    int                                     m_texture_repeat = 1;
     std::vector<GLfloat>                    vertices;
     std::vector<std::vector<glm::vec3>>*    vert_vec3;
     std::vector<std::vector<glm::vec2>>*    uv_vec2;
@@ -77,7 +80,7 @@ public:
 
 class Cube : public GeometricObject {
 private:
-    std::string                             model_path;
+    std::string                             m_model_path;
     
 public:
     Cube(sf::Vector3f _size);
@@ -89,7 +92,7 @@ public:
     void                                    Draw(sf::Vector3f);
     void                                    CreateVertices() {};
     void                                    CreateVerticesLegacy();
-    void                                    setModel(std::string& path);
+    void                                    SetModel(std::string& path);
 
     sf::Vector3f size_v;
 
@@ -97,24 +100,24 @@ public:
 
 class Screen : public GeometricObject {
 private:
-    GLuint                                  depth_stencil_buff;
-    GLuint                                  color_texture;
-    GLuint                                  albedo_texture;
-    GLuint                                  pos_texture;
-    GLuint                                  norm_texture;
-    unsigned int                            depthTex;
+    GLuint                                  m_color_texture;
+    GLuint                                  m_albedo_texture;
+    GLuint                                  m_pos_texture;
+    GLuint                                  m_norm_texture;
+    unsigned int                            m_depth_texture;
 public:
     GLuint                                  frameBuffer;
-    GLuint *                                getDepthSteencilBuffer();
-    GLuint *                                getColorBuffer();
-    void                                    setColorBuffer(GLuint t) { color_texture = t; }
-    GLuint*                                 GetDepthTex() { return &depthTex; }
-    GLuint*                                 GetPosTex() { return &pos_texture; }
-    glm::mat4 *                             view; 
-    glm::mat4 *                             proj;
+    GLuint *                                GetColorBuffer();
+    void                                    SetColorBuffer(GLuint t) { m_color_texture = t; }
+    GLuint*                                 GetDepthTex() { return &m_depth_texture; }
+    GLuint*                                 GetPosTex() { return &m_pos_texture; }
+    GLuint*                                 GetNormTex() { return &m_norm_texture; }
+    GLuint*                                 GetAlbedoTex() { return &m_albedo_texture; }
+    glm::mat4 *                             view_matrix; 
+    glm::mat4 *                             projection_matrix;
     void                                    CreateVertices();
     void                                    Draw();
-    void                                    setModel(std::string& path) {}
+    void                                    SetModel(std::string& path) {}
     void                                    CreateFrameBuffer(int height, int width);
     Screen();
     ~Screen();
@@ -130,18 +133,18 @@ public:
     void                                    Draw();
     void                                    CreateVertices();
 
-    GLuint *                                getHeightmap() { return &heightmap; }
-    GLuint *                                getAOMap() { return &ao; }
-    GLuint *                                getNormalMap() { return &norm; }
-    void                                    setModel(std::string& path) {}
+    GLuint *                                getHeightmap() { return &m_height_texture; }
+    GLuint *                                GetAmbientOcclusionMap() { return &m_ambient_occlusion_texture; }
+    GLuint *                                GetNormalMap() { return &m_normal_texture; }
+    void                                    SetModel(std::string& path) {}
     float                                   height;
 private:
-    float                                   size;
-    int                                     resolution;
+    float                                   m_size;
+    int                                     m_resolution;
 
-    GLuint                                  heightmap;
-    GLuint                                  ao;
-    GLuint                                  norm;
+    GLuint                                  m_height_texture;
+    GLuint                                  m_ambient_occlusion_texture;
+    GLuint                                  m_normal_texture;
 };
 
 
@@ -150,7 +153,7 @@ class  Mesh : public GeometricObject {
 public:
     std::string                             model_path;
     Mesh(std::string& path);
-    void                                    setModel(std::string& path);
+    void                                    SetModel(std::string& path);
     Mesh();
     ~Mesh();
     void                                    Draw();
@@ -165,14 +168,9 @@ public:
     ~Plane();
     void                                    Draw();
     void                                    CreateVertices();
-    void                                    setModel(std::string& path) {}
-    int                                     texture_repeat = 1;
+    void                                    SetModel(std::string& path) {}
 
-    GLuint *                                getNormalMap() { return &norm; }
-    GLuint *                                getSpecMap() { return &spec; }
-private:
-    GLuint                                  norm;
-    GLuint                                  spec;
+
 };
 
 
@@ -181,39 +179,39 @@ public:
     Cloudbox(sf::Vector3f _pos, sf::Vector3f _res, sf::Vector3f size);
     ~Cloudbox();
     void                                    RenderCloud(float innerRadius, float outerRadius, sf::Vector3f center);
-    void                                    renderTexture(int SCREEN_WIDTH, int SCREEN_HEIGHT);
+    void                                    RenderTexture(int SCREEN_WIDTH, int SCREEN_HEIGHT);
     struct                                  CloudParams {
-        glm::vec4                           phaseParams = glm::vec4(0.72, 0.33, 1, 0.74);
+        glm::vec4                           m_phase_params = glm::vec4(0.72, 0.33, 1, 0.74);
 
         glm::vec3
-                                            LightColor = glm::vec3(1, 1, 1),
-                                            cloudScale = glm::vec3(1),
-                                            cloudOffset = glm::vec3(0),
-                                            secondLayerScale = glm::vec3(2),
-                                            secondLayerOffset = glm::vec3(0),
-                                            thirdLayerScale = glm::vec3(3),
-                                            thirdLayerOffset = glm::vec3(0);
+                                            m_light_color = glm::vec3(1, 1, 1),
+                                            m_cloud_scale = glm::vec3(1),
+                                            m_cloud_offset = glm::vec3(0),
+                                            m_second_layer_scale = glm::vec3(2),
+                                            m_second_layer_offset = glm::vec3(0),
+                                            m_third_layer_scale = glm::vec3(3),
+                                            m_third_layer_offset = glm::vec3(0);
 
         float
-                                            DensityThreshold = 0.93,
-                                            DensityMultiplier = 72,
-                                            lightAbsorptionThroughCloud = 0.85,
-                                            lightAbsorptionTowardSun = 2.0,
-                                            darknessThreshold = 0.2;
+                                            m_density_threshold = 0.93,
+                                            m_density_multiplier = 72,
+                                            m_light_absorption_through_cloud = 0.85,
+                                            m_light_absorption_toward_light = 2.0,
+                                            m_darkness_threshold = 0.2;
 
         int
-                                            num_of_steps = 80,
-                                            num_of_steps_inside = 50;
+                                            m_num_of_steps_shape = 80,
+                                            m_num_of_steps_light = 50;
     };
     CloudParams                             cloudParams;
-    void                                    recreateShaders();
-    void                                    uniforms();
-    GLuint                                  GetTexture() { return cloudtex; }
+    void                                    ChangeShaders();
+    void                                    AttachUniforms();
+    GLuint                                  GetTexture() { return m_cloud_texture; }
 private:
-    sf::Vector3f                            cloudTexRes;
-    const int                               pointsGrid = 7;
-    GLuint                                  cloudbuffer;
-    GLuint                                  cloudtex;
+    sf::Vector3f                            m_cloud_texure_resolution;
+    const int                               m_points_in_grid = 7;
+    GLuint                                  m_cloudbuffer;
+    GLuint                                  m_cloud_texture;
 
     void                                    initBuffer();
     void                                    initTexture();
@@ -229,26 +227,26 @@ private:
 class LightSource {
 private:
                             
-    std::string                             name;
-    sf::Vector3f                            pos;
-    sf::Vector3f                            rot;
-    sf::Vector3f                            dir;
-    std::string                             vertexShader_source;
-    std::string                             fragmentShader_source;
-    int                                     resolution;
-    unsigned int                            depthMapFBO;
-    unsigned int                            depthMap;
-    unsigned int                            ShaderProgram;
-    float                                   fov = 20;
-    float                                   distance;
+    std::string                             m_name;
+    sf::Vector3f                            m_position;
+    sf::Vector3f                            m_rotation;
+    sf::Vector3f                            m_direction;
+    std::string                             m_vertex_shader_source;
+    std::string                             m_fragment_shader_source;
+    int                                     m_shadowmap_resolution;
+    GLuint                                  m_depthmap_buffer;
+    GLuint                                  m_depthmap;
+    GLuint                                  m_shader_program;
+    float                                   m_field_of_view = 20;
+    float                                   m_draw_distance;
 
-    sf::Vector3f                            pov;
+
 
     int                                     loadShader(GLenum type, const GLchar* path);
 
-    float                                   near_plane, 
-                                            far_plane;
-    glm::mat4                               lightProjection, lightView, lightSpaceMatrix;
+    float                                   m_near_plane, 
+                                            m_far_plane;
+    glm::mat4                               m_light_projection_matrix, m_light_view_matrix, m_light_space_matrix;
     void                                    updatePos();
 
     int                                     CreateShaderProgram();
@@ -256,27 +254,25 @@ public:
 
      LightSource();
     ~LightSource();
-    void                                    setShader(GLenum type, const GLchar* path);
+    void                                    SetShader(GLenum type, const GLchar* path);
     int                                     CreateShaders();
     void                                    SetName(std::string);
     std::string                             GetName(void);
 
-    glm::mat4 *                             getProjMatrix() { return &lightSpaceMatrix; }
+    glm::mat4 *                             GetProjMatrix() { return &m_light_space_matrix; }
 
-    unsigned int *                          getShadowMap();
+    unsigned int *                          GetShadowMap();
 
-    sf::Vector3f                            GetPos() { return pos; }
-    sf::Vector3f  *                         GetPosPtr() { return &pos; }
-    void                                    SetPos(sf::Vector3f _pos) { pos = _pos; }
-    sf::Vector3f                            GetPov() { return pov; }
-    void                                    SetPov(sf::Vector3f _pov) { pov = _pov; }
-    sf::Vector3f                            GetRot() { return rot; }
-    sf::Vector3f  *                         GetRotPtr() { return &rot; }
-    void                                    SetRot(sf::Vector3f _rot) { rot = _rot; }
-    void                                    SetDistance(float _distance) { distance = _distance; }
-    float                                   GetDistance() { return distance; }
-    sf::Vector3f                            GetDir() { return dir; }
-    sf::Vector3f   *                        GetDirPtr() { return &dir; }
+    sf::Vector3f                            GetPos() { return m_position; }
+    sf::Vector3f  *                         GetPosPtr() { return &m_position; }
+    void                                    SetPos(sf::Vector3f _pos) { m_position = _pos; }
+    sf::Vector3f                            GetRot() { return m_rotation; }
+    sf::Vector3f  *                         GetRotPtr() { return &m_rotation; }
+    void                                    SetRot(sf::Vector3f _rot) { m_rotation = _rot; }
+    void                                    SetDistance(float _distance) { m_draw_distance = _distance; }
+    float                                   GetDistance() { return m_draw_distance; }
+    sf::Vector3f                            GetDir() { return m_direction; }
+    sf::Vector3f   *                        GetDirPtr() { return &m_direction; }
     void                                    SetDir();
     void                                    SetDir(sf::Vector3f);
     
@@ -290,16 +286,15 @@ public:
      Sky(Cloudbox*);
     ~Sky();
     void                                    Render(int i);
-    GLuint                                  GetTex();
-    float                                   angle = 0.5;  
-    sf::Vector3f                            centerPos;
-    float                                   innerRadius;
-    float                                   outerRadius;
+    GLuint                                  GetTex(); 
+    const sf::Vector3f                      c_center_position = sf::Vector3f(0, -200, 0);
+    const float                             c_inner_radius = 210;
+    const float                             c_outer_radius = 250;
     void                                    initSky(const std::string&, GeometricObject*);
 protected:
     struct SkySphere {
-        Mesh*                               sphereMesh;
-        GLuint                              texture;
+        Mesh*                               m_sphere_mesh;
+        GLuint                              m_texture;
 
         GLuint                              fragmentShader;
         GLuint                              vertexShader;
@@ -343,7 +338,6 @@ protected:
     void                                    updateMatrices();
     void                                    initFramebuffer();
     void                                    initTexture();
-    void                                    setRadius();
 };
 
 #endif

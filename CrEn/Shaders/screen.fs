@@ -4,55 +4,56 @@
 
     out vec4 outColor;
 
-    uniform sampler2D depthTex;
     uniform sampler2D texFramebuffer;
+    uniform sampler2D depthTex;
+
+    uniform sampler2D albedo;
+    uniform sampler2D normal;
+    uniform sampler2D position;
+    uniform sampler2D shadowMap;
+
+    uniform mat4 lightSpaceMatrix;
+
     uniform float time;
 
     float blursize = 0.01;
 
-    vec4 blur (vec2 texcoord, float size){
-        vec4 clor = vec4(0);
-        clor += texture(texFramebuffer, (texcoord) );
-        clor += texture(texFramebuffer, (texcoord +vec2(size/10,size/10 )));
-        clor += texture(texFramebuffer, (texcoord +vec2(size/10,0 )));
-        clor += texture(texFramebuffer, (texcoord +vec2(size/10,-size/10 )));
-        clor += texture(texFramebuffer, (texcoord +vec2(0,-size/10 )));
-        clor += texture(texFramebuffer, (texcoord +vec2(-size/10,-size/10 )));
-        clor += texture(texFramebuffer, (texcoord +vec2(-size/10,0)));
-        clor += texture(texFramebuffer, (texcoord +vec2(-size/10,size/10 )));
-        clor += texture(texFramebuffer, (texcoord +vec2(0,size/10 )));
-        clor = clor / 9;
-        return clor;
-    }
-
-    vec4 sobel(vec2 texcoord, float size){
-        vec4 color = texture(texFramebuffer, (texcoord)/1 );
-        vec4 topright = texture(texFramebuffer, (texcoord +vec2(size/10,size/10 )));
-        vec4 right = texture(texFramebuffer, (texcoord +vec2(size/10,0 )));
-        vec4 bottomright = texture(texFramebuffer, (texcoord +vec2(size/10,-size/10 )));
-        vec4 bottom = texture(texFramebuffer, (texcoord +vec2(0,-size/10 )));
-        vec4 bottomleft = texture(texFramebuffer, (texcoord +vec2(-size/10,-size/10 )));
-        vec4 left = texture(texFramebuffer, (texcoord +vec2(-size/10,0)));
-        vec4 topleft = texture(texFramebuffer, (texcoord +vec2(-size/10,size/10 )));
-        vec4 top = texture(texFramebuffer, (texcoord +vec2(0,size/10 )));
-
-        vec4 sx = -topleft - 2 * left - bottomleft + topright + 2 * right + bottomright;
-        vec4 sy = -topleft - 2 * top - topright + bottomleft + 2 * bottom + bottomright;
-
-        vec4 res = sqrt(sx * sx - sy * sy);
-
-        return res;
-    }
 
     float getLen(vec4 v){
         return sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
     }
 
+    float ShadowCalculation(){
+        vec4 fragPosLightSpace = lightSpaceMatrix * texture(position, Texcoord);
+
+
+        vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+        projCoords = projCoords * 0.5 + 0.5;
+        float closestDepth = texture(shadowMap, projCoords.xy).r; 
+        float currentDepth = projCoords.z;
+        float bias =   0.001;
+        float shadow = 0.0;
+        vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
+        for(int x = -1; x <= 1; ++x){
+            for(int y = -1; y <= 1; ++y){
+                float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r; 
+                shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;        
+            }    
+        }
+
+        shadow /= 9.0;
+    
+        if(projCoords.z > 1.0 || projCoords.x > 1.0  || projCoords.y > 1.0 || projCoords.x < 0.0  || projCoords.y < 0.0)
+            shadow = 0.0;
+        
+        return shadow;
+}
+
     void main(){      
-        vec4 color= texture(texFramebuffer, Texcoord);
-        //color.rgb = pow(color.rgb, vec3(3));
+        vec4 color;
+        color.rgb = texture(albedo, Texcoord).rgb;
+        //color.rgb = vec3(1 - ShadowCalculation());
+        color.a = 1;
 
-
-
-        outColor = max( color , vec4(0.1, 0.1, 0.11, 1.0));
+        outColor = color;
     }

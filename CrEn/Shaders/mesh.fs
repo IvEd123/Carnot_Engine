@@ -61,7 +61,7 @@ void main(){
     float diffuse = dot(Normal, normalize(light))*0.5 + 0.5;
 
     //outColor.rgb = mix(texture(tex, Texcoord).rgb * shadow * max( dot(Normal, vec3(transpose(model) * vec4(normalize(lightPos), 1.0) )), 0.05), texture(tex, Texcoord).rgb, 0.2) + vec3(0.1, 0.1, 0.11);
-    outColor.rgb =  (ambient + shadow * diffuse) * texColor;
+    outColor.rgb =  vec3(shadow);
 
     //outColor.rgb =  vec3(gl_FragCoord.z);
 
@@ -69,5 +69,5 @@ void main(){
     outColor.a = 1.0;
     outPos = vec4(fs_in.FragPos, 1);
     outNormal = vec4(Normal, 1);
-    outAlbedo = vec4(texColor, 1);
+    outAlbedo = vec4((ambient + shadow * diffuse) * texColor, 1);//vec4(texColor, 1);
 }

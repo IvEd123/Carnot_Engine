@@ -96,8 +96,8 @@ int main(int argc, char* argv[]) {
 
     //light
     LightSource sun = LightSource();
-    sun.setShader(GL_VERTEX_SHADER, ".\\Shaders\\Shadow.vs");
-    sun.setShader(GL_FRAGMENT_SHADER, ".\\Shaders\\Shadow.fs");
+    sun.SetShader(GL_VERTEX_SHADER, ".\\Shaders\\Shadow.vs");
+    sun.SetShader(GL_FRAGMENT_SHADER, ".\\Shaders\\Shadow.fs");
     error = sun.CreateShaders();
     if (error != 0)
         std::cout << error << std::endl;
@@ -112,9 +112,9 @@ int main(int argc, char* argv[]) {
     cloudbox.material.loadShader(GL_FRAGMENT_SHADER, ".\\Shaders\\cloud.fs");
     cloudbox.material.CreateShaders();
     cloudbox.material.specifyVertexAttributes3D(cloudbox.material.getShaderProgram());
-    cloudbox.renderTexture(WIDTH, HEIGHT);
-    cloudbox.recreateShaders();
-    cloudbox.addLightSource(&sun);
+    cloudbox.RenderTexture(WIDTH, HEIGHT);
+    cloudbox.ChangeShaders();
+    cloudbox.AddLightSource(&sun);
 
 
 
@@ -139,9 +139,8 @@ int main(int argc, char* argv[]) {
 
 
     sf::Vector3f sun_spawn_pos = sun.GetPos();
-    sf::Vector3f sun_spawn_pov = sun.GetPov();
 
-    const unsigned int t = *screen.getColorBuffer();
+    const unsigned int t = *screen.GetColorBuffer();
     
     bool pause = 0;
     bool pause_prev = 0;
@@ -160,7 +159,7 @@ int main(int argc, char* argv[]) {
 
     
     for (int i = 0; i < obj_list.size(); i++) 
-        obj_list[i]->addLightSource(&sun);
+        obj_list[i]->AddLightSource(&sun);
     
     for (int i = 0; i < scripts.size(); i++)
         scripts[i].Start();
@@ -224,7 +223,7 @@ int main(int argc, char* argv[]) {
 
         int selected = -1;
 
-     /*   ImGui::Begin("object");
+        ImGui::Begin("object");
         if (ImGui::BeginMenu("objects")) {
             for (int i = 0; i < obj_list.size(); i++) {
                 char name[100];
@@ -267,7 +266,7 @@ int main(int argc, char* argv[]) {
         glDepthMask(GL_TRUE);
 
         
-       // gui_cloud.Update();
+        gui_cloud.Update();
         //std::cout << "clear glerror " << glGetError() << std::endl;
         if (cloudRender) {
             for (int i = 0; i < 6; i++) {
@@ -279,14 +278,14 @@ int main(int argc, char* argv[]) {
         }
         cloudRender = false;
 
-        //obj_list[0]->SetPos(pl.GetPos());
+        obj_list[0]->SetPos(pl.GetPos());
 
         for (int i = 0; i < obj_list.size(); i++) {
             obj_list[i]->material.setEnvironmentMap(sky.GetTex());
             obj_list[i]->Draw();
         }
 
-   /*     sf::Vector3f p = cloudbox.GetPos();
+        sf::Vector3f p = cloudbox.GetPos();
         p.y = 0;
         //cloudbox.RenderCloud(0.5, 1, p);
         
@@ -298,7 +297,7 @@ int main(int argc, char* argv[]) {
         if (selected != -1)
             obj_win.SetObject(obj_list[selected]);
         obj_win.Update();
-*/
+
 
         for (int i = 0; i < scripts.size(); i++)
             scripts[i].Update();
@@ -306,7 +305,7 @@ int main(int argc, char* argv[]) {
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         screen.material.attachUniform("time", Dtime);
-        //screen.setColorBuffer(*screen.GetPosTex());
+        //screen.setColorBuffer(*screen.GetAlbedoTex());
         
         if (event.type == Event::KeyReleased && event.key.code == Keyboard::F5){
             int t = sf.Save(&obj_list, &light_list);
@@ -325,21 +324,21 @@ int main(int argc, char* argv[]) {
         }
         
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)){
-           screen.setColorBuffer(*sun.getShadowMap());
+           screen.SetColorBuffer(*sun.GetShadowMap());
             
                 
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) {
-            screen.setColorBuffer(t);
+            screen.SetColorBuffer(t);
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::T)) {
             cloudRender = !cloudRender;
 
         }
 
-        screen.view = &pl.view;
-        screen.proj = &pl.proj;
-        //screen.addLightSource(&sun);
+        screen.view_matrix = &pl.view;
+        screen.projection_matrix = &pl.proj;
+        screen.AddLightSource(&sun);
         screen.Draw();
 
 

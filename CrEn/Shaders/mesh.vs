@@ -9,7 +9,7 @@ uniform mat4 view;
 uniform mat4 proj;
 uniform mat4 lightSpaceMatrix;
 uniform vec3 size;
-
+uniform float texture_repeat;
 
 
 out VS_OUT {
@@ -28,7 +28,7 @@ void main(){
     vs_out.depthMVP = lightSpaceMatrix;
 
 
-    Texcoord = texcoord;
+    Texcoord = texcoord * texture_repeat;
 
     Normal = normalize((model * vec4(normal, 0)).xyz);
     //Normal = normal;

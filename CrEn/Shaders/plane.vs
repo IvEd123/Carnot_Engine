@@ -9,7 +9,7 @@ uniform mat4 view;
 uniform mat4 proj;
 uniform mat4 lightSpaceMatrix;
 uniform vec3 size;
-uniform float repeat;
+uniform float texture_repeat;
 
 out VS_OUT {
     vec3 FragPos;
@@ -28,7 +28,7 @@ void main(){
     vs_out.depthMVP = lightSpaceMatrix;
 
     Normal = normal;
-    Texcoord = texcoord * repeat;
+    Texcoord = texcoord * texture_repeat;
     gl_Position = proj * view *  vec4(vs_out.FragPos, 1);
 
     Vertex_pos = vs_out.FragPos.xyz;

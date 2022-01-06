@@ -30,6 +30,7 @@ public:
 	std::string								GetExtension();
 
 	int										Load();
+	int										Load(Item &root);
 	int										Save(std::vector <GeometricObject*>* obj_list, std::vector <LightSource*>* light_list);
 };
 

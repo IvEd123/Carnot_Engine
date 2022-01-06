@@ -32,21 +32,24 @@ Item::~Item() {
 	std::cout << "Item tree node " << obj->GetName() <<  " deleted\n";
 }
 
-void Item::AddChild(GeometricObject* _obj){
+Item* Item::AddChild(GeometricObject* _obj){
 	if (_obj == nullptr)
 		throw std::exception("pointer to object is nullptr");
 
 	int child_id = children.size();
-	Item *child = new Item(this, obj, child_id);
+	Item *child = new Item(this, _obj, child_id);
 	children.push_back(child);
+	return child;
+}
+
+const GeometricObject* Item::GetObject(){
+	return obj;
 }
 
 void Item::Draw(){
-	if (obj != nullptr)
-		throw std::exception("Unable to draw non-existent geometric object");
-
-	obj->Draw();
-	for (int i = 0; i < children.size(); i++) 
+	if(obj != nullptr)
+		obj->Draw();
+	for (int i = 0; i < children.size(); i++)
 		children[i]->Draw();
 	
 }
@@ -62,6 +65,70 @@ bool Item::DrawIf(bool(*func)(Item* _this_ptr)){
 		return true;
 	}
 	return false;
+}
+
+void Item::DrawExternalShader(int shader_program, const GLfloat* matrix_prt){
+	if (obj != nullptr) {
+		sf::Vector3f pos = obj->GetPos();
+		sf::Vector3f rot = obj->GetRot();
+
+		glm::mat4 model = glm::mat4(1.0);
+		model = glm::translate(model, ConvertSFML2GLM(pos));
+            
+		model = glm::rotate(model, glm::radians(rot.x), glm::vec3(1.0, 0.0, 0.0));
+		model = glm::rotate(model, glm::radians(rot.y), glm::vec3(0.0, 1.0, 0.0));
+		model = glm::rotate(model, glm::radians(rot.z), glm::vec3(0.0, 0.0, 1.0));
+
+		GLuint lightSpaceMatrixLocation = glGetUniformLocation(shader_program, "mvpMatrix");
+		glUniformMatrix4fv(lightSpaceMatrixLocation, 1, GL_FALSE, matrix_prt);
+
+		GLuint model_loc = glGetUniformLocation(shader_program, "model");
+		glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model));
+
+		GLuint size_loc = glGetUniformLocation(shader_program, "size");
+		glUniform3f(size_loc, obj->GetSize().x, obj->GetSize().y, obj->GetSize().z);
+
+		glBindVertexArray(obj->material.getVAO());
+
+		int size = (*(*obj).vert_vec3)[obj->array_index].size();
+		glDrawArrays(GL_TRIANGLES, 0, size);
+		glBindVertexArray(0);
+
+	}
+	for (int i = 0; i < children.size(); i++)
+		children[i]->DrawExternalShader(shader_program, matrix_prt);
+}
+
+void Item::DrawExternalShaderIf(bool(*func)(Item* _this_ptr), int shader_program, const GLfloat* matrix_prt){
+	if (obj != nullptr && func(this)) {
+		sf::Vector3f pos = obj->GetPos();
+		sf::Vector3f rot = obj->GetRot();
+
+		glm::mat4 model = glm::mat4(1.0);
+		model = glm::translate(model, ConvertSFML2GLM(pos));
+
+		model = glm::rotate(model, glm::radians(rot.x), glm::vec3(1.0, 0.0, 0.0));
+		model = glm::rotate(model, glm::radians(rot.y), glm::vec3(0.0, 1.0, 0.0));
+		model = glm::rotate(model, glm::radians(rot.z), glm::vec3(0.0, 0.0, 1.0));
+
+		GLuint lightSpaceMatrixLocation = glGetUniformLocation(shader_program, "mvpMatrix");
+		glUniformMatrix4fv(lightSpaceMatrixLocation, 1, GL_FALSE, matrix_prt);
+
+		GLuint model_loc = glGetUniformLocation(shader_program, "model");
+		glUniformMatrix4fv(model_loc, 1, GL_FALSE, glm::value_ptr(model));
+
+		GLuint size_loc = glGetUniformLocation(shader_program, "size");
+		glUniform3f(size_loc, obj->GetSize().x, obj->GetSize().y, obj->GetSize().z);
+
+		glBindVertexArray(obj->material.getVAO());
+
+		int size = (*(*obj).vert_vec3)[obj->array_index].size();
+		glDrawArrays(GL_TRIANGLES, 0, size);
+		glBindVertexArray(0);
+
+	}
+	for (int i = 0; i < children.size(); i++)
+		children[i]->DrawExternalShaderIf(func, shader_program, matrix_prt);
 }
 
 int Item::GetLevel(){

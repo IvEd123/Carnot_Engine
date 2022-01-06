@@ -23,6 +23,8 @@
 #include "../Headers/GeometricObject.h"
 #include "../Headers/Node.h"
 
+class Item;
+
 #define M_PI 3.1415926535897932384626433832795
 
 void perspectiveGL(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar);
@@ -45,7 +47,7 @@ void OBJLoaderLegacy(const char* path, GeometricObject* object);
 
 int loadShader(GLenum type, const GLchar* path);
 
-bool loadModel(const std::string& path, GeometricObject* object);
+bool loadModel(const std::string& path, GeometricObject* object, Item* parent);
 
 enum GeometryType{
 	CUBE,

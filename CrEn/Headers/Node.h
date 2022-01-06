@@ -10,11 +10,14 @@ public:
 	Item(Item* _parent, GeometricObject* _obj, int _id);
 	~Item();
 
-	void AddChild(GeometricObject* _obj);
+	Item* AddChild(GeometricObject* _obj);
 
+	const GeometricObject* GetObject();
 
 	void Draw();
 	bool DrawIf(bool (*func)(Item* _this_ptr)); 
+	void DrawExternalShader(int shader_program, const GLfloat* matrix_prt);
+	void DrawExternalShaderIf(bool (*func)(Item* _this_ptr), int shader_program, const GLfloat* matrix_prt);
 
 	int GetLevel();
 	int GetID();

@@ -46,8 +46,9 @@ using namespace sf;
 #define M_PI 3.1415926535897932384626433832795
 #define DRAW_DISTANCE 1000
 
-#define HEIGHT 800
-#define WIDTH 800
+#define WIDTH 1280
+#define HEIGHT 720
+
 
 int main(int argc, char* argv[]) {
     ImGuiContext* ctx2 = ImGui::CreateContext();
@@ -72,7 +73,7 @@ int main(int argc, char* argv[]) {
 
     err().rdbuf(NULL);
     RenderWindow window(VideoMode(WIDTH, HEIGHT), "win", 7u, settings);
-    //window.setFramerateLimit(60);
+    window.setFramerateLimit(60);
     ImGui::SFML::Init(window);
     assert(window.getSettings().depthBits == 24);
     glewExperimental = GL_TRUE;
@@ -81,7 +82,9 @@ int main(int argc, char* argv[]) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
-    pl.proj = glm::perspective(glm::radians(90.0f), static_cast<float>(WIDTH) / static_cast<float>(WIDTH), 0.1f, 1000.0f);
+    float screen_ratio = (float)WIDTH / (float)HEIGHT;
+
+    pl.proj = glm::perspective(glm::radians(90.0f),screen_ratio , 0.1f, 1000.0f);
     glEnable(GL_TEXTURE_2D);
 
     int error;
@@ -154,9 +157,12 @@ int main(int argc, char* argv[]) {
     //std::cout << "Enter name of save file (without extension):\n";
     //std::cin >> name;
     sf.SetName(name);
+    
+    Item root;
+    
+    sf.Load(root);
 
-    sf.Load();
-
+    
     
     for (int i = 0; i < obj_list.size(); i++) 
         obj_list[i]->AddLightSource(&sun);
@@ -174,6 +180,8 @@ int main(int argc, char* argv[]) {
    
     unsigned int counter = 0;
     bool cloudRender = true;
+
+    //root.Draw();
         
     for ever{
         counter++;
@@ -255,7 +263,7 @@ int main(int argc, char* argv[]) {
 
         //shadows
         glCullFace(GL_FRONT);
-        sun.Draw(obj_list);
+        sun.Draw(root);
         glCullFace(GL_BACK);
         glViewport(0, 0, WIDTH, HEIGHT);
         glBindFramebuffer(GL_FRAMEBUFFER, screen.frameBuffer);
@@ -278,12 +286,18 @@ int main(int argc, char* argv[]) {
         }
         cloudRender = false;
 
+        /*cloudbox.cloudParams.m_cloud_offset = cloudbox.cloudParams.m_cloud_offset + glm::vec3(0.001, 0, 0);
+        cloudbox.cloudParams.m_second_layer_offset = cloudbox.cloudParams.m_second_layer_offset + glm::vec3(0.001, 0, 0);
+        cloudbox.cloudParams.m_third_layer_offset = cloudbox.cloudParams.m_third_layer_offset + glm::vec3(0.001, 0, 0);
+        //*/
         obj_list[0]->SetPos(pl.GetPos());
 
-        for (int i = 0; i < obj_list.size(); i++) {
+        /*for (int i = 0; i < obj_list.size(); i++) {
             obj_list[i]->material.setEnvironmentMap(sky.GetTex());
             obj_list[i]->Draw();
-        }
+        }*/
+        root.Draw();
+        
 
         sf::Vector3f p = cloudbox.GetPos();
         p.y = 0;

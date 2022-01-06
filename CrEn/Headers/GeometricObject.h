@@ -19,6 +19,7 @@
 
 void getError(std::vector<GLchar>log, GLuint shader);
 
+class Item;
 class LightSource;
 class DLLScriptHandler;
 
@@ -278,6 +279,7 @@ public:
     
 
     void                                    Draw(std::vector <GeometricObject*> obj_list);
+    void                                    Draw(Item& root);
 };
 
 

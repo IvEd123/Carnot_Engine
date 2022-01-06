@@ -197,12 +197,20 @@ void OBJLoaderLegacy(const char* path, GeometricObject* object) {
 
 
 // convert objl::vec to glm::vec
-glm::vec3 toglmv3(objl::Vector3 vec) {
+inline glm::vec3 toglmv3(objl::Vector3 vec) {
     return glm::vec3(vec.X, vec.Y, vec.Z);
 }
 
-glm::vec2 toglmv2(objl::Vector2 vec) {
+inline glm::vec3 toglmv3(aiVector3D vec) {
+    return glm::vec3(vec.x, vec.y, vec.z);
+}
+
+inline glm::vec2 toglmv2(objl::Vector2 vec) {
     return glm::vec2(vec.X, vec.Y);
+}
+
+inline glm::vec2 toglmv2(aiVector3D vec) {
+    return glm::vec2(vec.x, vec.y);
 }
 
 
@@ -274,18 +282,33 @@ int loadShader(GLenum type, const GLchar* path) {
     return shader;
 }
 
+void processNode(aiNode* node, const aiScene* scene, GeometricObject* object){
+    // process all the node's meshes (if any)
+    for (unsigned int i = 0; i < node->mNumMeshes; i++){
+        aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+        //meshes.push_back(processMesh(mesh, scene));
+        for (int i = 0; i < mesh->mNumVertices; i++) {
+            (*object->vert_vec3)[object->array_index].push_back(toglmv3(mesh->mVertices[i]));
+            (*object->norm_vec3)[object->array_index].push_back(toglmv3(mesh->mNormals[i]));
+            (*object->uv_vec2)[object->array_index].push_back(toglmv2(mesh->mTextureCoords[0][i]));
+        }
+    }
+    // then do the same for each of its children
+    for (unsigned int i = 0; i < node->mNumChildren; i++){
+        processNode(node->mChildren[i], scene, object);
+    }
+}
+
 bool loadModel(const std::string& path, GeometricObject* object, Item* parent){
-    /*Assimp::Importer importer;
+    Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(path, 
         aiProcess_CalcTangentSpace |
         aiProcess_Triangulate      |
         aiProcess_GenNormals
         );
 
-    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) 
-        throw std::exception(std::string("ERROR::ASSIMP::", importer.GetErrorString()).c_str());
-    
-    int meshes = scene->mRootNode->mNumMeshes;*/
+    processNode(scene->mRootNode, scene, object);
+
 
     return true;
 }

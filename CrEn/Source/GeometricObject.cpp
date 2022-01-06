@@ -589,8 +589,8 @@ void Mesh::Draw() {
 
     glDrawArrays(GL_TRIANGLES, 0,  (*vert_vec3)[array_index].size());
 
-    glUseProgram(previous_program);
-    glBindVertexArray(previous_vao);
+    //glUseProgram(previous_program);
+    //glBindVertexArray(previous_vao);
 }
 
 //    _____  _               _   _ ______ 
@@ -751,6 +751,44 @@ void LightSource::SetShader(GLenum type, const GLchar* path){
 
 int LightSource::CreateShaders(){
     return CreateShaderProgram();
+}
+
+static bool casts_shadow(Item* item) {
+    return item->GetObject()->cast_shadow;
+}
+
+void LightSource::Draw(Item& root) {
+    GLint previous_vao, previous_program;
+    GLint previous_buffer;
+    GLboolean previous_depth_test;
+    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &previous_vao);
+    glGetIntegerv(GL_CURRENT_PROGRAM, &previous_program);
+    glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &previous_buffer);
+    glGetBooleanv(GL_DEPTH_TEST, &previous_depth_test);
+
+    glEnable(GL_DEPTH_TEST);
+    glUseProgram(m_shader_program);
+    
+ 
+    glViewport(0, 0, m_shadowmap_resolution, m_shadowmap_resolution);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_depthmap_buffer);
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    updatePos();
+
+    m_light_view_matrix = glm::lookAt(ConvertSFML2GLM(m_position), ConvertSFML2GLM(sf::Vector3f(0, 0, 0)), glm::vec3(0.0f, 1.0f, 0.0f));
+
+    m_light_space_matrix = m_light_projection_matrix * m_light_view_matrix;
+    
+    root.DrawExternalShaderIf(casts_shadow, m_shader_program, glm::value_ptr(m_light_space_matrix));
+
+
+    glBindVertexArray(previous_vao);
+    glUseProgram(previous_program);
+    glBindBuffer(GL_FRAMEBUFFER, previous_buffer);
+    if (previous_depth_test)
+        glEnable(GL_DEPTH_TEST);
+
 }
 
 void LightSource::Draw(std::vector <GeometricObject*> obj_list) {

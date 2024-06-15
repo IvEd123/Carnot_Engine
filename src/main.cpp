@@ -8,21 +8,20 @@
 #include <stdint.h>
 #include <chrono>
 
-#include "../thirdparty/glew-2.1.0/include/GL/glew.h"
+#include <GL/glew.h>
 #include <gl/GLU.h>
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
-#include "../thirdparty/glm/glm.hpp"
-#include "../thirdparty/glm/gtc/matrix_transform.hpp"
-#include "../thirdparty/glm/gtc/type_ptr.hpp"
-
-#include "imgui.h"
-#include "imgui-SFML.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <imgui/imgui.h>
+#include <imgui/imgui-SFML.h>
 //привет
 
-#include "../Headers/GeometricObject.h"
-#include "../Headers/DLLScriptHandler.h"
-#include "../Headers/gui.h"
+#include "objects/geometricObject.h"
+#include "script/dllScriptHandler.h"
+#include "gui/gui.h"
 
 std::vector <GeometricObject*> obj_list;
 std::vector <LightSource*> light_list;
@@ -32,11 +31,11 @@ std::vector<std::vector<glm::vec3>> array_of_normals;
 std::vector<std::vector<glm::vec2>> array_of_uvs;
 std::vector<DLLScriptHandler> scripts;
 
-#include "../Headers/AddObject.h"
-#include "../Headers/PLayer.h"
-#include "../Headers/Render.h"
-#include "../Headers/Material.h"
-#include "../Headers/SaveLoad.h"
+#include "objects/addObject.h"
+#include "objects/player.h"
+#include "render/render.h"
+#include "materials/material.h"
+#include "objects/saveLoad.h"
 
 
 using namespace sf;

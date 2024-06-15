@@ -1,4 +1,4 @@
-#include "../Headers/gui.h"
+#include "gui.h"
 
 using namespace ImGui;
 

@@ -7,16 +7,16 @@
 #include <fstream>
 #include <sstream>
 
-#include "../thirdparty/glew-2.1.0/include/GL/glew.h"
+#include <GL/glew.h>
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
-#include "../thirdparty/glm/glm.hpp"
+#include <glm/glm.hpp>
 #include <gl/GLU.h>
-#include "../thirdparty/OBJ-loader/OBJ_Loader.h"
+#include <objLoader/OBJ_Loader.h>
 
-#include "../Headers/PLayer.h"
-#include "../Headers/Material.h"
-#include "../Headers/GeometricObject.h"
+#include "../objects/pLayer.h"
+#include "../materials/material.h"
+#include "../objects/geometricObject.h"
 
 #define M_PI 3.1415926535897932384626433832795
 

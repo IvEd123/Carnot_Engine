@@ -9,9 +9,8 @@
 #include <string>
 #include <vector>
 
-#include "../thirdparty/glew-2.1.0/include/GL/glew.h"
 #include <GL/glew.h>
-#include "../thirdparty/glm/ext/matrix_float4x4.hpp"
+#include <glm/ext/matrix_float4x4.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
 #include <gl/GLU.h>

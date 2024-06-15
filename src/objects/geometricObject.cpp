@@ -1,4 +1,4 @@
-#include "../Headers/GeometricObject.h"
+#include "geometricObject.h"
 
 Player& _pl = Player::Get();
 

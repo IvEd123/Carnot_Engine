@@ -3,7 +3,7 @@
 #define ADD_OBJECT_H
 
 #include <vector>
-#include "../Headers/GeometricObject.h"
+#include "geometricObject.h"
 
 #define LAST_OBJ_PTR obj_list.back()
 

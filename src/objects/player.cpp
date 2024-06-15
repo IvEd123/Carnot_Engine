@@ -1,4 +1,4 @@
-#include "../Headers/PLayer.h"
+#include "player.h"
 
 void Player::MoveLegacy(sf::Vector2f ang) {
 

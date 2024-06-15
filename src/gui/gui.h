@@ -3,10 +3,10 @@
 
 #include <SFML\System\Vector2.hpp>
 #include <SFML\System\Vector3.hpp>
-#include "imgui.h"
+#include <imgui/imgui.h>
 #include <string>
 
-#include "../Headers/GeometricObject.h"
+#include "../objects/geometricObject.h"
 
 class GUI_Element;
 

@@ -6,7 +6,7 @@
 
 
 #include <SFML/System/Vector3.hpp>
-#include "../Headers/GeometricObject.h"
+#include "../objects/geometricObject.h"
 #include <Windows.h>
 #include <string>
 #include <iostream>

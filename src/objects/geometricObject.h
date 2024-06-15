@@ -7,15 +7,15 @@
 #include <math.h>
 #include <assert.h>
 
-#include "../thirdparty/glew-2.1.0/include/GL/glew.h"
+#include <GL/glew.h>
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
 #include <gl/GLU.h>
 
 
-#include "../Headers/PLayer.h"
-#include "../Headers/Render.h"
-#include "../Headers/DLLScriptHandler.h"
+#include "player.h"
+#include "../render/render.h"
+#include "../script/dllScriptHandler.h"
 
 void getError(std::vector<GLchar>log, GLuint shader);
 

@@ -1,4 +1,4 @@
-#include "../Headers/AddObject.h"
+#include "addObject.h"
 
 void set_pointers_to_arrays(GeometricObject* g) {
     array_of_vertecies.emplace_back();

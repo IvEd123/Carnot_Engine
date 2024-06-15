@@ -1,7 +1,7 @@
 
-#include "../Headers/Material.h"
-#include "../Headers/PLayer.h"
-#include "../Headers/GeometricObject.h"
+#include "material.h"
+#include "../objects/player.h"
+#include "../objects/geometricObject.h"
 
 
 

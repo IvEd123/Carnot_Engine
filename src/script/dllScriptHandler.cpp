@@ -1,4 +1,4 @@
-#include "../Headers/DLLScriptHandler.h"
+#include "dllScriptHandler.h"
 
 void DLLScriptHandler::setObj(GeometricObject* ref, int id){
 	obj_id = id;

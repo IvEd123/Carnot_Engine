@@ -16,9 +16,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui.h>
+#include <imgui-SFML.h>
 //привет
 
-#include "objects/geometricObject.h"
+#include "object/geometricObject.h"
 #include "script/dllScriptHandler.h"
 #include "gui/gui.h"
 
@@ -30,11 +31,11 @@ std::vector<std::vector<glm::vec3>> array_of_normals;
 std::vector<std::vector<glm::vec2>> array_of_uvs;
 std::vector<DLLScriptHandler> scripts;
 
-#include "objects/addObject.h"
-#include "objects/player.h"
+#include "object/addObject.h"
+#include "object/player.h"
 #include "render/render.h"
-#include "materials/material.h"
-#include "objects/saveLoad.h"
+#include "material/material.h"
+#include "object/saveLoad.h"
 
 
 using namespace sf;

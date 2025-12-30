@@ -6,7 +6,7 @@
 #include <imgui.h>
 #include <string>
 
-#include "../objects/geometricObject.h"
+#include "../object/geometricObject.h"
 
 class GUI_Element;
 

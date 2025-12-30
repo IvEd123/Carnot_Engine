@@ -1,5 +1,5 @@
 #include "scriptCompiler.h"
-#include "../objects/geometricObject.h"
+#include "../object/geometricObject.h"
 
 ScriptHandler ScriptCompiler::LoadScript(std::string path, GeometricObject* obj) {
 

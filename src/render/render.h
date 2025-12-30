@@ -14,9 +14,9 @@
 #include <gl/GLU.h>
 #include <OBJ_Loader.h>
 
-#include "../objects/pLayer.h"
-#include "../materials/material.h"
-#include "../objects/geometricObject.h"
+#include "../object/pLayer.h"
+#include "../material/material.h"
+#include "../object/geometricObject.h"
 
 #define M_PI 3.1415926535897932384626433832795
 

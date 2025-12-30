@@ -4,6 +4,7 @@ find_package(glm REQUIRED)
 find_package(imgui REQUIRED)
 find_package(assimp REQUIRED)
 find_package(sfml REQUIRED)
+#find_package(ImGui-SFML REQUIRED)
 
 set(APP "${PROJECT_NAME}_app")
 
@@ -23,6 +24,7 @@ target_link_libraries( ${APP}
         sfml::sfml
         imgui
         objLoader
+        ImGui-SFML::ImGui-SFML
 ) 
 
 add_subdirectory(gui)

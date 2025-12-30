@@ -1,0 +1,10 @@
+[requires]
+glew/2.2.0
+glm/cci.20230113
+imgui/cci.20230105+1.89.2.docking
+assimp/5.4.1
+sfml/2.6.1
+
+[generators]
+CMakeDeps
+CMakeToolchain

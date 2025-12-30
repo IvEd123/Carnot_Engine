@@ -12,7 +12,6 @@
 #include <SFML/OpenGL.hpp>
 #include <glm/glm.hpp>
 #include <gl/GLU.h>
-#include <OBJ_Loader.h>
 
 #include "../object/pLayer.h"
 #include "../material/material.h"

@@ -4,7 +4,6 @@ find_package(glm REQUIRED)
 find_package(imgui REQUIRED)
 find_package(assimp REQUIRED)
 find_package(sfml REQUIRED)
-#find_package(ImGui-SFML REQUIRED)
 
 set(APP "${PROJECT_NAME}_app")
 

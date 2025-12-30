@@ -15,12 +15,13 @@ target_sources(${APP}
 )
 
 target_link_libraries( ${APP}
-    PRIVATE 
+    PUBLIC 
         GLEW::GLEW 
         glm::glm 
         imgui::imgui 
         assimp::assimp 
         sfml::sfml
+        imgui
 ) 
 
 add_subdirectory(gui)

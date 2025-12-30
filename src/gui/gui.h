@@ -3,7 +3,7 @@
 
 #include <SFML\System\Vector2.hpp>
 #include <SFML\System\Vector3.hpp>
-#include <imgui/imgui.h>
+#include <imgui.h>
 #include <string>
 
 #include "../objects/geometricObject.h"

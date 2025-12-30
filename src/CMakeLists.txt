@@ -22,6 +22,7 @@ target_link_libraries( ${APP}
         assimp::assimp 
         sfml::sfml
         imgui
+        objLoader
 ) 
 
 add_subdirectory(gui)

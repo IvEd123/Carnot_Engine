@@ -12,7 +12,7 @@
 #include <SFML/OpenGL.hpp>
 #include <glm/glm.hpp>
 #include <gl/GLU.h>
-#include <objLoader/OBJ_Loader.h>
+#include <OBJ_Loader.h>
 
 #include "../objects/pLayer.h"
 #include "../materials/material.h"

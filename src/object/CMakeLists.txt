@@ -1,0 +1,12 @@
+target_sources(${APP}
+    PUBLIC
+        addObject.h  
+        geometricObject.cpp  
+        player.cpp  
+        saveLoad.cpp
+        addObject.cpp   
+        cube.h       
+        geometricObject.h    
+        player.h    
+        saveLoad.h
+    )

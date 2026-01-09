@@ -1,38 +1,7 @@
 #include "player.h"
 
-void Player::MoveLegacy(sf::Vector2f ang) {
 
-	//TODO: improve moving
-
-    float dx = 0, dz = 0;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-	{
-		dx = sin(ang.x/180*M_PI) * -a; 
-		dz = cos(ang.x/180*M_PI) * -a;
-	}
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-	{
-		dx = sin(ang.x/180*M_PI) * a;
-		dz = cos(ang.x/180*M_PI) * a;
-	}
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-	{
-		dx = sin((ang.x+90)/180*M_PI) * a;	
-		dz = cos((ang.x+90)/180*M_PI) * a;
-	}
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))	
-	{
-		dx = sin((ang.x-90)/180*M_PI) * a;	
-		dz = cos((ang.x-90)/180*M_PI) * a;
-	}
-    pos.x += dx;
-    pos.z += dz;
-}
-
-void Player::Move(sf::Vector2f ang, float Dtime) {
+void Player::Move(glm::vec2 ang, float Dtime) {
 	
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
 		pos.y += 0.1;

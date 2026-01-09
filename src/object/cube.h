@@ -1,9 +1,7 @@
 #include <iostream>
-#include <SFML/System/Vector3.hpp>
 #include <GL/GL.h>
+#include <glm/glm.hpp>
 #include <GL/glew.h>
-
-using namespace sf;
 
 void drawCube(Vector3<float> pos, GLuint _texture[], float size) {
     glTranslatef(pos.x, pos.y, pos.z);

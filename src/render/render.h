@@ -8,8 +8,6 @@
 #include <sstream>
 
 #include <GL/glew.h>
-#include <SFML/Graphics.hpp>
-#include <SFML/OpenGL.hpp>
 #include <glm/glm.hpp>
 #include <gl/GLU.h>
 
@@ -21,7 +19,7 @@
 
 void perspectiveGL(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar);
 
-glm::vec3 ConvertSFML2GLM(sf::Vector3f vec);
+glm::vec3 ConvertSFML2GLM(glm::vec3 vec);
 
 GLuint loadTexture(const GLchar* path);
 

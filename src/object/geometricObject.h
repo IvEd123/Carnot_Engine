@@ -8,8 +8,6 @@
 #include <assert.h>
 
 #include <GL/glew.h>
-#include <SFML/Graphics.hpp>
-#include <SFML/OpenGL.hpp>
 #include <gl/GLU.h>
 
 
@@ -29,9 +27,9 @@ private:
 protected:
     
     int                                     type;
-    sf::Vector3f                            size;
-    sf::Vector3f                            pos;
-    sf::Vector3f                            rot;
+    glm::vec3                            size;
+    glm::vec3                            pos;
+    glm::vec3                            rot;
     
 
     void                                    deleteArrays();
@@ -49,17 +47,17 @@ public:
     std::string *                           GetNamePtr(void);
 
 
-    sf::Vector3f                            GetPos();
-    void                                    SetPos(sf::Vector3f _pos);
-    sf::Vector3f                            GetRot();
-    void                                    SetRot(sf::Vector3f _rot);
-    void                                    SetSize(sf::Vector3f s);
-    sf::Vector3f                            GetSize();
+    glm::vec3                            GetPos();
+    void                                    SetPos(glm::vec3 _pos);
+    glm::vec3                            GetRot();
+    void                                    SetRot(glm::vec3 _rot);
+    void                                    SetSize(glm::vec3 s);
+    glm::vec3                            GetSize();
 
     
-    sf::Vector3f *                          GetPosPtr();
-    sf::Vector3f *                          GetRotPtr();
-    sf::Vector3f *                          GetSizePtr();
+    glm::vec3 *                          GetPosPtr();
+    glm::vec3 *                          GetRotPtr();
+    glm::vec3 *                          GetSizePtr();
 
     Material                                material;
     bool                                    cast_shadow = true;
@@ -82,19 +80,19 @@ private:
     std::string                             model_path;
     
 public:
-    Cube(sf::Vector3f _size);
-    Cube(sf::Vector3f _pos, sf::Vector3f _rot, sf::Vector3f _size, GLuint* _texture);
+    Cube(glm::vec3 _size);
+    Cube(glm::vec3 _pos, glm::vec3 _rot, glm::vec3 _size, GLuint* _texture);
     Cube();
     ~Cube();
 
     void                                    Draw();
-    void                                    Draw(sf::Vector3f);
+    void                                    Draw(glm::vec3);
     void                                    Delete();
     void                                    CreateVertices() {};
     void                                    CreateVerticesLegacy();
     void                                    setModel(std::string& path);
 
-    sf::Vector3f size_v;
+    glm::vec3 size_v;
 
 };
 
@@ -179,9 +177,9 @@ private:
 
 class Cloudbox : public Cube {
 public:
-    Cloudbox(sf::Vector3f _pos, sf::Vector3f _res, sf::Vector3f size);
+    Cloudbox(glm::vec3 _pos, glm::vec3 _res, glm::vec3 size);
     void                                    Delete();
-    void                                    RenderCloud(float innerRadius, float outerRadius, sf::Vector3f center);
+    void                                    RenderCloud(float innerRadius, float outerRadius, glm::vec3 center);
     void                                    renderTexture(int SCREEN_WIDTH, int SCREEN_HEIGHT);
     struct                                  CloudParams {
         glm::vec4                           phaseParams = glm::vec4(0.72, 0.33, 1, 0.74);
@@ -211,7 +209,7 @@ public:
     void                                    uniforms();
     GLuint                                  GetTexture() { return cloudtex; }
 private:
-    sf::Vector3f                            cloudTexRes;
+    glm::vec3                            cloudTexRes;
     const int                               pointsGrid = 7;
     GLuint                                  cloudbuffer;
     GLuint                                  cloudtex;
@@ -231,9 +229,9 @@ class LightSource {
 private:
                             
     std::string                             name;
-    sf::Vector3f                            pos;
-    sf::Vector3f                            rot;
-    sf::Vector3f                            dir;
+    glm::vec3                            pos;
+    glm::vec3                            rot;
+    glm::vec3                            dir;
     std::string                             vertexShader_source;
     std::string                             fragmentShader_source;
     int                                     resolution;
@@ -243,7 +241,7 @@ private:
     float                                   fov = 20;
     float                                   distance;
 
-    sf::Vector3f                            pov;
+    glm::vec3                            pov;
 
     int                                     loadShader(GLenum type, const GLchar* path);
 
@@ -266,20 +264,20 @@ public:
 
     unsigned int *                          getShadowMap();
 
-    sf::Vector3f                            GetPos() { return pos; }
-    sf::Vector3f  *                          GetPosPtr() { return &pos; }
-    void                                    SetPos(sf::Vector3f _pos) { pos = _pos; }
-    sf::Vector3f                            GetPov() { return pov; }
-    void                                    SetPov(sf::Vector3f _pov) { pov = _pov; }
-    sf::Vector3f                            GetRot() { return rot; }
-    sf::Vector3f  *                         GetRotPtr() { return &rot; }
-    void                                    SetRot(sf::Vector3f _rot) { rot = _rot; }
+    glm::vec3                            GetPos() { return pos; }
+    glm::vec3  *                          GetPosPtr() { return &pos; }
+    void                                    SetPos(glm::vec3 _pos) { pos = _pos; }
+    glm::vec3                            GetPov() { return pov; }
+    void                                    SetPov(glm::vec3 _pov) { pov = _pov; }
+    glm::vec3                            GetRot() { return rot; }
+    glm::vec3  *                         GetRotPtr() { return &rot; }
+    void                                    SetRot(glm::vec3 _rot) { rot = _rot; }
     void                                    SetDistance(float _distance) { distance = _distance; }
     float                                   GetDistance() { return distance; }
-    sf::Vector3f                            GetDir() { return dir; }
-    sf::Vector3f   *                        GetDirPtr() { return &dir; }
+    glm::vec3                            GetDir() { return dir; }
+    glm::vec3   *                        GetDirPtr() { return &dir; }
     void                                    SetDir();
-    void                                    SetDir(sf::Vector3f);
+    void                                    SetDir(glm::vec3);
 
     void                                    Draw(std::vector <GeometricObject*> obj_list);
 };
@@ -292,7 +290,7 @@ public:
     void                                    Render(int i);
     GLuint                                  GetTex();
     float                                   angle = 0.5;  
-    sf::Vector3f                            centerPos;
+    glm::vec3                            centerPos;
     float                                   innerRadius;
     float                                   outerRadius;
     void                                    initSky(const std::string&, GeometricObject*);
@@ -317,7 +315,7 @@ protected:
         void                                initTexture(int res);
     };
     struct Camera {
-        sf::Vector3f                        cameraPos = sf::Vector3f(0, 0, 0);
+        glm::vec3                        cameraPos = glm::vec3(0, 0, 0);
         float                               pitch = 0;
         float                               yaw = 0;
         glm::mat4                           proj; 

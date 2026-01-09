@@ -67,7 +67,7 @@ int SaveLoad::Load(){
 					LAST_OBJ_PTR->setModel(mesh_path);
 					file >> buffer;
 				}
-				sf::Vector3f size;
+				glm::vec3 size;
 				
 				if (buffer.compare("#s") == 0) {
 					file >> size.x;
@@ -77,7 +77,7 @@ int SaveLoad::Load(){
 
 					file >> buffer;
 					if (buffer.compare("#p") == 0) {
-						sf::Vector3f pos;
+						glm::vec3 pos;
 						file >> pos.x;
 						file >> pos.y;
 						file >> pos.z;
@@ -85,7 +85,7 @@ int SaveLoad::Load(){
 
 						file >> buffer;
 						if (buffer.compare("#r") == 0) {
-							sf::Vector3f rot;
+							glm::vec3 rot;
 							file >> rot.x;
 							file >> rot.y;
 							file >> rot.z;

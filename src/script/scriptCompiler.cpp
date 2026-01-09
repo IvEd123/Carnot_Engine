@@ -148,18 +148,18 @@ void ScriptHandler::Start(){
 
 }
 
-void ScriptHandler::move(sf::Vector3f v){
+void ScriptHandler::move(glm::vec3 v){
 	object->SetPos(object->GetPos() + v);
 }
 
-void ScriptHandler::moveto(sf::Vector3f v){
+void ScriptHandler::moveto(glm::vec3 v){
 	object->SetPos(v);
 }
 
-void ScriptHandler::rotate(sf::Vector3f v){
+void ScriptHandler::rotate(glm::vec3 v){
 	object->SetRot(object->GetRot() + v);
 }
 
-void ScriptHandler::rotateto(sf::Vector3f v){
+void ScriptHandler::rotateto(glm::vec3 v){
 	object->SetRot(v);
 }

@@ -10,17 +10,15 @@ void DLLScriptHandler::setObj(GeometricObject* ref, int id){
 
 void DLLScriptHandler::Update(){
 	
-	if (!error)
-		update(&obj);
-	else
+	if (error)
 		return;
+	
+	update(&obj);
 }
 
 void DLLScriptHandler::Start(){
 	if (!error)
 		start(&obj);
-	else
-		return;
 }
 
 int DLLScriptHandler::SetDLL(const char* path) {

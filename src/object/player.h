@@ -5,8 +5,6 @@
 #include <iostream>
 #include <corecrt_math_defines.h>
 
-#include <SFML/Graphics.hpp>
-#include <SFML/OpenGL.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -17,11 +15,11 @@ class GeometricObject;
 											//
 class Player {
 private:
-	static sf::Vector3f						pos;
-	static sf::Vector3f						velocity;
+	static glm::vec3						pos;
+	static glm::vec3						velocity;
 	static Player							s_Instance;
 	static float							a;//acceleration
-	static sf::Vector2f						ang;
+	static glm::vec2 						ang;
 	float									h = 1.5;
 	const float								max_speed = .25;
 public:
@@ -33,15 +31,15 @@ public:
 
 	static Player&							Get() { return s_Instance; }
 	
-	static sf::Vector2f						GetAng() { return Get().ang; }
+	static glm::vec2						GetAng() { return Get().ang; }
 	
-	static void								SetAng(sf::Vector2f _ang) { Get().ang = _ang; }
+	static void								SetAng(glm::vec2 _ang) { Get().ang = _ang; }
 
-	static sf::Vector3f						GetPos() { return Get().pos; }
-	static void								SetPos(sf::Vector3f _pos) { pos = _pos; }
+	static glm::vec3						GetPos() { return Get().pos; }
+	static void								SetPos(glm::vec3 _pos) { pos = _pos; }
 
-	void									MoveLegacy(sf::Vector2f ang);
-	void									Move(sf::Vector2f ang, float Dtime);
+	void									MoveLegacy(glm::vec2 ang);
+	void									Move(glm::vec2 ang, float Dtime);
 	void									SetAcceleration(float _a) { a = _a; }
 	void									Update();
 };

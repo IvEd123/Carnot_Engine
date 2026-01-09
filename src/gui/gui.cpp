@@ -19,7 +19,7 @@ using namespace ImGui;
 * Apply changes
 */
 
-float* vec_to_ptr(sf::Vector3f *vec) {
+float* vec_to_ptr(glm::vec3 *vec) {
 	return (float*)vec;
 }
 

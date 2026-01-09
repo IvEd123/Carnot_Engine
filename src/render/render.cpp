@@ -15,10 +15,10 @@ Player Player::s_Instance;
 
 Player& Pl = Player::Get();
 
-sf::Vector2f Player::ang = sf::Vector2f(0, 0);
-sf::Vector3f Player::pos = sf::Vector3f(0, 0, 0);
+glm::vec2 Player::ang = { 0, 0 };
+glm::vec3 Player::pos = glm::vec3(0, 0, 0);
 float Player::a = .01;
-sf::Vector3f Player::velocity = sf::Vector3f(0, 0, 0);
+glm::vec3 Player::velocity = glm::vec3(0, 0, 0);
 
 
 
@@ -39,7 +39,7 @@ void perspectiveGL(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar
 }
 
 
-glm::vec3 ConvertSFML2GLM(sf::Vector3f vec) {
+glm::vec3 ConvertSFML2GLM(glm::vec3 vec) {
     return glm::vec3(vec.x, vec.y, vec.z);
 }
 

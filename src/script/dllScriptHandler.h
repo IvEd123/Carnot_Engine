@@ -5,7 +5,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 
-#include <SFML/System/Vector3.hpp>
+#include <glm/vec3.hpp>
 #include "../object/geometricObject.h"
 #include <Windows.h>
 #include <string>
@@ -14,9 +14,9 @@
 
 
 typedef struct gameobject {
-	sf::Vector3f* pos;
-	sf::Vector3f* rot;
-	sf::Vector3f* size;
+	glm::vec3* pos;
+	glm::vec3* rot;
+	glm::vec3* size;
 };
 
 typedef int (*UPDFUNCPTR) (gameobject*);

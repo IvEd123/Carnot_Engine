@@ -1,8 +1,8 @@
 #ifndef GUI_H
 #define GUI_H
 
-#include <SFML\System\Vector2.hpp>
-#include <SFML\System\Vector3.hpp>
+#include <glm/vec3.hpp>
+#include <glm/vec2.hpp>
 #include <imgui.h>
 #include <string>
 
@@ -26,7 +26,7 @@ public:
 
 class GUI_Vector3 {
 public:
-	sf::Vector3f vec;
+	glm::vec3 vec;
 	void Show();
 };
 
@@ -45,7 +45,7 @@ public:
 * Apply changes
 */
 
-float* vec_to_ptr(sf::Vector3f);
+float* vec_to_ptr(glm::vec3);
 
 class GUI_Object {
 public:
@@ -55,12 +55,12 @@ public:
 	void SetObject(GeometricObject*);
 protected:
 	char default_name[50] = "No object selected";
-	sf::Vector3f default_vec = sf::Vector3f(0, 0, 0);
+	glm::vec3 default_vec = glm::vec3(0, 0, 0);
 	float default_float = 0;
 	char *name;
-	sf::Vector3f *pos;
-	sf::Vector3f *rot;
-	sf::Vector3f* size;
+	glm::vec3 *pos;
+	glm::vec3 *rot;
+	glm::vec3* size;
 };
 
 class GUI_cloud : public GUI_Object  {

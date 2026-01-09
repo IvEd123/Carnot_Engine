@@ -5,15 +5,6 @@ Player& _pl = Player::Get();
 #define M_PI 3.1415926535897932384626433832795
 #define LOD 4
 
-void printVec(sf::Vector3f v) {
-    std::cout << v.x << '_' << v.y << '_' << v.z;
-}
-
-inline sf::Vector3f Normalize(sf::Vector3f v) {
-    float length =sqrt( v.x * v.x + v.y * v.y + v.z * v.z);
-    return v / length;
-}
-
 void getError(std::vector<GLchar>log, GLuint shader) {
     GLint maxLength = 0;
 	glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
@@ -88,39 +79,39 @@ std::string * GeometricObject::GetNamePtr(void) {
     return &name;
 }
 
-sf::Vector3f GeometricObject::GetPos(){
+glm::vec3 GeometricObject::GetPos(){
    return pos;
 }
 
-sf::Vector3f* GeometricObject::GetPosPtr(){
+glm::vec3* GeometricObject::GetPosPtr(){
    return &pos;
 }
 
-void GeometricObject::SetPos(sf::Vector3f _pos){
+void GeometricObject::SetPos(glm::vec3 _pos){
     pos = _pos;
 }
 
-sf::Vector3f GeometricObject::GetRot(){
+glm::vec3 GeometricObject::GetRot(){
     return rot;
 }
 
-sf::Vector3f* GeometricObject::GetRotPtr(){
+glm::vec3* GeometricObject::GetRotPtr(){
     return &rot;
 }
 
-void GeometricObject::SetRot(sf::Vector3f _rot){
+void GeometricObject::SetRot(glm::vec3 _rot){
     rot = _rot;
 }
 
-void GeometricObject::SetSize(sf::Vector3f s) {
+void GeometricObject::SetSize(glm::vec3 s) {
     size = s;
 }
 
-sf::Vector3f GeometricObject::GetSize() {
+glm::vec3 GeometricObject::GetSize() {
     return size;
 }
 
-sf::Vector3f* GeometricObject::GetSizePtr() {
+glm::vec3* GeometricObject::GetSizePtr() {
     return &size;
 }
 
@@ -138,17 +129,17 @@ int GeometricObject::GetType() {
 //  `Y88P `Y88P' 888P' 8888 
 //                          
 
-Cube::Cube(sf::Vector3f _size){
+Cube::Cube(glm::vec3 _size){
     size = _size;
-    pos = sf::Vector3f(0, 0, 0);
-    rot = sf::Vector3f(0, 0, 0);
+    pos = glm::vec3(0, 0, 0);
+    rot = glm::vec3(0, 0, 0);
 
 
     material = Material();
     
 }
 
-Cube::Cube(sf::Vector3f _pos, sf::Vector3f _rot, sf::Vector3f _size, GLuint* _texture){
+Cube::Cube(glm::vec3 _pos, glm::vec3 _rot, glm::vec3 _size, GLuint* _texture){
     pos = _pos;
     rot = _rot;
     size = _size;
@@ -161,9 +152,9 @@ Cube::~Cube() {
 }
 
 Cube::Cube() {
-    size = sf::Vector3f(1, 1, 1);
-    pos = sf::Vector3f(0, 0, 0);
-    rot = sf::Vector3f(0, 0, 0);
+    size = glm::vec3(1, 1, 1);
+    pos = glm::vec3(0, 0, 0);
+    rot = glm::vec3(0, 0, 0);
 
 
     material = *(new Material());
@@ -217,7 +208,7 @@ void Cube::Draw(){
     glBindVertexArray(0);
 }
 
-void Cube::Draw(sf::Vector3f cameraPos){
+void Cube::Draw(glm::vec3 cameraPos){
     UpdateModelMatrix();
     material.updateUniforms();
     glBindVertexArray(material.getVAO());
@@ -329,8 +320,8 @@ Terrain::Terrain(float _size, float _res, float _height){
     size = _size;
     resolution = _res;
     height = _height;
-    pos = sf::Vector3f(0, 0, 0);
-    rot = sf::Vector3f(0, 0, 0);
+    pos = glm::vec3(0, 0, 0);
+    rot = glm::vec3(0, 0, 0);
 
 }
 
@@ -340,8 +331,8 @@ Terrain::Terrain() {
 
 Terrain::~Terrain(){
     material = Material();
-    pos = sf::Vector3f(0, 0, 0);
-    rot = sf::Vector3f(0, 0, 0);
+    pos = glm::vec3(0, 0, 0);
+    rot = glm::vec3(0, 0, 0);
     size = 1;
 
     CreateVertices();
@@ -389,21 +380,21 @@ void Terrain::CreateVertices(){
     float step = size / (float)resolution;
     for (int j = 0; j < resolution; j++) {
         for (int i = 0; i < resolution; i++) {
-            std::vector<sf::Vector2f> vert(6);
-            std::vector<sf::Vector2f> uv(6);
-            vert[0] = sf::Vector2f( i,   j   );
-            vert[1] = sf::Vector2f( i+1, j   );
-            vert[2] = sf::Vector2f( i,   j+1 );
-            vert[3] = sf::Vector2f( i,   j+1 );
-            vert[4] = sf::Vector2f( i+1, j+1 );
-            vert[5] = sf::Vector2f( i+1, j   );
+            std::vector<glm::vec2> vert(6);
+            std::vector<glm::vec2> uv(6);
+            vert[0] = glm::vec2( i,   j   );
+            vert[1] = glm::vec2( i+1, j   );
+            vert[2] = glm::vec2( i,   j+1 );
+            vert[3] = glm::vec2( i,   j+1 );
+            vert[4] = glm::vec2( i+1, j+1 );
+            vert[5] = glm::vec2( i+1, j   );
 
-            uv[0] = sf::Vector2f(0, 1);
-            uv[1] = sf::Vector2f(1, 1);
-            uv[2] = sf::Vector2f(0, 0);
-            uv[3] = sf::Vector2f(0, 0);
-            uv[4] = sf::Vector2f(1, 0);
-            uv[5] = sf::Vector2f(1, 1);
+            uv[0] = glm::vec2(0, 1);
+            uv[1] = glm::vec2(1, 1);
+            uv[2] = glm::vec2(0, 0);
+            uv[3] = glm::vec2(0, 0);
+            uv[4] = glm::vec2(1, 0);
+            uv[5] = glm::vec2(1, 1);
 
             for (int k = 0; k < 6; k++) {
                 vertices.push_back(vert[k].x*step);
@@ -427,11 +418,11 @@ void Terrain::CreateVertices(){
 //    
 
 Mesh::Mesh(std::string& path){
-    pos = sf::Vector3f(0, 0, 0);
-    rot = sf::Vector3f(0, 0, 0);
+    pos = glm::vec3(0, 0, 0);
+    rot = glm::vec3(0, 0, 0);
     OBJLoader(path, this);
 
-    size = sf::Vector3f( 1, 1, 1);
+    size = glm::vec3( 1, 1, 1);
 
     material = Material();
 }
@@ -456,8 +447,8 @@ Mesh::~Mesh(){
 }
 
 Mesh::Mesh(){
-    pos = sf::Vector3f(0, 0, 0);
-    rot = sf::Vector3f(0, 0, 0);
+    pos = glm::vec3(0, 0, 0);
+    rot = glm::vec3(0, 0, 0);
     material = *(new Material());
 }
 
@@ -512,8 +503,8 @@ void Mesh::Draw() {
 //                                        
 
 Plane::Plane(){
-    pos = sf::Vector3f(0, 0, 0);
-    rot = sf::Vector3f(0, 0, 0);
+    pos = glm::vec3(0, 0, 0);
+    rot = glm::vec3(0, 0, 0);
 
     material = Material();
 }
@@ -671,7 +662,7 @@ void LightSource::Draw(std::vector <GeometricObject*> obj_list) {
    // SetDir();
     updatePos();
 
-    lightView = glm::lookAt(ConvertSFML2GLM(pos), ConvertSFML2GLM(sf::Vector3f(0, 0, 0)), glm::vec3(0.0f, 1.0f, 0.0f));
+    lightView = glm::lookAt(ConvertSFML2GLM(pos), ConvertSFML2GLM(glm::vec3(0, 0, 0)), glm::vec3(0.0f, 1.0f, 0.0f));
 
     lightSpaceMatrix = lightProjection * lightView;
 
@@ -679,8 +670,8 @@ void LightSource::Draw(std::vector <GeometricObject*> obj_list) {
        
         if (obj_list[i]->cast_shadow) {
 
-            sf::Vector3f pos = obj_list[i]->GetPos();
-            sf::Vector3f rot = obj_list[i]->GetRot();
+            glm::vec3 pos = obj_list[i]->GetPos();
+            glm::vec3 rot = obj_list[i]->GetRot();
 
             glm::mat4 model = glm::mat4(1.0);
             model = glm::translate(model, ConvertSFML2GLM(pos));
@@ -774,7 +765,7 @@ int LightSource::CreateShaderProgram() {
 
  void LightSource::updatePos() {
 
-     pos = - Normalize(dir) * distance;
+     pos = - glm::normalize(dir) * distance;
 
 
  }
@@ -790,11 +781,11 @@ int LightSource::CreateShaderProgram() {
 
      _dir = rot_mat * _dir;
 
-     dir = sf::Vector3f(_dir.x, _dir.y, _dir.z);
+     dir = glm::vec3(_dir.x, _dir.y, _dir.z);
  }
 
- void LightSource::SetDir(sf::Vector3f vec) {
-     dir = Normalize(vec);
+ void LightSource::SetDir(glm::vec3 vec) {
+     dir = glm::normalize(vec);
  }
 
 
@@ -815,9 +806,9 @@ int LightSource::CreateShaderProgram() {
 //    \_____|_|\___/ \__,_|\__,_|____/ \___/_/\_\
 //                                               
 
- Cloudbox::Cloudbox(sf::Vector3f _pos, sf::Vector3f _res, sf::Vector3f _size) {
+ Cloudbox::Cloudbox(glm::vec3 _pos, glm::vec3 _res, glm::vec3 _size) {
     pos = _pos;
-    rot = sf::Vector3f(0, 0, 0);
+    rot = glm::vec3(0, 0, 0);
     cloudTexRes = _res;
     size = _size;
 
@@ -834,7 +825,7 @@ int LightSource::CreateShaderProgram() {
      glDeleteBuffers(1, &cloudbuffer);
  }
 
- void Cloudbox::RenderCloud(float innerRadius, float outerRadius, sf::Vector3f center) {
+ void Cloudbox::RenderCloud(float innerRadius, float outerRadius, glm::vec3 center) {
      uniforms();
      glEnable(GL_CULL_FACE);
      glCullFace(GL_BACK);
@@ -1109,7 +1100,7 @@ int LightSource::CreateShaderProgram() {
      outerRadius = cloudsOnSky.cloudbox->GetSize().y;
      innerRadius = 0.1*/
 
-     centerPos = sf::Vector3f(0, -200, 0);
+     centerPos = glm::vec3(0, -200, 0);
      innerRadius =210;
      outerRadius =250;
 

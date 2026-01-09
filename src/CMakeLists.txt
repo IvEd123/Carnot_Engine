@@ -1,9 +1,9 @@
 
+find_package(glm CONFIG REQUIRED)
 find_package(glew REQUIRED)
-find_package(glm REQUIRED)
 find_package(imgui REQUIRED)
 find_package(assimp REQUIRED)
-find_package(sfml REQUIRED)
+find_package(glfw3 REQUIRED)
 
 set(APP "${PROJECT_NAME}_app")
 
@@ -18,12 +18,10 @@ target_link_libraries( ${APP}
     PUBLIC 
         GLEW::GLEW 
         glm::glm 
-        imgui::imgui 
         assimp::assimp 
-        sfml::sfml
         imgui
         objLoader
-        ImGui-SFML::ImGui-SFML
+        glfw
 ) 
 
 add_subdirectory(gui)

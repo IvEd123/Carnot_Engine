@@ -11,8 +11,6 @@
 
 #include <GL/glew.h>
 #include <glm/ext/matrix_float4x4.hpp>
-#include <SFML/Graphics.hpp>
-#include <SFML/OpenGL.hpp>
 #include <gl/GLU.h>
 
 

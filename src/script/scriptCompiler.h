@@ -9,8 +9,6 @@
 #include <stdint.h>
 #include <fstream>
 
-#include <SFML/Graphics.hpp>
-
 class GeometricObject;
 
 
@@ -56,10 +54,10 @@ public:
 	void									Update();					// update function
 	void									Start();					// start function
 private:
-	void									move(sf::Vector3f v);		// add vector to object position
-	void									moveto(sf::Vector3f v);		// changes object position
-	void									rotate(sf::Vector3f v);		// add vector to object rotation
-	void									rotateto(sf::Vector3f v);	// changes object rotation
+	void									move(glm::vec3 v);		// add vector to object position
+	void									moveto(glm::vec3 v);		// changes object position
+	void									rotate(glm::vec3 v);		// add vector to object rotation
+	void									rotateto(glm::vec3 v);	// changes object rotation
 };
 
 class ScriptCompiler{

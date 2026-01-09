@@ -8,15 +8,16 @@
 #include <stdint.h>
 #include <chrono>
 
+#include <GLFW/glfw3.h>
+
 #include <GL/glew.h>
 #include <gl/GLU.h>
-#include <SFML/Graphics.hpp>
-#include <SFML/OpenGL.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui.h>
-#include <imgui-SFML.h>
+#include <backends/imgui_impl_glfw.h>
+#include <backends/imgui_impl_opengl3.h>
 //привет
 
 #include "object/geometricObject.h"
@@ -37,9 +38,6 @@ std::vector<DLLScriptHandler> scripts;
 #include "material/material.h"
 #include "object/saveLoad.h"
 
-
-using namespace sf;
-
 #define ever (;;)
 
 #define M_PI 3.1415926535897932384626433832795
@@ -49,31 +47,38 @@ using namespace sf;
 #define WIDTH 800
 
 int main(int argc, char* argv[]) {
+    if (!glfwInit())
+        return -1;
+
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+    GLFWwindow* window =
+        glfwCreateWindow(WIDTH, HEIGHT, "Win", nullptr, nullptr);
+
+    if (!window)
+        return -1;
+
+    glfwMakeContextCurrent(window);
+    glfwSwapInterval(1);
+
+
+    IMGUI_CHECKVERSION();
     ImGuiContext* ctx2 = ImGui::CreateContext();
     ImGui::SetCurrentContext(ctx2);
     Player& pl = Player::Get();
-    pl.SetPos(Vector3f(0, 2, 0));
+    pl.SetPos(glm::vec3(0, 2, 0));
 
-   
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 330");
+
 
     std::cout << argv[0] << std::endl;
     std::string path = argv[0];
 
     std::cout << "WASD - move,\nalt - close,\nesc - pause(doesn't work good)" << std::endl;
-    Clock clock;
 
-    ContextSettings settings;
-    settings.depthBits = 24;
-    settings.stencilBits = 8;
-    settings.antialiasingLevel = 0;
-    settings.majorVersion = 3;
-    settings.minorVersion = 2;
-
-    err().rdbuf(NULL);
-    RenderWindow window(VideoMode(WIDTH, HEIGHT), "win", 7u, settings);
-    //window.setFramerateLimit(60);
-    ImGui::SFML::Init(window);
-    assert(window.getSettings().depthBits == 24);
     glewExperimental = GL_TRUE;
     glewInit();
 
@@ -85,14 +90,10 @@ int main(int argc, char* argv[]) {
 
     int error;
 
-    float time_passed = 0;
-    float _time = clock.getElapsedTime().asSeconds() * 100;
-    
     float size = 20.f;
     
     
-        
-
+   
     //light
     LightSource sun = LightSource();
     sun.setShader(GL_VERTEX_SHADER, ".\\Shaders\\Shadow.vs");
@@ -102,11 +103,11 @@ int main(int argc, char* argv[]) {
         std::cout << error << std::endl;
     //sun.SetPos(Vector3f(20, 20, 00));
     sun.SetDistance(30);
-    sun.SetDir(Vector3f(1, -1, 1));
+    sun.SetDir(glm::vec3(1, -1, 1));
 
     //cloud map
     glEnable(GL_TEXTURE_3D);
-    Cloudbox cloudbox = Cloudbox(sf::Vector3f(0, 0, 0), sf::Vector3f(256, 256, 256), sf::Vector3f(10, 1, 10));
+    Cloudbox cloudbox = Cloudbox(glm::vec3(0, 0, 0), glm::vec3(256, 256, 256), glm::vec3(10, 1, 10));
     cloudbox.material.loadShader(GL_VERTEX_SHADER, ".\\Shaders\\cloud.vs");
     cloudbox.material.loadShader(GL_FRAGMENT_SHADER, ".\\Shaders\\cloud.fs");
     cloudbox.material.CreateShaders();
@@ -134,10 +135,8 @@ int main(int argc, char* argv[]) {
     screen.addLightSource(&sun);
 
 
-
-
-    sf::Vector3f sun_spawn_pos = sun.GetPos();
-    sf::Vector3f sun_spawn_pov = sun.GetPov();
+    glm::vec3 sun_spawn_pos = sun.GetPos();
+    glm::vec3 sun_spawn_pov = sun.GetPov();
 
     const unsigned int t = *screen.getColorBuffer();
     
@@ -174,42 +173,28 @@ int main(int argc, char* argv[]) {
     unsigned int counter = 0;
     bool cloudRender = true;
         
-    for ever{
+    while(!glfwWindowShouldClose(window)){
         counter++;
-
-        float Dtime = clock.getElapsedTime().asSeconds() * 100;
-
-        time_passed += Dtime;
-        Event event;
-        while (window.pollEvent(event)) {
-            ImGui::SFML::ProcessEvent(event);
-            //ShowCursor(true);
-            if (event.type == Event::Closed || Keyboard::isKeyPressed(Keyboard::RAlt)) {
-                for(int i = 0; i < obj_list.size(); i++)
-                    DeleteObject(i);
-                pause = 1;
-                window.close();
-            }
-        }
-
-
-
-        pause = pause_prev ^ Keyboard::isKeyPressed(Keyboard::Escape);
-        //window.setMouseCursorVisible(pause);
-
-        pause_prev = pause;
-
+        glfwPollEvents();
 
 
         if (!pause) {
             POINT mousexy;
             GetCursorPos(&mousexy);
-            Vector2<int> t = Vector2<int>(window.getPosition().x + 400, window.getPosition().y + 400);
-            pl.SetAng(Vector2f((int)(pl.GetAng().x + (t.x - mousexy.x) / 4) % 360 , pl.GetAng().y + (t.y - mousexy.y) / 3));
+            glm::ivec2 t = { 
+                400, 
+                400 
+            };
+
+            pl.SetAng({
+                (int)(pl.GetAng().x + (t.x - mousexy.x) / 4) % 360, 
+                pl.GetAng().y + (t.y - mousexy.y) / 3 
+            });
+
             if (pl.GetAng().y < -89)
-                pl.SetAng(Vector2f(pl.GetAng().x, -89));
+                pl.SetAng({ pl.GetAng().x, -89 });
             if (pl.GetAng().y > 89)
-                pl.SetAng(Vector2f(pl.GetAng().x, 89));
+                pl.SetAng({ pl.GetAng().x, 89 });
             SetCursorPos(t.x, t.y);
             //ShowCursor(false);
         }
@@ -217,7 +202,6 @@ int main(int argc, char* argv[]) {
         //pl.SetAng(sf::Vector2f(-100, 2));
         //std::cout << pl.GetAng().x << " ." << pl.GetAng().y << std::endl;
 
-        ImGui::SFML::Update(window, clock.restart());
         ImGui::ShowDemoWindow();
 
         int selected = -1;
@@ -242,12 +226,12 @@ int main(int argc, char* argv[]) {
 
 
         pl.view = glm::lookAt(
-            ConvertSFML2GLM(pl.GetPos()),
+            pl.GetPos(),
             glm::vec3(pl.GetPos().x - sin(pl.GetAng().x / 180 * M_PI), pl.GetPos().y + tan(pl.GetAng().y / 180 * M_PI), pl.GetPos().z - cos(pl.GetAng().x / 180 * M_PI)),
             glm::vec3(0.0f, 1.0f, 0.0f)
         );
 
-        pl.Move(pl.GetAng(), Dtime);
+        pl.Move(pl.GetAng(), 0.01);
         //sun.SetPov(pl.GetPos() + sun_spawn_pov);
         //sun.SetPos(pl.GetPos() + sun_spawn_pos);
 
@@ -284,7 +268,7 @@ int main(int argc, char* argv[]) {
             obj_list[i]->Draw();
         }
 
-        sf::Vector3f p = cloudbox.GetPos();
+        glm::vec3 p = cloudbox.GetPos();
         p.y = 0;
         //cloudbox.RenderCloud(0.5, 1, p);
         
@@ -303,9 +287,10 @@ int main(int argc, char* argv[]) {
 
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        screen.material.attachUniform("time", Dtime);
+        screen.material.attachUniform("time", 0.01f);
         
-        if (event.type == Event::KeyReleased && event.key.code == Keyboard::F5){
+      /*
+        if (event.type == Event::KeyReleased && event.key.code == Keyboard::F5) {
             int t = sf.Save(&obj_list, &light_list);
             if (t == 0)
                 std::cout << "saved" << std::endl;
@@ -333,6 +318,7 @@ int main(int argc, char* argv[]) {
             cloudRender = !cloudRender;
 
         }
+      */  
 
         screen.view = &pl.view;
         screen.proj = &pl.proj;
@@ -342,17 +328,17 @@ int main(int argc, char* argv[]) {
 
         
         
-
-
-        ImGui::SFML::Render(window);
-
-        
-        window.display();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        glfwSwapBuffers(window);
 
     }
 
-    ImGui::SFML::Shutdown();
-    window.close();
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+
+    glfwDestroyWindow(window);
+    glfwTerminate();
     
     return 0;
 }

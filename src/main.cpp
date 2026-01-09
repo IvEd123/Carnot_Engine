@@ -8,9 +8,9 @@
 #include <stdint.h>
 #include <chrono>
 
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include <GL/glew.h>
 #include <gl/GLU.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

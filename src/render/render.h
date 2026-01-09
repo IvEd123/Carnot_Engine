@@ -21,7 +21,7 @@ void perspectiveGL(GLdouble fovY, GLdouble aspect, GLdouble zNear, GLdouble zFar
 
 glm::vec3 ConvertSFML2GLM(glm::vec3 vec);
 
-GLuint loadTexture(const GLchar* path);
+GLuint loadTexture(const char* path);
 
 GLuint createFrameBuffer(int height, int width, GLuint *depghstencil, GLuint *colorBuff);
 

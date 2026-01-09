@@ -5,16 +5,18 @@ add_library(imgui STATIC
     imgui/imgui_widgets.cpp
     imgui/imgui_tables.cpp
     imgui/imgui_demo.cpp
+    imgui/backends/imgui_impl_glfw.cpp
+    imgui/backends/imgui_impl_opengl3.cpp
 )
+
+find_package(glfw3 REQUIRED)
+target_link_libraries(imgui PUBLIC glfw)
 
 target_include_directories(imgui
     PUBLIC
         imgui
         imgui/backends
 )
-
-set(IMGUI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/imgui/)
-
 
 add_library(objLoader INTERFACE)
 

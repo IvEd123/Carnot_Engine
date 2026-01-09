@@ -3,6 +3,9 @@
 
 void Player::Move(glm::vec2 ang, float Dtime) {
 	
+	return;
+
+	/*
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
 		pos.y += 0.1;
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::F))
@@ -44,6 +47,7 @@ void Player::Move(glm::vec2 ang, float Dtime) {
 	
 	pos.z -= (velocity.x * cos(ang.x * 0.0174533) - velocity.z * sin(ang.x * 0.0174533) ) * Dtime;
 	pos.x -= (velocity.x * sin(ang.x * 0.0174533) + velocity.z * cos(ang.x * 0.0174533) ) * Dtime;
+	*/
 }
 
 

@@ -8,6 +8,8 @@
 #include <vector>
 #include <stdint.h>
 #include <fstream>
+#include <glm/glm.hpp>
+
 
 class GeometricObject;
 

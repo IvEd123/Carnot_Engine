@@ -1,9 +1,6 @@
 [submodule "libs/obj_loader"]
 	path = libs/obj_loader
 	url = https://github.com/Bly7/OBJ-Loader.git
-[submodule "libs/imgui-sflm"]
-	path = libs/imgui-sflm
-	url = https://github.com/SFML/imgui-sfml.git
 [submodule "libs/imgui"]
 	path = libs/imgui
 	url = https://github.com/ocornut/imgui.git

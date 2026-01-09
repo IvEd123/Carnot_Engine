@@ -2,9 +2,7 @@
 find_package(glm CONFIG REQUIRED)
 find_package(glew REQUIRED)
 find_package(imgui REQUIRED)
-find_package(assimp REQUIRED)
 find_package(glfw3 REQUIRED)
-find_package(stb REQUIRED)
 
 set(APP "${PROJECT_NAME}_app")
 
@@ -26,11 +24,8 @@ target_link_libraries( ${APP}
     PUBLIC 
         GLEW::GLEW 
         glm::glm 
-        assimp::assimp 
         imgui
-        objLoader
         glfw
-        stb::stb
 ) 
 
 add_subdirectory(gui)
@@ -38,3 +33,5 @@ add_subdirectory(material)
 add_subdirectory(object)
 add_subdirectory(render)
 add_subdirectory(script)
+
+add_subdirectory(core)

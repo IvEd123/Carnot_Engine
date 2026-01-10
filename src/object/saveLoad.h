@@ -10,6 +10,7 @@
 
 #include "geometricObject.h"
 #include "addObject.h"
+#include "../script/dllScriptHandler.h"
 
 extern std::vector <GeometricObject*> obj_list;
 extern std::vector <DLLScriptHandler> scripts;

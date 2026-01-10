@@ -7,6 +7,7 @@
 #include <string>
 
 #include "../object/geometricObject.h"
+#include "../object/cloud_box.h"
 
 class GUI_Element;
 

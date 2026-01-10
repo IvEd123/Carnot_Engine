@@ -1,4 +1,5 @@
 #include "saveLoad.h"
+#include "mesh.h"
 
 void SaveLoad::SetPath(std::string& _path){
 	path = _path;

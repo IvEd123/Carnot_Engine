@@ -4,6 +4,7 @@
 
 #include <vector>
 #include "geometricObject.h"
+#include "../render/render.h"
 
 #define LAST_OBJ_PTR obj_list.back()
 

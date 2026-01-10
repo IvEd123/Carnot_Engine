@@ -6,6 +6,7 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+#include "../object/utils.h"
 
 #pragma warning(disable : 4996)
 

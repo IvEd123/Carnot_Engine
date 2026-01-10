@@ -2,7 +2,8 @@
 #include "material.h"
 #include "../object/player.h"
 #include "../object/geometricObject.h"
-
+#include "../object/utils.h"
+#include "../render/render.h"
 
 
 

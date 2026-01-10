@@ -24,6 +24,9 @@
 #include "script/dllScriptHandler.h"
 #include "gui/gui.h"
 
+#include "object/light_source.h"
+#include "object/screen.h"
+
 std::vector <GeometricObject*> obj_list;
 std::vector <LightSource*> light_list;
 
@@ -45,6 +48,9 @@ std::vector<DLLScriptHandler> scripts;
 
 #define HEIGHT 800
 #define WIDTH 800
+
+
+Player& _pl = Player::Get();
 
 int main(int argc, char* argv[]) {
     if (!glfwInit())
@@ -106,6 +112,8 @@ int main(int argc, char* argv[]) {
     sun.SetDir(glm::vec3(1, -1, 1));
 
     //cloud map
+    
+    /*
     glEnable(GL_TEXTURE_3D);
     Cloudbox cloudbox = Cloudbox(glm::vec3(0, 0, 0), glm::vec3(256, 256, 256), glm::vec3(10, 1, 10));
     cloudbox.material.loadShader(GL_VERTEX_SHADER, ".\\Shaders\\cloud.vs");
@@ -115,18 +123,19 @@ int main(int argc, char* argv[]) {
     cloudbox.renderTexture(WIDTH, HEIGHT);
     cloudbox.recreateShaders();
     cloudbox.addLightSource(&sun);
+    */
 
 
 
     std::cout << "glerror " << glGetError() << std::endl;
-    Sky sky = Sky(&cloudbox);
+  //  Sky sky = Sky(&cloudbox);
     
 
 
     //framebuffer
     Screen screen = Screen();
     screen.frameBuffer = createFrameBuffer(WIDTH, HEIGHT, screen.getDepthSteencilBuffer(), screen.getColorBuffer());
-    screen.material.loadShader(GL_VERTEX_SHADER, ".\\Shaders\\screen.vs");
+    screen.material.loadShader(GL_VERTEX_SHADER, "resources\\shaders\\screen.vs");
     screen.material.loadShader(GL_FRAGMENT_SHADER, ".\\Shaders\\screen.fs");
     error = screen.material.CreateShaders();
     screen.material.specifyVertexAttributes_screen(screen.material.getShaderProgram());
@@ -162,10 +171,12 @@ int main(int argc, char* argv[]) {
     for (int i = 0; i < scripts.size(); i++)
         scripts[i].Start();
 
+    /*
     sky.initSky(".\\Shaders\\proceduralSky.fs", obj_list[0]);
     GUI_Object obj_win = GUI_Object();
     GUI_cloud gui_cloud = GUI_cloud();
     gui_cloud.SetObject(&cloudbox);
+    */
 
     
     //cloudbox.RenderCloud();
@@ -249,6 +260,7 @@ int main(int argc, char* argv[]) {
         glDepthMask(GL_TRUE);
 
         
+      /*
         gui_cloud.Update();
         //std::cout << "clear glerror " << glGetError() << std::endl;
         if (cloudRender) {
@@ -260,16 +272,18 @@ int main(int argc, char* argv[]) {
             }
         }
         cloudRender = false;
+      */
+
 
         //obj_list[0]->SetPos(pl.GetPos());
 
         for (int i = 0; i < obj_list.size(); i++) {
-            obj_list[i]->material.setEnvironmentMap(sky.GetTex());
+     //       obj_list[i]->material.setEnvironmentMap(sky.GetTex());
             obj_list[i]->Draw();
         }
 
-        glm::vec3 p = cloudbox.GetPos();
-        p.y = 0;
+     //   glm::vec3 p = cloudbox.GetPos();
+      //  p.y = 0;
         //cloudbox.RenderCloud(0.5, 1, p);
         
         ImGui::Begin("sky");
@@ -277,9 +291,9 @@ int main(int argc, char* argv[]) {
         ImGui::End();
        
 
-        if (selected != -1)
-            obj_win.SetObject(obj_list[selected]);
-        obj_win.Update();
+       // if (selected != -1)
+      //      obj_win.SetObject(obj_list[selected]);
+     //   obj_win.Update();
 
 
         for (int i = 0; i < scripts.size(); i++)

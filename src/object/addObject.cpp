@@ -1,4 +1,7 @@
 #include "addObject.h"
+#include "cube.h"
+#include "mesh.h"
+#include "plane.h"
 
 void set_pointers_to_arrays(GeometricObject* g) {
     array_of_vertecies.emplace_back();
@@ -16,10 +19,6 @@ void AddObject(GeometryType type, std::string name) {
     switch (type) {
     case CUBE:
         object = new Cube();
-
-        break;
-    case TERRAIN:
-        object = new Terrain();
 
         break;
     case MESH:

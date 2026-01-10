@@ -1,12 +1,28 @@
 target_sources(${APP}
     PUBLIC
         addObject.h  
-        geometricObject.cpp  
-        player.cpp  
-        saveLoad.cpp
         addObject.cpp   
-        cube.h       
-        geometricObject.h    
+        geometricObject.cpp  
+        geometricObject.h  
+        cube.h         
+        cube.cpp
+        cloud_box.h
+        cloud_box.cpp
+        light_source.h
+        light_source.cpp
+        mesh.h
+        mesh.cpp
+        plane.h
+        plane.cpp
+        screen.h
+        screen.cpp
+        sky.h
+        sky.cpp
+        utils.h
+        utils.cpp
+
+        player.cpp  
         player.h    
+        saveLoad.cpp
         saveLoad.h
     )

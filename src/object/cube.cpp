@@ -37,7 +37,7 @@ Cube::Cube() {
 
 
 void Cube::CreateVerticesLegacy() {
-    std::filesystem::path cubePath = ".\\resources\\meshes\\cube.obj";
+    std::filesystem::path cubePath = ".\\Degug\\resources\\meshes\\cube.obj";
     setModel(cubePath);
 
     //material.createVAO_VBO_mesh((*vert_vec3)[array_index], (*uv_vec2)[array_index], (*norm_vec3)[array_index]);

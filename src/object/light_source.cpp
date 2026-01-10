@@ -5,6 +5,7 @@
 #include "utils.h"
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <filesystem>
 
 
 LightSource::LightSource() {
@@ -125,6 +126,9 @@ int LightSource::CreateShaderProgram() {
  int LightSource::loadShader(GLenum type, const GLchar* path) {
 
     std::ifstream file;
+
+    auto cur = std::filesystem::current_path();
+
     file.open(path);
 
     if (!file.is_open()) {

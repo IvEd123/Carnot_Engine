@@ -102,8 +102,8 @@ int main(int argc, char* argv[]) {
    
     //light
     LightSource sun = LightSource();
-    sun.setShader(GL_VERTEX_SHADER, ".\\Shaders\\Shadow.vs");
-    sun.setShader(GL_FRAGMENT_SHADER, ".\\Shaders\\Shadow.fs");
+    sun.setShader(GL_VERTEX_SHADER, ".\\Debug\\resources\\shaders\\Shadow.vs");
+    sun.setShader(GL_FRAGMENT_SHADER, ".\\Debug\\resources\\shaders\\Shadow.fs");
     error = sun.CreateShaders();
     if (error != 0)
         std::cout << error << std::endl;
@@ -135,8 +135,8 @@ int main(int argc, char* argv[]) {
     //framebuffer
     Screen screen = Screen();
     screen.frameBuffer = createFrameBuffer(WIDTH, HEIGHT, screen.getDepthSteencilBuffer(), screen.getColorBuffer());
-    screen.material.loadShader(GL_VERTEX_SHADER, "resources\\shaders\\screen.vs");
-    screen.material.loadShader(GL_FRAGMENT_SHADER, ".\\Shaders\\screen.fs");
+    screen.material.loadShader(GL_VERTEX_SHADER, ".\\Debug\\resources\\shaders\\screen.vs");
+    screen.material.loadShader(GL_FRAGMENT_SHADER, ".\\Debug\\resources\\shaders\\screen.fs");
     error = screen.material.CreateShaders();
     screen.material.specifyVertexAttributes_screen(screen.material.getShaderProgram());
     if (error != 0)
@@ -213,10 +213,10 @@ int main(int argc, char* argv[]) {
         //pl.SetAng(sf::Vector2f(-100, 2));
         //std::cout << pl.GetAng().x << " ." << pl.GetAng().y << std::endl;
 
-        ImGui::ShowDemoWindow();
+//        ImGui::ShowDemoWindow();
 
         int selected = -1;
-
+        /*
         ImGui::Begin("object");
         if (ImGui::BeginMenu("objects")) {
             for (int i = 0; i < obj_list.size(); i++) {
@@ -227,7 +227,8 @@ int main(int argc, char* argv[]) {
             }
             ImGui::EndMenu();
         }
-        ImGui::End(); // end window*/
+        ImGui::End(); // end window
+        */
 
 
         //clear depth buffer
@@ -285,10 +286,11 @@ int main(int argc, char* argv[]) {
      //   glm::vec3 p = cloudbox.GetPos();
       //  p.y = 0;
         //cloudbox.RenderCloud(0.5, 1, p);
-        
+     /*
         ImGui::Begin("sky");
         ImGui::InputFloat3("sun dir", &(sun.GetDirPtr()->x));
         ImGui::End();
+     */
        
 
        // if (selected != -1)
@@ -342,7 +344,7 @@ int main(int argc, char* argv[]) {
 
         
         
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    //    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         glfwSwapBuffers(window);
 
     }

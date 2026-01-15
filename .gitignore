@@ -364,3 +364,7 @@ MigrationBackup/
 FodyWeavers.xsd
 
 CMakeUserPresets.json
+build/
+CMakeFiles/
+.DS_Store
+CMakeCache.txt

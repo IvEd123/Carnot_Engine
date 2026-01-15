@@ -1,7 +1,7 @@
 
 find_package(glm CONFIG REQUIRED)
-find_package(glew REQUIRED)
-find_package(imgui REQUIRED)
+find_package(glew CONFIG REQUIRED)
+find_package(imgui CONFIG REQUIRED)
 find_package(glfw3 REQUIRED)
 
 set(APP "${PROJECT_NAME}_app")
@@ -20,11 +20,13 @@ add_custom_command(
             $<TARGET_FILE_DIR:${APP}>/resources
 )
 
+target_compile_definitions(${APP} PUBLIC IMGUI_IMPL_OPENGL_LOADER_GLEW)
+
 target_link_libraries( ${APP}
     PUBLIC 
         GLEW::GLEW 
         glm::glm 
-        imgui
+        imgui::imgui
         glfw
 ) 
 

@@ -28,6 +28,7 @@ target_link_libraries( ${APP}
         glm::glm 
         imgui::imgui
         glfw
+        imgui_backend
 ) 
 
 add_subdirectory(gui)
